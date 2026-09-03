@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/yourorg/aicodingagentteam/internal/a2a"
-	"github.com/yourorg/aicodingagentteam/internal/agent"
-	"github.com/yourorg/aicodingagentteam/internal/planner"
-	"github.com/yourorg/aicodingagentteam/internal/qualitygate"
-	"github.com/yourorg/aicodingagentteam/internal/router"
-	"github.com/yourorg/aicodingagentteam/internal/scheduler"
-	"github.com/yourorg/aicodingagentteam/internal/types"
-	"github.com/yourorg/aicodingagentteam/pkg/api"
+	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
+	"github.com/agentcodinglab/aicodingagentteam/internal/agent"
+	"github.com/agentcodinglab/aicodingagentteam/internal/planner"
+	"github.com/agentcodinglab/aicodingagentteam/internal/qualitygate"
+	"github.com/agentcodinglab/aicodingagentteam/internal/router"
+	"github.com/agentcodinglab/aicodingagentteam/internal/scheduler"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/api"
 )
 
 // Director is the core scheduling loop implementing the 5-layer model.

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/yourorg/aicodingagentteam/pkg/runtime"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 func TestCapabilities(t *testing.T) {

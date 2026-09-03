@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/yourorg/aicodingagentteam/internal/governance"
+	"github.com/agentcodinglab/aicodingagentteam/internal/governance"
 )
 
 // GovernanceResult holds the output of a govern_file scan.

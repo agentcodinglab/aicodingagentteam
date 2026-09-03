@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 func TestRoute_BuildIntent(t *testing.T) {

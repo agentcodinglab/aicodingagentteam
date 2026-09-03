@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/yourorg/aicodingagentteam/pkg/runtime"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 // Driver is the Codex CLI driver (codex exec non-interactive mode).

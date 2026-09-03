@@ -11,9 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/yourorg/aicodingagentteam/internal/a2a"
-	"github.com/yourorg/aicodingagentteam/internal/audit"
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
+	"github.com/agentcodinglab/aicodingagentteam/internal/audit"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 // Scheduler executes a Plan by dispatching tasks to role agents.

@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/yourorg/aicodingagentteam/internal/a2a"
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 func TestReviewerAgent_AcceptsWhenArtifactsExist(t *testing.T) {

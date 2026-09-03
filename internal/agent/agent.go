@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/yourorg/aicodingagentteam/internal/a2a"
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 // ReviewerAgent is a generic reviewer role agent.

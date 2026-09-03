@@ -12,9 +12,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/yourorg/aicodingagentteam/internal/a2a"
-	"github.com/yourorg/aicodingagentteam/internal/types"
-	pb "github.com/yourorg/aicodingagentteam/pkg/api/gen"
+	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
+	pb "github.com/agentcodinglab/aicodingagentteam/pkg/api/gen"
 )
 
 // Handler is implemented by the Coordinator to serve protocol requests.

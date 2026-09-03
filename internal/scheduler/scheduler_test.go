@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 func TestExecute_WriterAcquiresLock(t *testing.T) {

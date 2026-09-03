@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yourorg/aicodingagentteam/pkg/runtime"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 // Driver is the DeepSeek-DSH CLI driver (ACP v1 / private protocol).

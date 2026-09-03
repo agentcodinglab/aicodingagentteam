@@ -5,7 +5,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 // Router routes user requests to intent classifications.

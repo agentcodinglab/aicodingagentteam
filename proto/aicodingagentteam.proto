@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package aicodingagentteam.v1;
 
-option go_package = "github.com/yourorg/aicodingagentteam/pkg/api/gen;aicodingagentteampb";
+option go_package = "github.com/agentcodinglab/aicodingagentteam/pkg/api/gen;aicodingagentteampb";
 
 // Coordinator service exposes the orchestration capabilities.
 service Coordinator {

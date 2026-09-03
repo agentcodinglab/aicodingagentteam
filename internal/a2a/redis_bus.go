@@ -15,8 +15,8 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"github.com/yourorg/aicodingagentteam/internal/audit"
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/audit"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 // RedisBus implements the A2A message bus using Redis Pub/Sub.

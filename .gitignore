@@ -21,5 +21,11 @@ node_modules/
 dist/
 req.md
 refer.md
-docs/
-agents.md
+01-需求分析文档.md
+ADR-0001-go-not-rust.md
+ADR-0003-container-per-role.md
+docs/adr/
+#agents.md
+
+
+

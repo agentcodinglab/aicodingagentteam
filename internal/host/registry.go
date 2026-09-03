@@ -5,11 +5,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yourorg/aicodingagentteam/internal/host/claude"
-	"github.com/yourorg/aicodingagentteam/internal/host/codex"
-	"github.com/yourorg/aicodingagentteam/internal/host/dsh"
-	"github.com/yourorg/aicodingagentteam/internal/host/opencode"
-	"github.com/yourorg/aicodingagentteam/pkg/runtime"
+	"github.com/agentcodinglab/aicodingagentteam/internal/host/claude"
+	"github.com/agentcodinglab/aicodingagentteam/internal/host/codex"
+	"github.com/agentcodinglab/aicodingagentteam/internal/host/dsh"
+	"github.com/agentcodinglab/aicodingagentteam/internal/host/opencode"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 // Registry holds all registered host drivers keyed by Backend.

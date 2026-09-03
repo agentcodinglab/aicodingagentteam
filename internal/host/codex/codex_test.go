@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yourorg/aicodingagentteam/pkg/runtime"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 func TestFilterStderr_RemovesNoise(t *testing.T) {

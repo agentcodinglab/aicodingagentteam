@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yourorg/aicodingagentteam/internal/a2a"
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 // mockHandler implements Handler for testing.

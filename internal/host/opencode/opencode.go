@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/yourorg/aicodingagentteam/pkg/runtime"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 // Driver is the OpenCode CLI driver (opencode run --format json non-interactive mode).

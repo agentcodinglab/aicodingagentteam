@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yourorg/aicodingagentteam/pkg/runtime"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 // Driver is the Claude-Code CLI driver (private stream protocol).

@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/yourorg/aicodingagentteam/internal/audit"
-	"github.com/yourorg/aicodingagentteam/internal/types"
+	"github.com/agentcodinglab/aicodingagentteam/internal/audit"
+	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
 // AgentCard declares an agent's capabilities for discovery.

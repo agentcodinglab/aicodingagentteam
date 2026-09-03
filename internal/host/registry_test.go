@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/yourorg/aicodingagentteam/pkg/runtime"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 func TestRegistry_GetAllBackends(t *testing.T) {

@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/yourorg/aicodingagentteam/internal/audit"
+	"github.com/agentcodinglab/aicodingagentteam/internal/audit"
 )
 
 // Result is the output of a quality gate run.
