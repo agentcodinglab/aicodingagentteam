@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Card",
+  "description": "Agent capability declaration for A2A discovery",
+  "type": "object",
+  "required": ["id", "name", "role", "capabilities", "endpoint"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "role": {
+      "type": "string",
+      "enum": ["coordinator", "pm", "architect", "uiux", "frontend", "backend", "qa", "security", "devops"]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "endpoint": { "type": "string" },
+    "max_concurrent": { "type": "integer", "minimum": 1, "default": 1 },
+    "timeout_default": { "type": "integer", "minimum": 1, "default": 300 }
+  }
+}

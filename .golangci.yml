@@ -1,0 +1,35 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - misspell
+    - gocritic
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+linters-settings:
+  goimports:
+    local-prefixes:
+      - github.com/yourorg/aicodingagentteam
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclusions:
+    - path: _test\.go
+      linters: [gocritic]

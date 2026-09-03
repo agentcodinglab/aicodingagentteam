@@ -1,0 +1,57 @@
+{
+  "name": "aicodingagentteam-tui",
+  "version": "0.1.0",
+  "description": "Terminal UI client for AiCodingAgentTeam orchestration platform",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/cli.js",
+  "bin": {
+    "aicodingagentteam-tui": "./dist/cli.js"
+  },
+  "files": [
+    "dist/",
+    "proto/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js",
+    "lint": "eslint src/ --ext .ts,.tsx",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ai-coding",
+    "orchestration",
+    "tui",
+    "terminal",
+    "agent-team",
+    "a2a"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourorg/aicodingagentteam"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.12.0",
+    "@grpc/proto-loader": "^0.7.13",
+    "ink": "^4.4.1",
+    "ink-spinner": "^5.0.0",
+    "ink-table": "^3.1.0",
+    "react": "^18.3.1",
+    "zustand": "^4.5.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.5",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

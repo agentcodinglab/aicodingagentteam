@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package aicodingagentteam.v1;
+
+option go_package = "github.com/yourorg/aicodingagentteam/pkg/api/gen;aicodingagentteampb";
+
+// Coordinator service exposes the orchestration capabilities.
+service Coordinator {
+  // RunPipeline starts a full build pipeline.
+  rpc RunPipeline(RunPipelineRequest) returns (RunPipelineResponse);
+  // RunPipelineStream starts a full pipeline with streaming progress.
+  rpc RunPipelineStream(RunPipelineRequest) returns (stream ProgressEvent);
+  // QuickEdit performs a lightweight edit.
+  rpc QuickEdit(QuickEditRequest) returns (QuickEditResponse);
+  // Verify runs quality gate checks.
+  rpc Verify(VerifyRequest) returns (VerifyResponse);
+  // GetPlan returns the current DAG plan.
+  rpc GetPlan(GetPlanRequest) returns (GetPlanResponse);
+  // Continue resumes a parked task.
+  rpc Continue(ContinueRequest) returns (ContinueResponse);
+}
+
+message RunPipelineRequest {
+  string requirement = 1;
+  string backend = 2;
+  bool auto_approve_gates = 3;
+}
+
+message RunPipelineResponse {
+  string plan_id = 1;
+  repeated string artifacts = 2;
+  int32 score = 3;
+  bool passed = 4;
+}
+
+message ProgressEvent {
+  string task_id = 1;
+  string phase = 2;
+  string role = 3;
+  string status = 4;  // running / completed / failed / parked
+  string message = 5;
+}
+
+message QuickEditRequest {
+  string description = 1;
+  string backend = 2;
+}
+
+message QuickEditResponse {
+  repeated string files_changed = 1;
+  bool passed = 2;
+}
+
+message VerifyRequest {
+  bool runtime = 1;  // include runtime probe
+}
+
+message VerifyResponse {
+  int32 score = 1;
+  bool passed = 2;
+  repeated string blocking = 3;
+  repeated string advisory = 4;
+}
+
+message GetPlanRequest {}
+
+message GetPlanResponse {
+  string plan_json = 1;
+  int32 node_count = 2;
+  repeated GateInfo gates = 3;
+}
+
+message GateInfo {
+  string id = 1;
+  string after_node = 2;
+  string type = 3;  // human / auto
+  string status = 4;
+}
+
+message ContinueRequest {
+  string plan_id = 1;
+}
+
+message ContinueResponse {
+  bool resumed = 1;
+  string status = 2;
+}

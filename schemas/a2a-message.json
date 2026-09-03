@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A2A Message",
+  "description": "Agent-to-Agent JSON-RPC message for task delegation",
+  "type": "object",
+  "required": ["jsonrpc", "id", "method"],
+  "properties": {
+    "jsonrpc": { "const": "2.0" },
+    "id": { "type": "string" },
+    "method": {
+      "type": "string",
+      "enum": ["agent.execute", "agent.progress", "agent.result", "agent.status"]
+    },
+    "params": {
+      "type": "object",
+      "properties": {
+        "task_id": { "type": "string" },
+        "role": {
+          "type": "string",
+          "enum": ["coordinator", "pm", "architect", "uiux", "frontend", "backend", "qa", "security", "devops"]
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "artifacts": { "type": "array", "items": { "type": "string" } },
+            "instruction": { "type": "string" }
+          }
+        },
+        "deadline": { "type": "string", "format": "date-time" }
+      }
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "task_id": { "type": "string" },
+        "verdict": {
+          "type": "object",
+          "required": ["decision"],
+          "properties": {
+            "decision": { "type": "string", "enum": ["accept", "blocking", "advisory"] },
+            "severity": { "type": "string" },
+            "findings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "check": { "type": "string" },
+                  "status": { "type": "string" },
+                  "detail": { "type": "string" },
+                  "evidence": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

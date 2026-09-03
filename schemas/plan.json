@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DAG Plan",
+  "description": "Task dependency graph plan for pipeline execution",
+  "type": "object",
+  "required": ["id", "nodes"],
+  "properties": {
+    "id": { "type": "string" },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "phase", "role", "depends_on"],
+        "properties": {
+          "id": { "type": "string" },
+          "phase": {
+            "type": "string",
+            "enum": ["clarify", "research", "docs", "spec", "frontend", "backend", "quality", "delivery"]
+          },
+          "role": {
+            "type": "string",
+            "enum": ["coordinator", "pm", "architect", "uiux", "frontend", "backend", "qa", "security", "devops"]
+          },
+          "depends_on": { "type": "array", "items": { "type": "string" } },
+          "artifacts_in": { "type": "array", "items": { "type": "string" } },
+          "artifacts_out": { "type": "array", "items": { "type": "string" } },
+          "writer": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "after", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "after": { "type": "string" },
+          "type": { "type": "string", "enum": ["human", "auto"] }
+        }
+      }
+    }
+  }
+}

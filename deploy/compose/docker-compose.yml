@@ -1,0 +1,81 @@
+services:
+  coordinator:
+    build: ../..
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
+    environment:
+      - AICODINGAGENTTEAM_A2A_BUS=redis://a2a-bus:6379
+      - AICODINGAGENTTEAM_WORKSPACE=/workspace
+    volumes:
+      - workspace:/workspace
+    depends_on:
+      a2a-bus:
+        condition: service_healthy
+    command: ["aicodingagentteam", "serve"]
+    restart: unless-stopped
+
+  a2a-bus:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  host-codex:
+    build: ../docker/host-codex
+    volumes: [workspace:/workspace:rw]
+    restart: unless-stopped
+
+  host-opencode:
+    build: ../docker/host-codex
+    volumes: [workspace:/workspace:rw]
+    restart: unless-stopped
+
+  agent-pm:
+    build: ../docker/agent
+    environment:
+      - AGENT_ROLE=pm
+      - AICODINGAGENTTEAM_A2A_BUS=redis://a2a-bus:6379
+    volumes: [workspace:/workspace:rw]
+    restart: unless-stopped
+
+  agent-architect:
+    build: ../docker/agent
+    environment:
+      - AGENT_ROLE=architect
+      - AICODINGAGENTTEAM_A2A_BUS=redis://a2a-bus:6379
+    volumes: [workspace:/workspace:rw]
+    restart: unless-stopped
+
+  agent-qa:
+    build: ../docker/agent
+    environment:
+      - AGENT_ROLE=qa
+      - AICODINGAGENTTEAM_A2A_BUS=redis://a2a-bus:6379
+    volumes: [workspace:/workspace:rw]
+    restart: unless-stopped
+
+  agent-security:
+    build: ../docker/agent
+    environment:
+      - AGENT_ROLE=security
+      - AICODINGAGENTTEAM_A2A_BUS=redis://a2a-bus:6379
+    volumes: [workspace:/workspace:rw]
+    restart: unless-stopped
+
+  agent-devops:
+    build: ../docker/agent
+    environment:
+      - AGENT_ROLE=devops
+      - AICODINGAGENTTEAM_A2A_BUS=redis://a2a-bus:6379
+    volumes: [workspace:/workspace:rw]
+    restart: unless-stopped
+
+volumes:
+  workspace:
