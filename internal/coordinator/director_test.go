@@ -18,7 +18,10 @@ import (
 
 // fastCheck is a near-instant quality gate check for tests.
 func fastCheck(name, script, severity string) qualitygate.Check {
-	return qualitygate.Check{Name: name, Command: []string{"cmd", "/c", script}, Timeout: 10, Severity: severity}
+	if strings.Contains(script, "0") {
+		return qualitygate.Check{Name: name, Command: []string{"go", "version"}, Timeout: 10, Severity: severity}
+	}
+	return qualitygate.Check{Name: name, Command: []string{"go", "tool", "nonexistent-binary-xyz"}, Timeout: 10, Severity: severity}
 }
 
 // newTestDirector builds a Director with a real A2A in-process bus, registered
