@@ -17,18 +17,11 @@ formatters:
   enable:
     - gofmt
     - goimports
-
-linters-settings:
-  goimports:
-    local-prefixes: github.com/agentcodinglab/aicodingagentteam
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - style
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/agentcodinglab/aicodingagentteam
 
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
-  exclusions:
-    - path: _test\.go
-      linters: [gocritic]
