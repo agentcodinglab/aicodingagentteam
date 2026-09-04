@@ -20,8 +20,7 @@ formatters:
 
 linters-settings:
   goimports:
-    local-prefixes:
-      - github.com/yourorg/aicodingagentteam
+    local-prefixes: github.com/agentcodinglab/aicodingagentteam
   gocritic:
     enabled-tags:
       - diagnostic
