@@ -20,7 +20,11 @@ service Coordinator {
   rpc Continue(ContinueRequest) returns (ContinueResponse);
 }
 
-message RunPipelineRequest {
+message CheckDetailInfo {
+  string name = 1;
+  string status = 2;  // pass / fail / skipped
+  string output = 3;
+}message RunPipelineRequest {
   string requirement = 1;
   string backend = 2;
   bool auto_approve_gates = 3;
@@ -31,6 +35,7 @@ message RunPipelineResponse {
   repeated string artifacts = 2;
   int32 score = 3;
   bool passed = 4;
+  repeated CheckDetailInfo details = 5;
 }
 
 message ProgressEvent {
@@ -49,6 +54,8 @@ message QuickEditRequest {
 message QuickEditResponse {
   repeated string files_changed = 1;
   bool passed = 2;
+  int32 score = 3;
+  repeated CheckDetailInfo details = 4;
 }
 
 message VerifyRequest {
@@ -60,6 +67,7 @@ message VerifyResponse {
   bool passed = 2;
   repeated string blocking = 3;
   repeated string advisory = 4;
+  repeated CheckDetailInfo details = 5;
 }
 
 message GetPlanRequest {}

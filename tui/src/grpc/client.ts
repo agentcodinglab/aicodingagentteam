@@ -21,13 +21,6 @@ export interface RunPipelineResponse {
   passed: boolean;
 }
 
-export interface ProgressEvent {
-  taskId: string;
-  phase: string;
-  role: string;
-  status: string;
-  message: string;
-}
 
 export interface VerifyResponse {
   score: number;
@@ -70,7 +63,7 @@ export class CoordinatorClient implements ClientInterface {
     this.address = `${h}:${p}`;
 
     const packageDef = protoLoader.loadSync(PROTO_PATH, {
-      keepCase: true,
+      keepCase: false,
       longs: String,
       enums: String,
       defaults: true,

@@ -138,4 +138,14 @@ type Delivery struct {
 	Score     int
 	Passed    bool
 	CreatedAt time.Time
+	// CheckDetails holds per-check results from the quality gate, so callers
+	// can diagnose failures without re-running the gate.
+	CheckDetails []CheckSummary
+}
+
+// CheckSummary is a compact per-check result carried on Delivery.
+type CheckSummary struct {
+	Name   string
+	Status string // pass / fail / skipped
+	Output string // truncated failure output, empty on pass
 }

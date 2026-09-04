@@ -78,6 +78,7 @@ func cmdRun(ctx context.Context, cfg *config.Config, args []string) {
 		os.Exit(1)
 	}
 	fmt.Printf("delivery: plan=%s score=%d passed=%v artifacts=%v\n", delivery.PlanID, delivery.Score, delivery.Passed, delivery.Artifacts)
+	printCheckDetails(delivery.CheckDetails)
 }
 
 func cmdQuick(ctx context.Context, cfg *config.Config, args []string) {
@@ -92,6 +93,7 @@ func cmdQuick(ctx context.Context, cfg *config.Config, args []string) {
 		os.Exit(1)
 	}
 	fmt.Printf("quick edit done: passed=%v files=%v\n", delivery.Passed, delivery.Artifacts)
+	printCheckDetails(delivery.CheckDetails)
 }
 
 func cmdVerify(ctx context.Context, cfg *config.Config, args []string) {
@@ -199,6 +201,7 @@ func cmdReport(ctx context.Context, cfg *config.Config) {
 		Passed:   v.Passed,
 		Blocking: v.Blocking,
 		Advisory: v.Advisory,
+		Details:  toGateDetails(v.Details),
 	}
 	report := qualitygate.Scorecard(result)
 	fmt.Print(report)
@@ -227,11 +230,23 @@ func newDirector(cfg *config.Config) *coordinator.Director {
 		router.New(),
 		planner.New(""),
 		scheduler.NewFull("", bus, al),
-		qualitygate.New(cfg.Quality.Threshold),
+		qualitygate.NewWithAudit(cfg.Quality.Threshold, al),
 		bus,
 	)
 }
 
+func printCheckDetails(details []types.CheckSummary) {
+	for _, d := range details {
+		if d.Status == "pass" {
+			continue
+		}
+		out := d.Output
+		if len(out) > 200 {
+			out = out[:200] + "..."
+		}
+		fmt.Printf("  [%s] %s: %s\n", strings.ToUpper(d.Status), d.Name, out)
+	}
+}
 func printUsage() {
 	fmt.Println(`AiCodingAgentTeam - AI coding orchestration platform
 
@@ -243,4 +258,15 @@ Usage:
   aicodingagentteam govern [--ci] [path]           Governance scan
   aicodingagentteam serve                          Start coordinator server
   aicodingagentteam version                        Print version`)
+}
+
+func toGateDetails(in []api.CheckSummary) []qualitygate.CheckDetail {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]qualitygate.CheckDetail, len(in))
+	for i, s := range in {
+		out[i] = qualitygate.CheckDetail{Name: s.Name, Status: s.Status, Output: s.Output}
+	}
+	return out
 }

@@ -29,3 +29,12 @@ docs/adr/
 
 
 
+
+# coverage artifacts
+cover
+cover.out
+aicodingagentteam.exe
+serve.log
+serve.err
+output/quality-gate.md
+

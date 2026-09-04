@@ -61,12 +61,17 @@ func NewWithAudit(threshold int, al *audit.Logger) *Engine {
 	return e
 }
 
+// NewWithChecks creates an Engine with custom checks (e.g. for tests or configurable gates).
+func NewWithChecks(threshold int, checks []Check) *Engine {
+	return &Engine{threshold: threshold, checks: checks}
+}
+
 func defaultChecks() []Check {
 	return []Check{
 		{Name: "build", Command: []string{"go", "build", "./..."}, Timeout: 120, Severity: "blocking"},
 		{Name: "vet", Command: []string{"go", "vet", "./..."}, Timeout: 120, Severity: "blocking"},
 		{Name: "test", Command: []string{"go", "test", "./...", "-count=1"}, Timeout: 300, Severity: "blocking"},
-		{Name: "lint", Command: []string{"golangci-lint", "run", "./..."}, Timeout: 120, Severity: "advisory"},
+		{Name: "lint", Command: []string{"golangci-lint", "run", "./..."}, Timeout: 300, Severity: "advisory"},
 	}
 }
 
@@ -192,8 +197,8 @@ func (e *Engine) runRuntimeProbe(ctx context.Context, backend string) CheckDetai
 		if len(out) == 0 {
 			out = stdout.String()
 		}
-		if len(out) > 200 {
-			out = out[:200] + "..."
+		if len(out) > 2000 {
+			out = out[:2000] + "..."
 		}
 		detail.Output = out
 		return detail
@@ -247,8 +252,8 @@ func (e *Engine) runCheck(ctx context.Context, c Check) CheckDetail {
 		if len(out) == 0 {
 			out = stdout.String()
 		}
-		if len(out) > 300 {
-			out = out[:300] + "..."
+		if len(out) > 2000 {
+			out = out[:2000] + "..."
 		}
 		detail.Output = out
 		return detail

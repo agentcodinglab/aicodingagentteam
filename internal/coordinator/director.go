@@ -61,11 +61,12 @@ func (d *Director) Handle(ctx context.Context, req types.UserRequest) (*types.De
 
 	// ⑤ Finalize
 	delivery := &types.Delivery{
-		PlanID:    plan.ID,
-		Artifacts: result.Artifacts,
-		Score:     verdict.Score,
-		Passed:    verdict.Passed,
-		CreatedAt: time.Now(),
+		PlanID:       plan.ID,
+		Artifacts:    result.Artifacts,
+		Score:        verdict.Score,
+		Passed:       verdict.Passed,
+		CreatedAt:    time.Now(),
+		CheckDetails: toCheckSummaries(verdict.Details),
 	}
 	return delivery, nil
 }
@@ -89,7 +90,7 @@ func (d *Director) QuickEdit(ctx context.Context, req api.QuickRequest) (*api.Qu
 	if err != nil {
 		return nil, err
 	}
-	return &api.QuickResponse{FilesChanged: delivery.Artifacts, Passed: delivery.Passed}, nil
+	return &api.QuickResponse{FilesChanged: delivery.Artifacts, Passed: delivery.Passed, Score: delivery.Score, Details: toAPISummary(delivery.CheckDetails)}, nil
 }
 
 // Verify implements api.Handler.
@@ -165,4 +166,28 @@ func (d *Director) ContinuePlan(ctx context.Context, planID string) (bool, strin
 	}
 
 	return true, "resumed", nil
+}
+
+// toCheckSummaries converts qualitygate check details into portable CheckSummary values.
+func toCheckSummaries(details []qualitygate.CheckDetail) []types.CheckSummary {
+	if len(details) == 0 {
+		return nil
+	}
+	out := make([]types.CheckSummary, len(details))
+	for i, d := range details {
+		out[i] = types.CheckSummary{Name: d.Name, Status: d.Status, Output: d.Output}
+	}
+	return out
+}
+
+// toAPISummary maps types.CheckSummary to api.CheckSummary.
+func toAPISummary(in []types.CheckSummary) []api.CheckSummary {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]api.CheckSummary, len(in))
+	for i, s := range in {
+		out[i] = api.CheckSummary{Name: s.Name, Status: s.Status, Output: s.Output}
+	}
+	return out
 }

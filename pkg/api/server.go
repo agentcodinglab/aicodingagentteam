@@ -66,6 +66,14 @@ type RunResponse struct {
 	Artifacts []string
 	Score     int
 	Passed    bool
+	Details   []CheckSummary
+}
+
+// CheckSummary is a compact per-check result propagated to API clients.
+type CheckSummary struct {
+	Name   string
+	Status string // pass / fail / skipped
+	Output string
 }
 
 // QuickRequest is a lightweight edit request.
@@ -78,6 +86,8 @@ type QuickRequest struct {
 type QuickResponse struct {
 	FilesChanged []string
 	Passed       bool
+	Score        int
+	Details      []CheckSummary
 }
 
 // VerifyResponse holds quality gate results.
@@ -86,6 +96,7 @@ type VerifyResponse struct {
 	Passed   bool
 	Blocking []string
 	Advisory []string
+	Details  []CheckSummary
 }
 
 // PlanResponse returns the current DAG plan.
@@ -258,6 +269,7 @@ func (a *coordinatorAdapter) RunPipeline(ctx context.Context, req *pb.RunPipelin
 		Artifacts: resp.Artifacts,
 		Score:     int32(resp.Score),
 		Passed:    resp.Passed,
+		Details:   toPBDetails(resp.Details),
 	}, nil
 }
 
@@ -335,6 +347,8 @@ func (a *coordinatorAdapter) QuickEdit(ctx context.Context, req *pb.QuickEditReq
 	return &pb.QuickEditResponse{
 		FilesChanged: resp.FilesChanged,
 		Passed:       resp.Passed,
+		Score:        int32(resp.Score),
+		Details:      toPBDetails(resp.Details),
 	}, nil
 }
 
@@ -348,6 +362,7 @@ func (a *coordinatorAdapter) Verify(ctx context.Context, req *pb.VerifyRequest) 
 		Passed:   resp.Passed,
 		Blocking: resp.Blocking,
 		Advisory: resp.Advisory,
+		Details:  toPBDetails(resp.Details),
 	}, nil
 }
 
@@ -414,4 +429,16 @@ func (a *coordinatorAdapter) Continue(ctx context.Context, req *pb.ContinueReque
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &pb.ContinueResponse{Resumed: resumed, Status: statusStr}, nil
+}
+
+// toPBDetails converts api.CheckSummary to pb.CheckDetailInfo.
+func toPBDetails(in []CheckSummary) []*pb.CheckDetailInfo {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]*pb.CheckDetailInfo, len(in))
+	for i, s := range in {
+		out[i] = &pb.CheckDetailInfo{Name: s.Name, Status: s.Status, Output: s.Output}
+	}
+	return out
 }

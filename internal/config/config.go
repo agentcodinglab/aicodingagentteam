@@ -54,19 +54,56 @@ func Default() *Config {
 }
 
 // Load reads config from ~/.aicodingagentteam/config.json if present.
+// applyEnvOverrides lets the operator override ports/backend via env vars
+// (AICODINGAGENTTEAM_GRPC_PORT etc.), matching the env contract documented
+// for the TUI client. File config takes precedence over env; env over defaults.
+func applyEnvOverrides(c *Config) {
+	if v := os.Getenv("AICODINGAGENTTEAM_PORT"); v != "" {
+		if p := atoiSafe(v); p > 0 {
+			c.Coordinator.GRPC = p
+		}
+	}
+	if v := os.Getenv("AICODINGAGENTTEAM_BACKEND"); v != "" {
+		c.Default.Backend = v
+	}
+	if v := os.Getenv("AICODINGAGENTTEAM_QUALITY_THRESHOLD"); v != "" {
+		if p := atoiSafe(v); p > 0 {
+			c.Quality.Threshold = p
+		}
+	}
+}
+
+func atoiSafe(s string) int {
+	n := 0
+	for _, r := range s {
+		if r < '0' || r > '9' {
+			return 0
+		}
+		n = n*10 + int(r-'0')
+	}
+	return n
+}
 func Load() (*Config, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return Default(), nil
+		c := Default()
+		applyEnvOverrides(c)
+		return c, nil
 	}
 	p := filepath.Join(home, ".aicodingagentteam", "config.json")
 	data, err := os.ReadFile(p)
 	if err != nil {
-		return Default(), nil
+		c := Default()
+		applyEnvOverrides(c)
+		return c, nil
 	}
-	var c Config
-	if err := json.Unmarshal(data, &c); err != nil {
-		return Default(), nil
+	c := Default()
+	if len(data) > 0 {
+		if err := json.Unmarshal(data, c); err != nil {
+			applyEnvOverrides(c)
+			return c, nil
+		}
 	}
-	return &c, nil
+	applyEnvOverrides(c)
+	return c, nil
 }
