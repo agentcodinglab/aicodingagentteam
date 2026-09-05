@@ -130,6 +130,9 @@ func NewDevOpsAgent() *ReviewerAgent {
 
 // RegisterAllReviewers registers all 5 reviewer agents on the bus.
 func RegisterAllReviewers(bus a2a.Bus) {
+	if bus == nil {
+		return
+	}
 	bus.Register(NewPMAgent())
 	bus.Register(NewArchitectAgent())
 	bus.Register(NewQAAgent())

@@ -8,6 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- End-to-end RAG + memory demo through Director.Handle (cmd `knowledge demo`)
+- IndexDirectoryWithLimit API for capped repo indexing
+- RegisterAllReviewers nil-bus guard for standalone demo use
+- E2E tests: TestKnowledgeDemo_E2E_ThroughDirector, TestKnowledgeDemo_ReportWritten, TestKnowledgeDemo_NilKnowledge_NoPanic
+- Governance CI: rag-demo job (soft-fail, uploads demo-report.md + demo-report.json artifacts)
+- ADR-0017: Direction D end-to-end RAG demo decision record
+- Implementation plan: docs/plan/direction-d-rag-demo.md
+
+### Changed
+- Demo report output written to .aicodingagentteam/ (gitignored runtime artifacts)
+
+## [0.4.0] - 2026-09-05
+
+### Added
+- Direction D: end-to-end RAG + memory demo through Director.Handle
+- IndexDirectoryWithLimit API for capped repo indexing
+- RegisterAllReviewers nil-bus guard for standalone demo use
+- E2E tests covering demo flow, report writer, and nil-knowledge safety
+- Governance CI: rag-demo job (soft-fail, uploads demo-report artifacts)
+- ADR-0017: Direction D end-to-end RAG demo decision record
+- Implementation plan: docs/plan/direction-d-rag-demo.md
+
+### Changed
+- Demo report output written to .aicodingagentteam/ (gitignored runtime artifacts)
+
+
+### Added
 - Go E2E integration tests (quick edit + build + park/continue + API surface)
 - proof-pack zip generation (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)
 - Fail-open governance fault injection tests (closed engine + excluded path + disabled rule)

@@ -34,30 +34,42 @@ func New(cloudEmbed bool) *Engine {
 
 // isCloudEmbedAllowed checks if cloud embedding is explicitly enabled via double env vars.
 func isCloudEmbedAllowed() bool {
-	// Must have BOTH AICODINGAGENTTEAM_ALLOW_CLOUD_EMBED=1 AND an embedding key
 	allow := os.Getenv("AICODINGAGENTTEAM_ALLOW_CLOUD_EMBED")
 	key := os.Getenv("OPENAI_EMBED_KEY")
 	return allow == "1" && key != ""
 }
 
 // IndexDirectory indexes all code and doc files in the given directory tree.
-func (e *Engine) IndexDirectory(ctx context.Context, root string) error {
+// Returns the number of files indexed. Respects ctx for cancellation.
+// Equivalent to IndexDirectoryWithLimit(ctx, root, 0) (no cap).
+func (e *Engine) IndexDirectory(ctx context.Context, root string) (int, error) {
+	return e.IndexDirectoryWithLimit(ctx, root, 0)
+}
+
+// IndexDirectoryWithLimit is IndexDirectory with a maximum file count.
+// maxFiles <= 0 means unlimited. Returns (indexed, error).
+func (e *Engine) IndexDirectoryWithLimit(ctx context.Context, root string, maxFiles int) (int, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
-	// If cloud embed is on but env vars not set, degrade to BM25 silently
 	if e.cloudEmbed && !isCloudEmbedAllowed() {
-		e.cloudEmbed = false // graceful degradation
+		e.cloudEmbed = false
 	}
 
-	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	indexed := 0
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return nil // skip unreadable
+			return nil
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
 		}
 		if info.IsDir() {
 			return nil
 		}
-		// Index code files and markdown docs
+		if maxFiles > 0 && indexed >= maxFiles {
+			return filepath.SkipDir
+		}
 		ext := strings.ToLower(filepath.Ext(path))
 		if ext != ".go" && ext != ".ts" && ext != ".tsx" && ext != ".js" &&
 			ext != ".md" && ext != ".py" && ext != ".java" {
@@ -68,8 +80,10 @@ func (e *Engine) IndexDirectory(ctx context.Context, root string) error {
 			return nil
 		}
 		e.bm25.Add(path, string(content))
+		indexed++
 		return nil
 	})
+	return indexed, err
 }
 
 // IndexFile adds a single file to the index.
@@ -85,10 +99,9 @@ func (e *Engine) Retrieve(ctx context.Context, query string, topK int) []Chunk {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
 
-	// BM25 is always available; cloud vector is optional and degrades silently
 	results := e.bm25.Search(query, topK)
 	if results == nil {
-		results = []Chunk{} // non-nil empty slice per spec
+		results = []Chunk{}
 	}
 	return results
 }

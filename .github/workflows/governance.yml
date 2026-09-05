@@ -127,6 +127,34 @@ jobs:
           path: ${{ github.workspace }}/tests/test-results/
           retention-days: 14
 
+  # ---- Soft gate: end-to-end RAG + memory demo through Director. ----
+  rag-demo:
+    name: RAG + memory demo (Director end-to-end)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+
+      - name: Build CLI
+        run: go build ./cmd/aicodingagentteam/...
+
+      - name: Run knowledge demo
+        run: go run ./cmd/aicodingagentteam knowledge demo
+
+      - name: Upload demo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rag-demo
+          path: |
+            .aicodingagentteam/demo-report.md
+            .aicodingagentteam/demo-report.json
+          retention-days: 14
+
   # ---- Soft gate: regenerate Go API docs and upload artifact. ----
   godocgen:
     name: Go public API docs (godocgen)
@@ -158,7 +186,7 @@ jobs:
   summary:
     name: Governance summary
     runs-on: ubuntu-latest
-    needs: [perf-budget, lighthouse, a11y, godocgen]
+    needs: [perf-budget, lighthouse, a11y, rag-demo, godocgen]
     if: always()
     steps:
       - name: Summarize
@@ -169,6 +197,7 @@ jobs:
           echo "- lighthouse:  ${{ needs.lighthouse.result }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- a11y:        ${{ needs.a11y.result }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- godocgen:    ${{ needs.godocgen.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- rag-demo:    ${{ needs.rag-demo.result }}" >> "$GITHUB_STEP_SUMMARY"
 
 
 

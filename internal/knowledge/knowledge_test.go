@@ -74,7 +74,7 @@ func TestIndexDirectory(t *testing.T) {
 	_ = os.WriteFile(filepath.Join(tmpDir, "ignore.txt"), []byte("not indexed"), 0o644)
 
 	e := New(false)
-	if err := e.IndexDirectory(context.Background(), tmpDir); err != nil {
+	if _, err := e.IndexDirectory(context.Background(), tmpDir); err != nil {
 		t.Fatalf("IndexDirectory error: %v", err)
 	}
 	if e.DocCount() != 2 {
@@ -177,3 +177,4 @@ func indexString(s, substr string) int {
 	}
 	return -1
 }
+

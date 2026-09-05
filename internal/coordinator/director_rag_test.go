@@ -32,7 +32,7 @@ func newTestDirectorWithKM(t *testing.T, checks []qualitygate.Check) (*Director,
 	// Index a dummy file so Retrieve returns something
 	_ = os.MkdirAll(filepath.Join(ws, "src"), 0o755)
 	_ = os.WriteFile(filepath.Join(ws, "src", "main.go"), []byte("package main\nfunc main() {}"), 0o644)
-	_ = keng.IndexDirectory(context.Background(), ws)
+	_, _ = keng.IndexDirectory(context.Background(), ws)
 	return NewWithOptions(r, p, s, g, bus, WithKnowledge(keng), WithMemory(mem)), ws
 }
 
@@ -116,3 +116,4 @@ func TestWithKnowledge_NilEngine(t *testing.T) {
 		t.Error("expected nil memory")
 	}
 }
+

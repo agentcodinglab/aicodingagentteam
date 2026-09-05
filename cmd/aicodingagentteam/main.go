@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
 	"github.com/agentcodinglab/aicodingagentteam/internal/acp"
@@ -277,7 +279,7 @@ func cmdKnowledge(ctx context.Context, args []string) {
 			dir = args[1]
 		}
 		keng := knowledge.New(false)
-		if err := keng.IndexDirectory(ctx, dir); err != nil {
+		if _, err := keng.IndexDirectory(ctx, dir); err != nil {
 			fmt.Fprintf(os.Stderr, "index error: %v\n", err)
 			os.Exit(1)
 		}
@@ -288,7 +290,7 @@ func cmdKnowledge(ctx context.Context, args []string) {
 			os.Exit(1)
 		}
 		keng := knowledge.New(false)
-		_ = keng.IndexDirectory(ctx, ".")
+		_, _ = keng.IndexDirectoryWithLimit(ctx, ".", 500)
 		chunks := keng.Retrieve(ctx, args[1], 5)
 		fmt.Printf("top-%d results for %q:\n", len(chunks), args[1])
 		for i, c := range chunks {
@@ -303,43 +305,108 @@ func cmdKnowledge(ctx context.Context, args []string) {
 }
 
 func knowledgeDemo(ctx context.Context) {
-	dir := tempDir()
-	_ = os.MkdirAll(dir, 0o755)
+	workspace, _ := os.Getwd()
+	reportDir := filepath.Join(workspace, ".aicodingagentteam")
+	_ = os.MkdirAll(reportDir, 0o755)
+	memDir := filepath.Join(reportDir, "memory")
 
-	// Write two sample files for indexing
-	_ = os.WriteFile(filepath.Join(dir, "router.go"), []byte("package main\nfunc route(msg string) string { return msg }\n"), 0o644)
-	_ = os.WriteFile(filepath.Join(dir, "planner.go"), []byte("package main\nfunc plan(intent string) { println(intent) }\n"), 0o644)
-
-	// 1. Index
+	// 1. Index current repository (cap at 500 files for safety).
 	keng := knowledge.New(false)
-	if err := keng.IndexDirectory(ctx, dir); err != nil {
+	indexed, err := keng.IndexDirectoryWithLimit(ctx, workspace, 500)
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "index error: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Printf("[demo] indexed %d documents\n", keng.DocCount())
+	fmt.Printf("[demo] indexed %d documents (cap=500) from %s\n", indexed, workspace)
 
-	// 2. Retrieve
-	chunks := keng.Retrieve(ctx, "route message intent", 3)
-	fmt.Printf("[demo] retrieve 'route message intent' -> %d chunks:\n", len(chunks))
+	// 2. Wire Director with knowledge + memory, using stub backend (no real CLI).
+	mem := memory.New(memDir)
+	routerInst := router.New()
+	plannerInst := planner.New(workspace)
+	schedulerInst := scheduler.New(workspace)
+	gate := qualitygate.New(80)
+	// Demo uses NewWithOptions without a real A2A bus (nil bus = no reviewers fire).
+	dir := coordinator.NewWithOptions(routerInst, plannerInst, schedulerInst, gate, nil,
+		coordinator.WithKnowledge(keng),
+		coordinator.WithMemory(mem),
+	)
+
+	// 3. Capture one seed fact so memory recall has something to return.
+	_ = mem.Capture(ctx, memory.Fact{Key: "demo-seed", Value: "RAG demo bootstrap", Source: "knowledge-demo"})
+
+	// 4. Drive Director.Handle: full 5-layer flow (Route->Plan->Schedule->Verify->Finalize).
+	//    Knowledge retrieval and memory recall/capture fire as side effects.
+	delivery, derr := dir.Handle(ctx, types.UserRequest{
+		Message: "explain how the coordinator routes user requests",
+		Backend: "stub",
+	})
+	if derr != nil {
+		fmt.Fprintf(os.Stderr, "handle error: %v\n", derr)
+		os.Exit(1)
+	}
+
+	// 5. Manual retrieval for the report (Director already triggered one inside Handle).
+	chunks := keng.Retrieve(ctx, "coordinator routes user requests", 5)
+	facts, _ := mem.RecallFacts(ctx)
+
+	// 6. Print summary to stdout.
+	fmt.Printf("[demo] delivery: planID=%s score=%d passed=%v artifacts=%d\n",
+		delivery.PlanID, delivery.Score, delivery.Passed, len(delivery.Artifacts))
+	fmt.Printf("[demo] retrieve -> %d chunks\n", len(chunks))
 	for i, c := range chunks {
 		fmt.Printf("  %d. [%.4f] %s\n", i+1, c.Score, c.Path)
 	}
-
-	// 3. Memory: capture a fact
-	mem := memory.New(filepath.Join(dir, ".memory"))
-	_ = mem.Capture(ctx, memory.Fact{Key: "demo-fact", Value: "router routes messages", Source: "knowledge-demo"})
-	fmt.Println("[demo] captured fact: demo-fact")
-
-	// 4. Memory: recall
-	facts, _ := mem.RecallFacts(ctx)
-	fmt.Printf("[demo] recalled %d facts:\n", len(facts))
+	fmt.Printf("[demo] recalled %d facts\n", len(facts))
 	for _, f := range facts {
 		fmt.Printf("  - %s: %s\n", f.Key, f.Value)
 	}
 
-	// 5. Status
-	fmt.Printf("[demo] cloud-embed=%v doc-count=%d\n", keng.IsCloudEmbed(), keng.DocCount())
+	// 7. Write demo report (markdown + JSON) into .aicodingagentteam/ (gitignored).
+	writeDemoReport(reportDir, indexed, workspace, chunks, facts, delivery)
+	fmt.Printf("[demo] report written to %s/demo-report.md\n", reportDir)
 	fmt.Println("[demo] RAG + memory end-to-end complete")
+}
+
+func writeDemoReport(reportDir string, indexed int, workspace string, chunks []knowledge.Chunk, facts []memory.Fact, delivery *types.Delivery) {
+	md := &strings.Builder{}
+	fmt.Fprintf(md, "# RAG Demo Report\n\n")
+	fmt.Fprintf(md, "- Generated: %s\n", time.Now().Format(time.RFC3339))
+	fmt.Fprintf(md, "- Workspace: %s\n", workspace)
+	fmt.Fprintf(md, "- Indexed documents: %d (cap=500)\n", indexed)
+	fmt.Fprintf(md, "- Retrieved chunks: %d\n\n", len(chunks))
+
+	fmt.Fprintf(md, "## Top retrieved chunks\n\n")
+	for i, c := range chunks {
+		fmt.Fprintf(md, "%d. `%.4f` `%s`\n", i+1, c.Score, c.Path)
+	}
+	fmt.Fprintf(md, "\n## Recalled facts (%d)\n\n", len(facts))
+	for _, f := range facts {
+		fmt.Fprintf(md, "- `%s`: %s\n", f.Key, f.Value)
+	}
+
+	fmt.Fprintf(md, "\n## Delivery verdict\n\n")
+	fmt.Fprintf(md, "- Plan ID: %s\n", delivery.PlanID)
+	fmt.Fprintf(md, "- Score: %d\n", delivery.Score)
+	fmt.Fprintf(md, "- Passed: %v\n", delivery.Passed)
+	fmt.Fprintf(md, "- Artifacts: %d\n", len(delivery.Artifacts))
+	if len(delivery.CheckDetails) > 0 {
+		fmt.Fprintf(md, "\n### Check details\n\n")
+		for _, c := range delivery.CheckDetails {
+			fmt.Fprintf(md, "- %s: %s\n", c.Name, c.Status)
+		}
+	}
+
+	_ = os.WriteFile(filepath.Join(reportDir, "demo-report.md"), []byte(md.String()), 0o644)
+
+	js := struct {
+		Indexed  int                `json:"indexed"`
+		Chunks   []knowledge.Chunk  `json:"chunks"`
+		Facts    []memory.Fact      `json:"facts"`
+		Delivery *types.Delivery    `json:"delivery"`
+	}{indexed, chunks, facts, delivery}
+	if buf, err := json.MarshalIndent(js, "", "  "); err == nil {
+		_ = os.WriteFile(filepath.Join(reportDir, "demo-report.json"), buf, 0o644)
+	}
 }
 
 var tempDir = func() string {
@@ -487,3 +554,4 @@ func toGateDetails(in []api.CheckSummary) []qualitygate.CheckDetail {
 	}
 	return out
 }
+
