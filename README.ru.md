@@ -2,16 +2,7 @@
 
 ## 🌐 Languages / 语言
 
-- [English](README.md)
-- [简体中文](README.zh.md)
-- [日本語](README.ja.md)
-- [한국어](README.ko.md)
-- [Français](README.fr.md)
-- [Deutsch](README.de.md)
-- [Русский](README.ru.md)
-- [Español](README.es.md)
-- [Italiano](README.it.md)
-
+[English](README.md) · [简体中文](README.zh.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Italiano](README.it.md)
 > Платформа оркестровки AI-кодинга на Go. Сама по себе она не содержит LLM, а делегирует работу внешним CLI-кодинга (Codex и OpenCode — реальные драйверы; Claude-Code и DeepSeek-DSH — заглушки), моделирует команду разработки ПО из 9 ролей, взаимодействующих через протокол A2A, обеспечивает детерминированный quality gate с аудитом governance, поставляется в контейнерах и предоставляет наружу четыре протокола — gRPC, MCP, ACP и A2A, а также TUI-клиент на TypeScript.
 
 [![CI](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml/badge.svg)](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml)

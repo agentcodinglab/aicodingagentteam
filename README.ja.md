@@ -2,16 +2,7 @@
 
 ## 🌐 Languages / 语言
 
-- [English](README.md)
-- [简体中文](README.zh.md)
-- [日本語](README.ja.md)
-- [한국어](README.ko.md)
-- [Français](README.fr.md)
-- [Deutsch](README.de.md)
-- [Русский](README.ru.md)
-- [Español](README.es.md)
-- [Italiano](README.it.md)
-
+[English](README.md) · [简体中文](README.zh.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Italiano](README.it.md)
 > Go 言語で実装された AI コーディング・オーケストレーション・プラットフォーム。大規模言語モデル自身は保持せず、外部の AI コーディング CLI（Codex と OpenCode は実駆動、Claude-Code と DeepSeek-DSH はスタブ）に処理を委譲し、A2A プロトコルで協働する 9 ロールのソフトウェア開発チームをシミュレートします。決定論的な品質ゲートとガバナンス監査を備え、コンテナで配布され、gRPC / MCP / ACP / A2A の 4 種プロトコルを外部に公開、TypeScript TUI クライアントも提供します。
 
 [![CI](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml/badge.svg)](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml)

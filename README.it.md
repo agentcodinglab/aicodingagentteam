@@ -2,16 +2,7 @@
 
 ## 🌐 Languages / 语言
 
-- [English](README.md)
-- [简体中文](README.zh.md)
-- [日本語](README.ja.md)
-- [한국어](README.ko.md)
-- [Français](README.fr.md)
-- [Deutsch](README.de.md)
-- [Русский](README.ru.md)
-- [Español](README.es.md)
-- [Italiano](README.it.md)
-
+[English](README.md) · [简体中文](README.zh.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Italiano](README.it.md)
 > Una piattaforma di orchestrazione per il coding con IA scritta in Go. Non ospita un LLM proprio; delega il lavoro a CLI di coding IA esterne (Codex e OpenCode come driver reali; Claude-Code e DeepSeek-DSH come stub), simula un team di sviluppo software a 9 ruoli che collabora tramite il protocollo A2A, applica una porta di qualità deterministica con audit di governance, è distribuita in container ed espone quattro protocolli — gRPC, MCP, ACP e A2A — oltre a un client TUI in TypeScript.
 
 [![CI](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml/badge.svg)](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml)

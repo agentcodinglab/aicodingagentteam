@@ -2,17 +2,7 @@
 
 ## 🌐 Languages / 语言
 
-- [English](README.md)
-- [简体中文](README.zh.md)
-- [日本語](README.ja.md)
-- [한국어](README.ko.md)
-- [Français](README.fr.md)
-- [Deutsch](README.de.md)
-- [Русский](README.ru.md)
-- [Español](README.es.md)
-- [Italiano](README.it.md)
-
-
+[English](README.md) · [简体中文](README.zh.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Italiano](README.it.md)
 > 基于 Golang 的 AI 编码编排平台——本身不拥有大模型，调度外部 AI 编码 CLI（Codex、OpenCode 真实驱动；Claude-Code、DeepSeek-DSH stub），模拟软件开发团队 9 角色协作，通过 A2A 协议通信，带质量门禁与治理审计，容器化部署，对外暴露 gRPC/MCP/ACP/A2A 四协议，提供 TypeScript TUI 客户端。
 
 [![CI](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml/badge.svg)](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml)

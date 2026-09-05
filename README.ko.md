@@ -2,16 +2,7 @@
 
 ## 🌐 Languages / 语言
 
-- [English](README.md)
-- [简体中文](README.zh.md)
-- [日本語](README.ja.md)
-- [한국어](README.ko.md)
-- [Français](README.fr.md)
-- [Deutsch](README.de.md)
-- [Русский](README.ru.md)
-- [Español](README.es.md)
-- [Italiano](README.it.md)
-
+[English](README.md) · [简体中文](README.zh.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Italiano](README.it.md)
 > Go 기반 AI 코딩 오케스트레이션 플랫폼입니다. 자체 LLM 을 보유하지 않고, 외부 AI 코딩 CLI(Codex 및 OpenCode 는 실제 드라이버, Claude-Code 및 DeepSeek-DSH 는 스텁)에 작업을 위임하여 A2A 프로토콜로 협업하는 9 개 역할의 소프트웨어 개발 팀을 시뮬레이션합니다. 결정론적 품질 게이트와 거버넌스 감사를 적용하고, 컨테이너로 배포되며, gRPC / MCP / ACP / A2A 의 4 종 프로토콜을 외부에 노출하고 TypeScript TUI 클라이언트를 함께 제공합니다.
 
 [![CI](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml/badge.svg)](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml)
