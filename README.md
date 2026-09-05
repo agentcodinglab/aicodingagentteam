@@ -1,160 +1,172 @@
 # AiCodingAgentTeam
 
-> 基于 Golang 的 AI 编码编排平台——本身不拥有大模型，调度外部 AI 编码 CLI（Codex、OpenCode 真实驱动；Claude-Code、DeepSeek-DSH stub），模拟软件开发团队 9 角色协作，通过 A2A 协议通信，带质量门禁与治理审计，容器化部署，对外暴露 gRPC/MCP/ACP/A2A 四协议，提供 TypeScript TUI 客户端。
+## 🌐 Languages / 语言
+
+- [English](README.md)
+- [简体中文](README.zh.md)
+- [日本語](README.ja.md)
+- [한국어](README.ko.md)
+- [Français](README.fr.md)
+- [Deutsch](README.de.md)
+- [Русский](README.ru.md)
+- [Español](README.es.md)
+- [Italiano](README.it.md)
+
+> A Golang-based AI coding orchestration platform. It owns no LLM itself; instead it dispatches external AI coding CLIs (Codex & OpenCode as real drivers; Claude-Code & DeepSeek-DSH as stubs), simulates a 9-role software-development team that collaborates over the A2A protocol, enforces a deterministic quality gate with governance auditing, ships in containers, and exposes four protocols externally — gRPC, MCP, ACP, and A2A — alongside a TypeScript TUI client.
 
 [![CI](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml/badge.svg)](https://github.com/agentcodinglab/aicodingagentteam/actions/workflows/ci.yml)
 [![Go](https://img.shields.io/badge/Go-1.25-00ADD8)](https://go.dev)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-## 核心特性
+## Core Features
 
-- **编排与执行分离**：Coordinator 只编排不写代码，宿主 CLI 只执行不决策
-- **容器即角色**：9 个团队角色（PM/Architect/Frontend/Backend/QA/Security/DevOps 等），独立容器可伸缩替换
-- **A2A 协议协作**：Agent 间结构化通信，支持 InProc（开发）+ Redis Pub/Sub（容器化）
-- **确定性质量门禁**：golangci-lint + go vet + go test 机器硬执行，不依赖模型自评
-- **RAG 知识库 + 项目记忆**：BM25 检索注入上下文，记忆库沉淀失败教训与历史方案
-- **四协议对外暴露**：gRPC（TUI 通信）、MCP（外部工具集成）、ACP（标准 Agent 客户端）、A2A（跨实例互联）
-- **本地优先**：代码不出容器，不持有任何 API Key，鉴权全部交底层宿主 CLI
+- **Orchestration vs execution separation** — The Coordinator only orchestrates and never writes code; host CLIs only execute and never decide.
+- **Container-as-role** — 9 team roles (PM, Architect, Frontend, Backend, QA, Security, DevOps, …), each in its own container, independently scalable and replaceable.
+- **A2A protocol collaboration** — Structured inter-agent communication, supporting InProc (development) and Redis Pub/Sub (containerized).
+- **Deterministic quality gate** — Hard-executed by `golangci-lint` + `go vet` + `go test`; never relies on model self-evaluation.
+- **RAG knowledge base + project memory** — BM25 retrieval injected into context; the memory store accumulates failure lessons and historical solutions.
+- **Four external protocols** — gRPC (TUI communication), MCP (external tool integration), ACP (standard Agent client), A2A (cross-instance mesh).
+- **Local-first** — Code never leaves the container; no API keys are held; all auth is delegated to the underlying host CLI.
 
-## 架构总览
+## Architecture Overview
 
 ```
-用户 → TypeScript TUI (Ink) → gRPC → Coordinator
-                                         ├── Router (意图路由)
-                                         ├── Planner (DAG 计划)
-                                         ├── Scheduler (角色调度)
-                                         │    ├── A2A Bus → Reviewer Agents (并行)
-                                         │    └── Single-Writer Lock → Writer Agents (串行)
-                                         ├── Knowledge (BM25 RAG 检索)
-                                         ├── Memory (facts/pitfalls/lessons)
-                                         └── Quality Gate (确定性校验)
-                                              ↓
-宿主 CLI: Codex (real) | OpenCode (real) | Claude (stub) | DSH (stub)
+User → TypeScript TUI (Ink) → gRPC → Coordinator
+                                       ├── Router (intent routing)
+                                       ├── Planner (DAG plan)
+                                       ├── Scheduler (role dispatch)
+                                       │    ├── A2A Bus → Reviewer Agents (parallel)
+                                       │    └── Single-Writer Lock → Writer Agents (serial)
+                                       ├── Knowledge (BM25 RAG retrieval)
+                                       ├── Memory (facts/pitfalls/lessons)
+                                       └── Quality Gate (deterministic checks)
+                                            ↓
+Host CLIs: Codex (real) | OpenCode (real) | Claude (stub) | DSH (stub)
 ```
 
-详细架构图见 [docs/04-系统架构图.md](docs/04-系统架构图.md)。
+See [docs/04-系统架构图.md](docs/04-系统架构图.md) for the full architecture diagrams.
 
-## 快速上手
+## Quick Start
 
-### 单二进制模式
+### Single-binary mode
 
 ```bash
-# 构建
+# Build
 go build -o bin/aicodingagentteam ./cmd/aicodingagentteam
 
-# 初始化项目
+# Initialize a project
 ./bin/aicodingagentteam init
 
-# 运行完整流水线
-./bin/aicodingagentteam run "搭建一个 REST API" --backend codex
+# Run a full pipeline
+./bin/aicodingagentteam run "Build a REST API" --backend codex
 
-# 快速编辑
-./bin/aicodingagentteam quick "修复登录按钮样式"
+# Quick edit
+./bin/aicodingagentteam quick "Fix the login button style"
 
-# 质量校验
+# Quality verification
 ./bin/aicodingagentteam verify
 
-# RAG 知识库 demo
+# RAG knowledge base demo
 ./bin/aicodingagentteam knowledge demo
 
-# 启动协调器服务（gRPC + A2A HTTP）
+# Start the coordinator service (gRPC + A2A HTTP)
 ./bin/aicodingagentteam serve
 ```
 
-### TUI 客户端
+### TUI client
 
 ```bash
 cd tui && npm install && npm run build
 
-# 启动协调器
+# Start the coordinator
 cd .. && go run ./cmd/aicodingagentteam serve
 
-# 启动 TUI（另一终端）
+# Launch the TUI (in another terminal)
 cd tui && node dist/cli.js
-# Demo 模式（无需协调器）
+# Demo mode (no coordinator required)
 node dist/cli.js --demo
 ```
 
-### 容器化部署
+### Containerized deployment
 
 ```bash
 docker compose -f deploy/compose/docker-compose.yml up -d
 ```
 
-## 命令速查
+## Command Reference
 
-| 命令 | 说明 |
+| Command | Description |
 |---|---|
-| `init` | 初始化项目配置 |
-| `run "需求"` | 运行完整流水线 |
-| `quick "描述"` | 轻量快速编辑 |
-| `verify` | 执行质量校验 |
-| `govern [--ci] [path]` | 治理扫描 |
-| `report` | 输出合规报告 |
-| `serve` | 启动协调器（gRPC + A2A） |
-| `knowledge index [dir]` | 索引目录到知识库 |
-| `knowledge search "query"` | 检索 top-5 知识块 |
-| `knowledge demo` | 端到端 RAG + 记忆演示 |
-| `version` | 打印版本 |
+| `init` | Initialize project configuration |
+| `run "requirement"` | Run the full pipeline |
+| `quick "description"` | Lightweight quick edit |
+| `verify` | Execute quality verification |
+| `govern [--ci] [path]` | Governance scan |
+| `report` | Emit compliance report |
+| `serve` | Start coordinator (gRPC + A2A) |
+| `knowledge index [dir]` | Index a directory into the knowledge base |
+| `knowledge search "query"` | Retrieve top-5 knowledge chunks |
+| `knowledge demo` | End-to-end RAG + memory demo |
+| `version` | Print version |
 
-## 项目结构
+## Project Structure
 
 ```
 agent_team/
-├── cmd/aicodingagentteam/     # Go 二进制入口
+├── cmd/aicodingagentteam/     # Go binary entry
 ├── internal/
-│   ├── a2a/                   # A2A 协议（InProc + Redis）
-│   ├── acp/                  # Agent Client Protocol
-│   ├── agent/                # 9 角色注册
-│   ├── audit/                # 审计日志
-│   ├── config/               # 配置加载
-│   ├── coordinator/          # 编排核心（5 层流）
-│   ├── governance/           # 治理规则（113+ 规则）
-│   ├── host/                 # 宿主驱动（codex/opencode/claude/dsh）
-│   ├── knowledge/            # RAG 检索引擎（BM25）
-│   ├── mcp/                  # Model Context Protocol
-│   ├── memory/               # 项目记忆（facts/pitfalls/lessons）
-│   ├── planner/              # DAG 计划构建
-│   ├── qualitygate/          # 质量门禁引擎
-│   ├── router/               # 意图路由
-│   ├── scheduler/            # 角色调度 + 单写者
-│   └── types/                # 共享类型
+│   ├── a2a/                   # A2A protocol (InProc + Redis)
+│   ├── acp/                   # Agent Client Protocol
+│   ├── agent/                 # 9-role registry
+│   ├── audit/                 # Audit log
+│   ├── config/                # Configuration loader
+│   ├── coordinator/           # Orchestration core (5-layer flow)
+│   ├── governance/            # Governance rules (113+ rules)
+│   ├── host/                  # Host drivers (codex/opencode/claude/dsh)
+│   ├── knowledge/             # RAG retrieval engine (BM25)
+│   ├── mcp/                   # Model Context Protocol
+│   ├── memory/                # Project memory (facts/pitfalls/lessons)
+│   ├── planner/               # DAG plan builder
+│   ├── qualitygate/           # Quality-gate engine
+│   ├── router/                # Intent router
+│   ├── scheduler/             # Role scheduler + single-writer lock
+│   └── types/                 # Shared types
 ├── pkg/
-│   ├── api/                  # gRPC proto + server
-│   ├── contracts/            # 前后端契约
-│   └── runtime/              # 宿主驱动 trait
-├── tui/                       # TypeScript TUI 客户端
-├── deploy/                    # 容器化部署
-├── proto/                     # gRPC proto 定义
-└── docs/                      # 文档（需求/架构/规划/ADR/spec/plan）
+│   ├── api/                   # gRPC proto + server
+│   ├── contracts/             # Front/back-end contracts
+│   └── runtime/               # Host driver trait
+├── tui/                       # TypeScript TUI client
+├── deploy/                    # Containerized deployment
+├── proto/                     # gRPC proto definitions
+└── docs/                      # Documentation (requirements/architecture/plans/ADR/spec/plan)
 ```
 
-## 质量基线
+## Quality Baseline
 
-| 维度 | 阈值 | 实际 |
+| Dimension | Threshold | Actual |
 |---|---|---|
-| Go 测试覆盖率 | ≥ 80%（核心 ≥ 90%） | router 100% · scheduler 96% · governance 96% · codex 94.9% |
-| Lint | 0 新增警告 | golangci-lint + eslint |
-| 构建 | ≤ 5 分钟 | CI 全流程 ~3 分钟 |
-| 安全 | 0 高危漏洞 | govulncheck + npm audit |
+| Go test coverage | ≥ 80% (core ≥ 90%) | router 100% · scheduler 96% · governance 96% · codex 94.9% |
+| Lint | 0 new warnings | golangci-lint + eslint |
+| Build | ≤ 5 minutes | CI full flow ~3 minutes |
+| Security | 0 high-severity CVEs | govulncheck + npm audit |
 
-## 开发
+## Development
 
 ```bash
 make all      # lint + vet + test + build
-make test     # 全量测试
+make test     # Full test suite
 make lint     # golangci-lint
 make run      # build + serve
 ```
 
-## 文档
+## Documentation
 
-- [AGENTS.md](AGENTS.md) — 项目规范总纲
-- [docs/01-需求分析文档.md](docs/01-需求分析文档.md) — 产品需求
-- [docs/02-技术架构设计.md](docs/02-技术架构设计.md) — 架构设计
-- [docs/03-系统设计与实施规划.md](docs/03-系统设计与实施规划.md) — 实施规划
-- [docs/adr/](docs/adr/) — 架构决策记录（ADR-0001 ~ 0013）
-- [docs/CONSTRAINTS.md](docs/CONSTRAINTS.md) — 质量红线
+- [AGENTS.md](AGENTS.md) — Project standards (root doc)
+- [docs/01-需求分析文档.md](docs/01-需求分析文档.md) — Product requirements
+- [docs/02-技术架构设计.md](docs/02-技术架构设计.md) — Architecture design
+- [docs/03-系统设计与实施规划.md](docs/03-系统设计与实施规划.md) — Implementation plan
+- [docs/adr/](docs/adr/) — Architecture Decision Records (ADR-0001 ~ 0013)
+- [docs/CONSTRAINTS.md](docs/CONSTRAINTS.md) — Quality red lines
 
 ## License
 
