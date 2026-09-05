@@ -158,7 +158,7 @@ jobs:
         run: |
           echo "### Governance results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          for job in perf-budget lighthouse a11y godocgen; do
-            result="${{ needs.$job.result }}"
-            echo "- $job: $result" >> "$GITHUB_STEP_SUMMARY"
-          done
+          echo "- perf-budget: ${{ needs.perf-budget.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- lighthouse:  ${{ needs.lighthouse.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- a11y:        ${{ needs.a11y.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- godocgen:    ${{ needs.godocgen.result }}" >> "$GITHUB_STEP_SUMMARY"
