@@ -17,12 +17,50 @@
       "title": "Coordinate a 9-role software team with AI coding CLIs.",
       "subtitle": "AiCodingAgentTeam is a Go-based orchestrator that dispatches Codex, OpenCode, Claude-Code and DeepSeek-DSH — without holding any API key — to build, review, and ship code under a deterministic quality gate.",
       "ctaPrimary": "Quick Start",
-      "ctaSecondary": "Read the Docs"
+      "ctaSecondary": "Read the Docs",
+      "ctaGithub": "Star on GitHub",
+      "terminalTitle": "~/projects/demo",
+      "terminalPrompt": "$",
+      "terminalLines": [
+        "git clone https://github.com/agentcodinglab/aicodingagentteam",
+        "cd aicodingagentteam && go build -o bin/aicodingagentteam ./cmd/aicodingagentteam",
+        "./bin/aicodingagentteam run \"Build a REST API\" --backend codex",
+        "→ Router classified intent → Planner built 9-node DAG → Scheduler dispatched reviewers in parallel → Quality gate: 0 lint, 0 vet, 0 test failures",
+        "✓ proof-pack.zip (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
+      ]
     },
+    "trustedBy": "Works with your favourite AI coding CLIs",
     "featuresTitle": "Why teams use it",
-    "architectureTitle": "How it fits together",
+    "featuresSubtitle": "Eight principles, one orchestrator. Built so the Coordinator only orchestrates and the host CLIs only execute.",
+    "statsTitle": "By the numbers",
+    "statsSubtitle": "Designed to be small at the core and big where it matters.",
+    "stats": {
+      "roles": {
+        "value": "9",
+        "label": "team roles"
+      },
+      "protocols": {
+        "value": "4",
+        "label": "external protocols"
+      },
+      "locales": {
+        "value": "9",
+        "label": "UI languages"
+      },
+      "keys": {
+        "value": "0",
+        "label": "API keys held"
+      }
+    },
+    "codeTitle": "One command, full pipeline",
+    "codeSubtitle": "From a natural-language requirement to a verified proof-pack in a single CLI invocation.",
+    "architectureTitle": "Five layers, one flow",
+    "architectureSubtitle": "Each layer is a small, replaceable component. The interface between them is the only contract.",
     "quickstartTitle": "From zero to first pipeline",
-    "footerNote": "Released under the MIT License · Static export deployed via GitHub Pages"
+    "quickstartSubtitle": "Single-binary mode is the fastest path; TUI and containers are optional layers.",
+    "ctaTitle": "Ship a 9-role team in 60 seconds",
+    "ctaSubtitle": "Pull the binary, write one command, get a deterministic verification artifact. That's the whole pitch.",
+    "ctaButton": "Get Started"
   },
   "features": {
     "title": "Core features",
@@ -55,6 +93,10 @@
       "local": {
         "title": "Local-first, keyless",
         "body": "Code stays inside the container. No API keys held. All authentication is delegated to the underlying host CLI."
+      },
+      "scale": {
+        "title": "Scale-adaptive flow",
+        "body": "A quick edit skips the DAG. A large project gets the full team. The platform adapts to the work, not the other way around."
       }
     }
   },
@@ -105,12 +147,30 @@
     "notFound": "Document not found",
     "backToDocs": "Back to docs"
   },
+  "footer": {
+    "product": "Product",
+    "resources": "Resources",
+    "community": "Community",
+    "links": {
+      "features": "Features",
+      "architecture": "Architecture",
+      "quickstart": "Quick Start",
+      "requirements": "Requirements",
+      "implementation": "Implementation Plan",
+      "quality": "Quality Constraints",
+      "domain": "Domain Model",
+      "github": "GitHub",
+      "releases": "Releases",
+      "issues": "Issues",
+      "discussions": "Discussions"
+    },
+    "copyright": "© AiCodingAgentTeam contributors",
+    "releaseNote": "Released under the MIT License · Static export deployed via GitHub Pages"
+  },
   "common": {
     "language": "Language",
     "theme": "Toggle theme",
-    "viewOnGithub": "View on GitHub"
-  },
-  "footer": {
-    "copyright": "© AiCodingAgentTeam contributors"
+    "viewOnGithub": "View on GitHub",
+    "viewRelease": "Latest release"
   }
 }

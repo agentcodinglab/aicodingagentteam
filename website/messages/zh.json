@@ -17,12 +17,51 @@
       "title": "用 AI 编码 CLI 调度一支 9 角色软件团队。",
       "subtitle": "AiCodingAgentTeam 是一个 Go 编写的编排器，分发任务给 Codex、OpenCode、Claude-Code 与 DeepSeek-DSH —— 不持有任何 API Key —— 在确定性质量门禁下构建、评审与交付代码。",
       "ctaPrimary": "快速上手",
-      "ctaSecondary": "阅读文档"
+      "ctaSecondary": "阅读文档",
+      "terminalTitle": "~/projects/demo",
+      "terminalPrompt": "$",
+      "terminalLines": [
+        "git clone https://github.com/agentcodinglab/aicodingagentteam",
+        "cd aicodingagentteam && go build -o bin/aicodingagentteam ./cmd/aicodingagentteam",
+        "./bin/aicodingagentteam run \"构建一个 REST API\" --backend codex",
+        "→ 路由器完成意图分类 → 计划器构建 9 节点 DAG → 调度器并行派发评审者 → 质量门禁：0 lint，0 vet，0 测试失败",
+        "✓ proof-pack.zip（plan.json + verify.jsonl + scorecard.md + delivery-summary.md）"
+      ],
+      "ctaGithub": "在 GitHub 上 Star"
     },
     "featuresTitle": "为什么团队选择它",
-    "architectureTitle": "如何协同",
+    "architectureTitle": "五层架构，一个流程",
     "quickstartTitle": "从零到第一条流水线",
-    "footerNote": "MIT 协议发布 · 静态导出经 GitHub Pages 部署"
+    "footerNote": "MIT 协议发布 · 静态导出经 GitHub Pages 部署",
+    "trustedBy": "兼容你喜爱的 AI 编码 CLI",
+    "featuresSubtitle": "八大原则，一台编排器。Coordinator 只编排，宿主 CLI 只执行——职责泾渭分明。",
+    "statsTitle": "数字说明一切",
+    "statsSubtitle": "核心要小，真正重要的地方要大。",
+    "stats": {
+      "roles": {
+        "value": "9",
+        "label": "团队角色"
+      },
+      "protocols": {
+        "value": "4",
+        "label": "对外协议"
+      },
+      "locales": {
+        "value": "9",
+        "label": "界面语言"
+      },
+      "keys": {
+        "value": "0",
+        "label": "持有 API Key"
+      }
+    },
+    "codeTitle": "一行命令，完整流水线",
+    "codeSubtitle": "从一段自然语言需求，到一个可校验的 proof-pack，只需一次 CLI 调用。",
+    "architectureSubtitle": "每一层都是可独立替换的小组件，层与层之间的接口就是唯一的契约。",
+    "quickstartSubtitle": "单二进制模式是最快路径；TUI 与容器是可叠加的层。",
+    "ctaTitle": "60 秒内组建你的 9 角色团队",
+    "ctaSubtitle": "下载二进制，写一行命令，得到一份确定性校验产物。这就是全部要点。",
+    "ctaButton": "立即开始"
   },
   "features": {
     "title": "核心特性",
@@ -55,6 +94,10 @@
       "local": {
         "title": "本地优先 · 不持密钥",
         "body": "代码不出容器；不存任何 API Key；所有鉴权全部交由底层宿主 CLI 完成。"
+      },
+      "scale": {
+        "title": "规模自适应流程",
+        "body": "小改动跳过 DAG，大项目召集全员。平台适应任务，而非反过来。"
       }
     }
   },
@@ -111,6 +154,23 @@
     "viewOnGithub": "在 GitHub 上查看"
   },
   "footer": {
-    "copyright": "© AiCodingAgentTeam 贡献者"
+    "copyright": "© AiCodingAgentTeam 贡献者",
+    "product": "产品",
+    "resources": "资源",
+    "community": "社区",
+    "links": {
+      "features": "特性",
+      "architecture": "架构",
+      "quickstart": "快速上手",
+      "requirements": "需求分析",
+      "implementation": "实施规划",
+      "quality": "质量红线",
+      "domain": "领域模型",
+      "github": "GitHub",
+      "releases": "发布",
+      "issues": "Issue",
+      "discussions": "讨论区"
+    },
+    "releaseNote": "MIT 协议发布 · 静态导出经 GitHub Pages 部署"
   }
 }

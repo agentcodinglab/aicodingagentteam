@@ -1,30 +1,104 @@
 {
-  "brand": { "name": "AiCodingAgentTeam", "tagline": "Une plateforme d’orchestration de codage IA écrite en Go." },
-  "nav": { "home": "Accueil", "features": "Fonctionnalités", "architecture": "Architecture", "quickstart": "Démarrage rapide", "docs": "Documentation", "github": "GitHub" },
+  "brand": {
+    "name": "AiCodingAgentTeam",
+    "tagline": "Une plateforme d’orchestration de codage IA écrite en Go."
+  },
+  "nav": {
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "architecture": "Architecture",
+    "quickstart": "Démarrage rapide",
+    "docs": "Documentation",
+    "github": "GitHub"
+  },
   "home": {
     "hero": {
       "eyebrow": "v0.2.1 · 9 langues · MIT",
       "title": "Orchestrez une équipe logicielle à 9 rôles via des CLI IA.",
       "subtitle": "AiCodingAgentTeam est un orchestrateur en Go qui délègue à Codex, OpenCode, Claude-Code et DeepSeek-DSH — sans détenir de clé API — pour construire, relire et livrer du code sous une porte de qualité déterministe.",
       "ctaPrimary": "Démarrage rapide",
-      "ctaSecondary": "Lire la documentation"
+      "ctaSecondary": "Lire la documentation",
+      "terminalTitle": "~/projets/demo",
+      "terminalPrompt": "$",
+      "terminalLines": [
+        "git clone https://github.com/agentcodinglab/aicodingagentteam",
+        "cd aicodingagentteam && go build -o bin/aicodingagentteam ./cmd/aicodingagentteam",
+        "./bin/aicodingagentteam run \"Construire une API REST\" --backend codex",
+        "→ Router classifie l’intention → Planner construit un DAG à 9 nœuds → Scheduler dispatche les relecteurs en parallèle → Quality gate : 0 lint, 0 vet, 0 échec de test",
+        "✓ proof-pack.zip (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
+      ],
+      "ctaGithub": "Star sur GitHub"
     },
     "featuresTitle": "Pourquoi les équipes l’adoptent",
-    "architectureTitle": "Comment tout s’articule",
+    "architectureTitle": "Cinq couches, un seul flux",
     "quickstartTitle": "De zéro au premier pipeline",
-    "footerNote": "Sous licence MIT · Export statique déployé via GitHub Pages"
+    "footerNote": "Sous licence MIT · Export statique déployé via GitHub Pages",
+    "trustedBy": "Compatible avec vos CLI IA préférées",
+    "featuresSubtitle": "Huit principes, un orchestrateur. Le Coordinator orchestre, les CLI hôtes exécutent — jamais l’inverse.",
+    "statsTitle": "En chiffres",
+    "statsSubtitle": "Petit au cœur, grand là où ça compte.",
+    "stats": {
+      "roles": {
+        "value": "9",
+        "label": "rôles d’équipe"
+      },
+      "protocols": {
+        "value": "4",
+        "label": "protocoles externes"
+      },
+      "locales": {
+        "value": "9",
+        "label": "langues d’UI"
+      },
+      "keys": {
+        "value": "0",
+        "label": "clés API conservées"
+      }
+    },
+    "codeTitle": "Une commande, pipeline complet",
+    "codeSubtitle": "D’une exigence en langage naturel à un proof-pack vérifié en un seul appel CLI.",
+    "architectureSubtitle": "Chaque couche est un petit composant remplaçable. L’interface entre elles est l’unique contrat.",
+    "quickstartSubtitle": "Le mode binaire unique est le plus rapide ; TUI et conteneurs sont des couches optionnelles.",
+    "ctaTitle": "Constituez une équipe à 9 rôles en 60 secondes",
+    "ctaSubtitle": "Récupérez le binaire, écrezissez une commande, obtenez un artefact de vérification déterministe.",
+    "ctaButton": "Commencer"
   },
   "features": {
     "title": "Fonctionnalités clés",
     "subtitle": "Tout ce qu’il faut pour orchestrer du code IA sans perdre le contrôle.",
     "items": {
-      "separation": { "title": "Orchestration vs exécution", "body": "Le Coordinator orchestre sans écrire de code. Les CLI hôtes exécutent sans décider. Aucun couplage, aucune ambiguïté." },
-      "containerRoles": { "title": "Conteneur = rôle", "body": "9 rôles d’équipe (PM, Architect, Frontend, Backend, QA, Security, DevOps) chacun dans son propre conteneur, scalable et remplaçable indépendamment." },
-      "a2a": { "title": "Collaboration via A2A", "body": "Messagerie structurée entre agents. Mode InProc pour le développement, Redis Pub/Sub pour le déploiement conteneurisé." },
-      "quality": { "title": "Porte de qualité déterministe", "body": "golangci-lint, go vet et go test exécutés comme une vérification machine stricte. Aucune autoévaluation du modèle." },
-      "rag": { "title": "RAG + mémoire projet", "body": "La recherche BM25 injecte du contexte. La mémoire accumule les leçons d’échec et les solutions passées entre les exécutions." },
-      "protocols": { "title": "Quatre protocoles externes", "body": "gRPC pour le TUI, MCP pour les outils externes, ACP pour les clients Agent standard, A2A pour le maillage inter-instances." },
-      "local": { "title": "Local d’abord, sans clé", "body": "Le code reste dans le conteneur. Aucune clé API conservée. Toute l’authentification est déléguée à la CLI hôte." }
+      "separation": {
+        "title": "Orchestration vs exécution",
+        "body": "Le Coordinator orchestre sans écrire de code. Les CLI hôtes exécutent sans décider. Aucun couplage, aucune ambiguïté."
+      },
+      "containerRoles": {
+        "title": "Conteneur = rôle",
+        "body": "9 rôles d’équipe (PM, Architect, Frontend, Backend, QA, Security, DevOps) chacun dans son propre conteneur, scalable et remplaçable indépendamment."
+      },
+      "a2a": {
+        "title": "Collaboration via A2A",
+        "body": "Messagerie structurée entre agents. Mode InProc pour le développement, Redis Pub/Sub pour le déploiement conteneurisé."
+      },
+      "quality": {
+        "title": "Porte de qualité déterministe",
+        "body": "golangci-lint, go vet et go test exécutés comme une vérification machine stricte. Aucune autoévaluation du modèle."
+      },
+      "rag": {
+        "title": "RAG + mémoire projet",
+        "body": "La recherche BM25 injecte du contexte. La mémoire accumule les leçons d’échec et les solutions passées entre les exécutions."
+      },
+      "protocols": {
+        "title": "Quatre protocoles externes",
+        "body": "gRPC pour le TUI, MCP pour les outils externes, ACP pour les clients Agent standard, A2A pour le maillage inter-instances."
+      },
+      "local": {
+        "title": "Local d’abord, sans clé",
+        "body": "Le code reste dans le conteneur. Aucune clé API conservée. Toute l’authentification est déléguée à la CLI hôte."
+      },
+      "scale": {
+        "title": "Flux adaptatif à l’échelle",
+        "body": "Une petite modification ignore le DAG ; un grand projet mobilise toute l’équipe."
+      }
     }
   },
   "architecture": {
@@ -42,10 +116,22 @@
     "title": "Démarrage rapide",
     "subtitle": "Le mode binaire unique est le plus rapide ; TUI et conteneurs sont des couches optionnelles.",
     "steps": {
-      "build": { "title": "1. Compiler le binaire", "body": "Depuis les sources — Go pur, aucune dépendance d’exécution." },
-      "init": { "title": "2. Initialiser un projet", "body": "Génère la configuration de l’espace de travail dans le répertoire courant." },
-      "run": { "title": "3. Exécuter un pipeline complet", "body": "Passez une exigence en langage naturel et choisissez un backend (Codex est le driver réel)." },
-      "verify": { "title": "4. Vérifier la qualité", "body": "Lancez la porte de qualité déterministe sur les artefacts produits." }
+      "build": {
+        "title": "1. Compiler le binaire",
+        "body": "Depuis les sources — Go pur, aucune dépendance d’exécution."
+      },
+      "init": {
+        "title": "2. Initialiser un projet",
+        "body": "Génère la configuration de l’espace de travail dans le répertoire courant."
+      },
+      "run": {
+        "title": "3. Exécuter un pipeline complet",
+        "body": "Passez une exigence en langage naturel et choisissez un backend (Codex est le driver réel)."
+      },
+      "verify": {
+        "title": "4. Vérifier la qualité",
+        "body": "Lancez la porte de qualité déterministe sur les artefacts produits."
+      }
     }
   },
   "docs": {
@@ -62,6 +148,29 @@
     "notFound": "Document introuvable",
     "backToDocs": "Retour aux documents"
   },
-  "common": { "language": "Langue", "theme": "Basculer le thème", "viewOnGithub": "Voir sur GitHub" },
-  "footer": { "copyright": "© Contributeurs AiCodingAgentTeam" }
+  "common": {
+    "language": "Langue",
+    "theme": "Basculer le thème",
+    "viewOnGithub": "Voir sur GitHub"
+  },
+  "footer": {
+    "copyright": "© Contributeurs AiCodingAgentTeam",
+    "product": "Produit",
+    "resources": "Ressources",
+    "community": "Communauté",
+    "links": {
+      "features": "Fonctionnalités",
+      "architecture": "Architecture",
+      "quickstart": "Démarrage rapide",
+      "requirements": "Exigences",
+      "implementation": "Plan d’implémentation",
+      "quality": "Contraintes qualité",
+      "domain": "Modèle du domaine",
+      "github": "GitHub",
+      "releases": "Versions",
+      "issues": "Tickets",
+      "discussions": "Discussions"
+    },
+    "releaseNote": "Sous licence MIT · Export statique déployé via GitHub Pages"
+  }
 }

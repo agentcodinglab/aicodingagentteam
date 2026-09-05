@@ -1,30 +1,104 @@
 {
-  "brand": { "name": "AiCodingAgentTeam", "tagline": "Go 기반 AI 코딩 오케스트레이션 플랫폼." },
-  "nav": { "home": "홈", "features": "기능", "architecture": "아키텍처", "quickstart": "빠른 시작", "docs": "문서", "github": "GitHub" },
+  "brand": {
+    "name": "AiCodingAgentTeam",
+    "tagline": "Go 기반 AI 코딩 오케스트레이션 플랫폼."
+  },
+  "nav": {
+    "home": "홈",
+    "features": "기능",
+    "architecture": "아키텍처",
+    "quickstart": "빠른 시작",
+    "docs": "문서",
+    "github": "GitHub"
+  },
   "home": {
     "hero": {
       "eyebrow": "v0.2.1 · 9 개 언어 · MIT",
       "title": "AI 코딩 CLI 로 9 개 역할의 개발 팀을 오케스트레이션.",
       "subtitle": "AiCodingAgentTeam 은 Go 기반 오케스트레이터로, API 키를 보유하지 않고 Codex · OpenCode · Claude-Code · DeepSeek-DSH 에 작업을 위임하여 결정론적 품질 게이트 아래에서 코드를 구축 · 리뷰 · 출하합니다.",
       "ctaPrimary": "빠른 시작",
-      "ctaSecondary": "문서 읽기"
+      "ctaSecondary": "문서 읽기",
+      "terminalTitle": "~/projects/demo",
+      "terminalPrompt": "$",
+      "terminalLines": [
+        "git clone https://github.com/agentcodinglab/aicodingagentteam",
+        "cd aicodingagentteam && go build -o bin/aicodingagentteam ./cmd/aicodingagentteam",
+        "./bin/aicodingagentteam run \"REST API 구체\" --backend codex",
+        "→ Router가 의도 분류 → Planner가 9 개 노드 DAG 구축 → Scheduler가 리뷰어를 방행 배핑 → Quality gate: 0 lint, 0 vet, 0 test failure",
+        "✓ proof-pack.zip(plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
+      ],
+      "ctaGithub": "GitHub 에서 Star"
     },
     "featuresTitle": "팀이 선택하는 이유",
-    "architectureTitle": "전체 동작 방식",
+    "architectureTitle": "5 개 계층, 하나의 흐름",
     "quickstartTitle": "제로에서 첫 파이프라인까지",
-    "footerNote": "MIT 라이선스로 배포 · GitHub Pages 로 정적 익스포트 배포"
+    "footerNote": "MIT 라이선스로 배포 · GitHub Pages 로 정적 익스포트 배포",
+    "trustedBy": "선호하는 AI 코딩 CLI 와 호환",
+    "featuresSubtitle": "8 가지 원칙, 1 개의 오케스트레이터. Coordinator 는 오케스트레이션만, 호스트 CLI 는 실행만 담당합니다.",
+    "statsTitle": "숫자로 보기",
+    "statsSubtitle": "핵심은 작게, 중요한 곳은 크게.",
+    "stats": {
+      "roles": {
+        "value": "9",
+        "label": "팀 역할"
+      },
+      "protocols": {
+        "value": "4",
+        "label": "외부 프로토콜"
+      },
+      "locales": {
+        "value": "9",
+        "label": "UI 언어"
+      },
+      "keys": {
+        "value": "0",
+        "label": "보유 API 키"
+      }
+    },
+    "codeTitle": "하나의 명령으로 전체 파이프라인",
+    "codeSubtitle": "자연어 요구사항부터 검증된 proof-pack 까지 단일 CLI 호출로.",
+    "architectureSubtitle": "각 계층은 작고 교체 가능한 컴포넌트이며, 계층 사이의 인터페이스가 유일한 계약입니다.",
+    "quickstartSubtitle": "단일 바이너리 모드가 가장 빠른 경로이며, TUI 와 컨테이너는 선택적 레이어입니다.",
+    "ctaTitle": "60 초 만에 9 개 역할의 팀을 구축",
+    "ctaSubtitle": "바이너리를 받고 한 줄의 명령을 내리면 결정론적 검증 산출물을 얻습니다.",
+    "ctaButton": "시작하기"
   },
   "features": {
     "title": "핵심 기능",
     "subtitle": "AI 코딩을 오케스트레이션하면서 통제권을 유지하세요.",
     "items": {
-      "separation": { "title": "오케스트레이션과 실행의 분리", "body": "Coordinator 는 오케스트레이션만 하고 코드를 작성하지 않습니다. 호스트 CLI 는 실행만 하며 결정하지 않습니다. 결합도 모호함도 없습니다." },
-      "containerRoles": { "title": "컨테이너 = 역할", "body": "9 개 팀 역할(PM · Architect · Frontend · Backend · QA · Security · DevOps)이 각각의 컨테이너에서 독립적으로 실행 · 확장 · 교체됩니다." },
-      "a2a": { "title": "A2A 프로토콜 협업", "body": "구조화된 에이전트 간 메시징. 개발은 InProc, 컨테이너 배포는 Redis Pub/Sub." },
-      "quality": { "title": "결정론적 품질 게이트", "body": "golangci-lint · go vet · go test 를 기계적으로 실행. 모델 자체 평가에 의존하지 않습니다." },
-      "rag": { "title": "RAG + 프로젝트 메모리", "body": "BM25 검색이 컨텍스트를 주입하고, 메모리는 실패 교훈과 과거 해결책을 실행 간 누적합니다." },
-      "protocols": { "title": "4 종 외부 프로토콜", "body": "gRPC(TUI) · MCP(외부 도구) · ACP(표준 Agent) · A2A(인스턴스 메시)." },
-      "local": { "title": "로컬 우선 · 키 비보관", "body": "코드는 컨테이너 밖으로 나가지 않습니다. API 키를 보관하지 않으며, 인증은 모두 호스트 CLI 에 위임됩니다." }
+      "separation": {
+        "title": "오케스트레이션과 실행의 분리",
+        "body": "Coordinator 는 오케스트레이션만 하고 코드를 작성하지 않습니다. 호스트 CLI 는 실행만 하며 결정하지 않습니다. 결합도 모호함도 없습니다."
+      },
+      "containerRoles": {
+        "title": "컨테이너 = 역할",
+        "body": "9 개 팀 역할(PM · Architect · Frontend · Backend · QA · Security · DevOps)이 각각의 컨테이너에서 독립적으로 실행 · 확장 · 교체됩니다."
+      },
+      "a2a": {
+        "title": "A2A 프로토콜 협업",
+        "body": "구조화된 에이전트 간 메시징. 개발은 InProc, 컨테이너 배포는 Redis Pub/Sub."
+      },
+      "quality": {
+        "title": "결정론적 품질 게이트",
+        "body": "golangci-lint · go vet · go test 를 기계적으로 실행. 모델 자체 평가에 의존하지 않습니다."
+      },
+      "rag": {
+        "title": "RAG + 프로젝트 메모리",
+        "body": "BM25 검색이 컨텍스트를 주입하고, 메모리는 실패 교훈과 과거 해결책을 실행 간 누적합니다."
+      },
+      "protocols": {
+        "title": "4 종 외부 프로토콜",
+        "body": "gRPC(TUI) · MCP(외부 도구) · ACP(표준 Agent) · A2A(인스턴스 메시)."
+      },
+      "local": {
+        "title": "로컬 우선 · 키 비보관",
+        "body": "코드는 컨테이너 밖으로 나가지 않습니다. API 키를 보관하지 않으며, 인증은 모두 호스트 CLI 에 위임됩니다."
+      },
+      "scale": {
+        "title": "규모 적응 흐름",
+        "body": "작은 수정은 DAG 를 건너뛰고, 큰 프로젝트는 전체 팀을 소집합니다."
+      }
     }
   },
   "architecture": {
@@ -42,10 +116,22 @@
     "title": "빠른 시작",
     "subtitle": "가장 빠른 경로는 단일 바이너리 모드. TUI 와 컨테이너는 선택적 레이어입니다.",
     "steps": {
-      "build": { "title": "1. 바이너리 빌드", "body": "소스에서 컴파일 — 순수 Go, 런타임 의존성 없음." },
-      "init": { "title": "2. 프로젝트 초기화", "body": "현재 디렉터리에 워크스페이스 구성을 스캐폴드." },
-      "run": { "title": "3. 전체 파이프라인 실행", "body": "자연어 요구사항을 전달하고 백엔드 선택(Codex 가 실제 드라이버)." },
-      "verify": { "title": "4. 품질 검증", "body": "산출물에 대해 결정론적 품질 게이트 실행." }
+      "build": {
+        "title": "1. 바이너리 빌드",
+        "body": "소스에서 컴파일 — 순수 Go, 런타임 의존성 없음."
+      },
+      "init": {
+        "title": "2. 프로젝트 초기화",
+        "body": "현재 디렉터리에 워크스페이스 구성을 스캐폴드."
+      },
+      "run": {
+        "title": "3. 전체 파이프라인 실행",
+        "body": "자연어 요구사항을 전달하고 백엔드 선택(Codex 가 실제 드라이버)."
+      },
+      "verify": {
+        "title": "4. 품질 검증",
+        "body": "산출물에 대해 결정론적 품질 게이트 실행."
+      }
     }
   },
   "docs": {
@@ -62,6 +148,29 @@
     "notFound": "문서를 찾을 수 없음",
     "backToDocs": "문서로 돌아가기"
   },
-  "common": { "language": "언어", "theme": "테마 전환", "viewOnGithub": "GitHub 에서 보기" },
-  "footer": { "copyright": "© AiCodingAgentTeam 기여자" }
+  "common": {
+    "language": "언어",
+    "theme": "테마 전환",
+    "viewOnGithub": "GitHub 에서 보기"
+  },
+  "footer": {
+    "copyright": "© AiCodingAgentTeam 기여자",
+    "product": "제품",
+    "resources": "리소스",
+    "community": "커뮤니티",
+    "links": {
+      "features": "기능",
+      "architecture": "아키텍처",
+      "quickstart": "빠른 시작",
+      "requirements": "요구사항",
+      "implementation": "구현 계획",
+      "quality": "품질 제약",
+      "domain": "도메인 모델",
+      "github": "GitHub",
+      "releases": "릴리스",
+      "issues": "이슈",
+      "discussions": "토론"
+    },
+    "releaseNote": "MIT 라이선스로 배포 · GitHub Pages 로 정적 익스포트 배포"
+  }
 }
