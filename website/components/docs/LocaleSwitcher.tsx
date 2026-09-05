@@ -27,6 +27,11 @@ export function LocaleSwitcher() {
     return l === defaultLocale ? suffix : `/${l}${suffix}`;
   }
 
+  function remember(l: Locale) {
+    try { localStorage.setItem("locale", l); } catch (e) {}
+    setOpen(false);
+  }
+
   return (
     <div ref={ref} className="relative">
       <button
@@ -49,7 +54,7 @@ export function LocaleSwitcher() {
             <Link
               key={l}
               href={hrefFor(l)}
-              onClick={() => setOpen(false)}
+              onClick={() => remember(l)}
               className={`flex items-center justify-between px-3 py-1.5 text-sm hover:bg-bg-2/80 ${
                 l === current ? "font-semibold text-cyan" : "text-ink-muted"
               }`}
