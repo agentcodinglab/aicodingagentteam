@@ -7,9 +7,13 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
+
+	"google.golang.org/grpc/metadata"
 
 	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
 	"github.com/agentcodinglab/aicodingagentteam/internal/types"
+	pb "github.com/agentcodinglab/aicodingagentteam/pkg/api/gen"
 )
 
 // mockHandler implements Handler for testing.
@@ -190,5 +194,178 @@ func TestAgentCardHasRequiredFields(t *testing.T) {
 		if result[0][field] == nil {
 			t.Errorf("missing required field: %s", field)
 		}
+	}
+}
+
+func TestToPBDetails_Nil(t *testing.T) {
+	if v := toPBDetails(nil); v != nil {
+		t.Errorf("expected nil, got %v", v)
+	}
+}
+
+func TestToPBDetails_Converts(t *testing.T) {
+	in := []CheckSummary{
+		{Name: "build", Status: "pass"},
+		{Name: "vet", Status: "fail", Output: "syntax error"},
+	}
+	out := toPBDetails(in)
+	if len(out) != 2 {
+		t.Fatalf("expected 2, got %d", len(out))
+	}
+	if out[0].Name != "build" || out[0].Status != "pass" {
+		t.Errorf("unexpected first: %+v", out[0])
+	}
+	if out[1].Output != "syntax error" {
+		t.Errorf("unexpected second output: %s", out[1].Output)
+	}
+}
+
+// TestCoordinatorAdapter_RPCCalls verifies the adapter methods translate
+// Handler responses to pb responses, without starting a gRPC server.
+func TestCoordinatorAdapter_RPCCalls(t *testing.T) {
+	a := &coordinatorAdapter{h: &mockHandler{}}
+
+	ctx := context.Background()
+
+	// RunPipeline
+	resp, err := a.RunPipeline(ctx, &pb.RunPipelineRequest{Requirement: "test", Backend: "codex"})
+	if err != nil {
+		t.Fatalf("RunPipeline: %v", err)
+	}
+	if resp.PlanId != "test" || !resp.Passed || resp.Score != 100 {
+		t.Errorf("unexpected RunPipeline response: %+v", resp)
+	}
+
+	// QuickEdit
+	qresp, err := a.QuickEdit(ctx, &pb.QuickEditRequest{Description: "fix", Backend: "codex"})
+	if err != nil {
+		t.Fatalf("QuickEdit: %v", err)
+	}
+	if !qresp.Passed || len(qresp.FilesChanged) != 1 {
+		t.Errorf("unexpected QuickEdit response: %+v", qresp)
+	}
+
+	// Verify
+	vresp, err := a.Verify(ctx, &pb.VerifyRequest{})
+	if err != nil {
+		t.Fatalf("Verify: %v", err)
+	}
+	if vresp.Score != 90 || !vresp.Passed {
+		t.Errorf("unexpected Verify response: %+v", vresp)
+	}
+
+	// GetPlan
+	presp, err := a.GetPlan(ctx, &pb.GetPlanRequest{})
+	if err != nil {
+		t.Fatalf("GetPlan: %v", err)
+	}
+	if presp.PlanJson != "{}" {
+		t.Errorf("unexpected PlanJson: %s", presp.PlanJson)
+	}
+}
+
+func TestCoordinatorAdapter_ExtendedHandler(t *testing.T) {
+	a := &coordinatorAdapter{h: &mockHandler{}, ext: &mockExtendedHandler{}}
+	ctx := context.Background()
+
+	// GetPlan with ExtendedHandler
+	resp, err := a.GetPlan(ctx, &pb.GetPlanRequest{})
+	if err != nil {
+		t.Fatalf("GetPlan: %v", err)
+	}
+	if resp.NodeCount != 2 {
+		t.Errorf("expected 2 nodes, got %d", resp.NodeCount)
+	}
+	if len(resp.Gates) != 1 {
+		t.Errorf("expected 1 gate, got %d", len(resp.Gates))
+	}
+
+	// Continue
+	cresp, err := a.Continue(ctx, &pb.ContinueRequest{PlanId: "p1"})
+	if err != nil {
+		t.Fatalf("Continue: %v", err)
+	}
+	if !cresp.Resumed || cresp.Status != "resumed" {
+		t.Errorf("unexpected Continue response: %+v", cresp)
+	}
+}
+
+func TestCoordinatorAdapter_NoExtendedHandler(t *testing.T) {
+	a := &coordinatorAdapter{h: &mockHandler{}}
+	ctx := context.Background()
+
+	// GetPlan should fall back to basic Handler
+	resp, err := a.GetPlan(ctx, &pb.GetPlanRequest{})
+	if err != nil {
+		t.Fatalf("GetPlan: %v", err)
+	}
+	if resp.PlanJson != "{}" {
+		t.Errorf("expected fallback PlanJson, got %s", resp.PlanJson)
+	}
+
+	// Continue should return not implemented
+	cresp, err := a.Continue(ctx, &pb.ContinueRequest{PlanId: "p1"})
+	if err != nil {
+		t.Fatalf("Continue: %v", err)
+	}
+	if cresp.Resumed {
+		t.Error("should not resume without ExtendedHandler")
+	}
+}
+
+// mockStream implements grpc.ServerStreamingServer for testing RunPipelineStream.
+type mockStream struct {
+	events []*pb.ProgressEvent
+	ctx    context.Context
+}
+
+func (m *mockStream) Send(ev *pb.ProgressEvent) error {
+	m.events = append(m.events, ev)
+	return nil
+}
+func (m *mockStream) Context() context.Context        { return m.ctx }
+func (m *mockStream) SetHeader(md metadata.MD) error  { return nil }
+func (m *mockStream) SendHeader(md metadata.MD) error { return nil }
+func (m *mockStream) SetTrailer(md metadata.MD)       {}
+func (m *mockStream) SendMsg(msg interface{}) error   { return nil }
+func (m *mockStream) RecvMsg(msg interface{}) error   { return nil }
+
+func TestRunPipelineStream_EmitsProgress(t *testing.T) {
+	a := &coordinatorAdapter{h: &mockHandler{}}
+	stream := &mockStream{ctx: context.Background()}
+	err := a.RunPipelineStream(&pb.RunPipelineRequest{Requirement: "build app", Backend: "codex"}, stream)
+	if err != nil {
+		t.Fatalf("RunPipelineStream: %v", err)
+	}
+	if len(stream.events) < 9 {
+		t.Fatalf("expected at least 9 progress events, got %d", len(stream.events))
+	}
+	if stream.events[0].Phase != "clarify" {
+		t.Errorf("expected first phase clarify, got %s", stream.events[0].Phase)
+	}
+	last := stream.events[len(stream.events)-1]
+	if last.Phase != "delivery" {
+		t.Errorf("expected last phase delivery, got %s", last.Phase)
+	}
+}
+
+func TestStart_AllServicesGracefulShutdown(t *testing.T) {
+	h := &mockExtendedHandler{}
+	srv := NewServer(0, 0, 0, 0, h)
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	go func() {
+		done <- srv.Start(ctx)
+	}()
+	// Wait for server to start serving
+	time.Sleep(100 * time.Millisecond)
+	cancel()
+	select {
+	case err := <-done:
+		if err != nil && err != context.Canceled {
+			t.Fatalf("Start returned error: %v", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("Start did not return after cancel")
 	}
 }
