@@ -28,6 +28,9 @@ export function SiteHeader() {
           <LocaleLink href="/docs/requirements" className="text-ink-muted transition-colors hover:text-cyan">
             {t("docs")}
           </LocaleLink>
+          <LocaleLink href="/docs/changelog" className="text-ink-muted transition-colors hover:text-cyan">
+            {t("changelog")}
+          </LocaleLink>
         </nav>
         <div className="flex items-center gap-1">
           <a

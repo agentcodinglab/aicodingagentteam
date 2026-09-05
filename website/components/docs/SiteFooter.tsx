@@ -67,6 +67,11 @@ export function SiteFooter() {
                   {tLinks("domain")}
                 </LocaleLink>
               </li>
+              <li>
+                <LocaleLink href="/docs/changelog" className="text-ink-muted transition-colors hover:text-cyan">
+                  {tLinks("changelog")}
+                </LocaleLink>
+              </li>
             </ul>
           </div>
           <div>

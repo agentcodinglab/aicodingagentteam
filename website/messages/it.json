@@ -9,7 +9,8 @@
     "architecture": "Architettura",
     "quickstart": "Avvio rapido",
     "docs": "Documentazione",
-    "github": "GitHub"
+    "github": "GitHub",
+    "changelog": "Registro modifiche"
   },
   "home": {
     "hero": {
@@ -151,7 +152,8 @@
       "architecture": "Architettura",
       "implementationPlan": "Piano di implementazione",
       "qualityConstraints": "Vincoli di qualità",
-      "domainModel": "Modello di dominio"
+      "domainModel": "Modello di dominio",
+      "changelog": "Registro modifiche"
     },
     "tableOfContents": "In questa pagina",
     "notFound": "Documento non trovato",
@@ -179,7 +181,8 @@
       "github": "GitHub",
       "releases": "Release",
       "issues": "Issue",
-      "discussions": "Discussioni"
+      "discussions": "Discussioni",
+      "changelog": "Registro modifiche"
     },
     "releaseNote": "Rilasciato sotto licenza MIT · Export statico distribuito tramite GitHub Pages"
   }

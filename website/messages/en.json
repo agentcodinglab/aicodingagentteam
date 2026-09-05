@@ -9,7 +9,8 @@
     "architecture": "Architecture",
     "quickstart": "Quick Start",
     "docs": "Docs",
-    "github": "GitHub"
+    "github": "GitHub",
+    "changelog": "Changelog"
   },
   "home": {
     "hero": {
@@ -150,7 +151,8 @@
       "architecture": "Architecture",
       "implementationPlan": "Implementation Plan",
       "qualityConstraints": "Quality Constraints",
-      "domainModel": "Domain Model"
+      "domainModel": "Domain Model",
+      "changelog": "Changelog"
     },
     "tableOfContents": "On this page",
     "notFound": "Document not found",
@@ -171,7 +173,8 @@
       "github": "GitHub",
       "releases": "Releases",
       "issues": "Issues",
-      "discussions": "Discussions"
+      "discussions": "Discussions",
+      "changelog": "Changelog"
     },
     "copyright": "© AiCodingAgentTeam contributors",
     "releaseNote": "Released under the MIT License · Static export deployed via GitHub Pages"

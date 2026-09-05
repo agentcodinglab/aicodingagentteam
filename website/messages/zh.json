@@ -9,7 +9,8 @@
     "architecture": "架构",
     "quickstart": "快速上手",
     "docs": "文档",
-    "github": "GitHub"
+    "github": "GitHub",
+    "changelog": "版本记录"
   },
   "home": {
     "hero": {
@@ -151,7 +152,8 @@
       "architecture": "架构设计",
       "implementationPlan": "实施规划",
       "qualityConstraints": "质量红线",
-      "domainModel": "领域模型"
+      "domainModel": "领域模型",
+      "changelog": "版本记录"
     },
     "tableOfContents": "本页目录",
     "notFound": "文档未找到",
@@ -179,7 +181,8 @@
       "github": "GitHub",
       "releases": "发布",
       "issues": "Issue",
-      "discussions": "讨论区"
+      "discussions": "讨论区",
+      "changelog": "版本记录"
     },
     "releaseNote": "MIT 协议发布 · 静态导出经 GitHub Pages 部署"
   }

@@ -9,7 +9,8 @@
     "architecture": "Архитектура",
     "quickstart": "Быстрый старт",
     "docs": "Документация",
-    "github": "GitHub"
+    "github": "GitHub",
+    "changelog": "Журнал изменений"
   },
   "home": {
     "hero": {
@@ -151,7 +152,8 @@
       "architecture": "Архитектура",
       "implementationPlan": "План реализации",
       "qualityConstraints": "Ограничения качества",
-      "domainModel": "Модель домена"
+      "domainModel": "Модель домена",
+      "changelog": "Журнал изменений"
     },
     "tableOfContents": "На этой странице",
     "notFound": "Документ не найден",
@@ -179,7 +181,8 @@
       "github": "GitHub",
       "releases": "Релизы",
       "issues": "Задачи",
-      "discussions": "Обсуждения"
+      "discussions": "Обсуждения",
+      "changelog": "Журнал изменений"
     },
     "releaseNote": "Под лицензией MIT · Статический экспорт развёрнут через GitHub Pages"
   }

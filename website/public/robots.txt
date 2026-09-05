@@ -1,0 +1,6 @@
+# AiCodingAgentTeam — https://agentcodinglab.github.io/aicodingagentteam/
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://agentcodinglab.github.io/aicodingagentteam/sitemap.xml

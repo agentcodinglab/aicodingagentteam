@@ -6,6 +6,7 @@ on:
     paths:
       - 'website/**'
       - '.github/workflows/docs-site.yml'
+      - 'CHANGELOG.md'
   workflow_dispatch:
 
 permissions:
@@ -41,6 +42,9 @@ jobs:
             git diff --staged --quiet || git commit -m 'chore(website): regenerate package-lock.json'
             git push || true
           fi
+
+      - name: Generate sitemap.xml
+        run: node scripts/gen-sitemap.mjs
 
       - name: Type check
         run: npx tsc --noEmit

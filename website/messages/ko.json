@@ -9,7 +9,8 @@
     "architecture": "아키텍처",
     "quickstart": "빠른 시작",
     "docs": "문서",
-    "github": "GitHub"
+    "github": "GitHub",
+    "changelog": "변경 이력"
   },
   "home": {
     "hero": {
@@ -151,7 +152,8 @@
       "architecture": "아키텍처",
       "implementationPlan": "구현 계획",
       "qualityConstraints": "품질 제약",
-      "domainModel": "도메인 모델"
+      "domainModel": "도메인 모델",
+      "changelog": "변경 이력"
     },
     "tableOfContents": "목차",
     "notFound": "문서를 찾을 수 없음",
@@ -179,7 +181,8 @@
       "github": "GitHub",
       "releases": "릴리스",
       "issues": "이슈",
-      "discussions": "토론"
+      "discussions": "토론",
+      "changelog": "변경 이력"
     },
     "releaseNote": "MIT 라이선스로 배포 · GitHub Pages 로 정적 익스포트 배포"
   }

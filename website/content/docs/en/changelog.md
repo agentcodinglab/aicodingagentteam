@@ -1,4 +1,3 @@
-# Changelog
 
 All notable changes to AiCodingAgentTeam are documented in this file.
 
