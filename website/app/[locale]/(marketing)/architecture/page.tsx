@@ -1,6 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { Reveal } from "@/components/ui/Reveal";
+import { Tilt } from "@/components/ui/Tilt";
 import { PageHero } from "@/components/marketing/PageHero";
 
 const LAYERS = [
@@ -31,22 +32,24 @@ function Content() {
           <div className="grid gap-3">
             {LAYERS.map((layer, i) => (
               <Reveal key={layer.key} delay={i * 80}>
-                <div className="group flex items-stretch overflow-hidden rounded-xl border border-cyan-line bg-bg-panel transition-all hover:border-cyan/60">
-                  <div className="flex w-16 flex-shrink-0 items-center justify-center bg-duo font-display text-lg font-bold text-bg">
-                    {i + 1}
-                  </div>
-                  <div className="flex flex-1 flex-col justify-center px-5 py-4">
-                    <div className="flex flex-wrap items-baseline gap-x-3">
-                      <span className="font-display text-xs font-semibold uppercase tracking-[0.18em] text-cyan">
-                        {layer.title}
-                      </span>
-                      <span className="font-mono text-xs text-ink-muted2">
-                        {layer.sub}
-                      </span>
+                <Tilt maxDeg={1.2}>
+                  <div className="group flex items-stretch overflow-hidden rounded-xl border border-cyan-line bg-bg-panel transition-colors hover:border-cyan/60">
+                    <div className="flex w-16 flex-shrink-0 items-center justify-center bg-duo font-display text-lg font-bold text-bg">
+                      {i + 1}
                     </div>
-                    <p className="mt-1 text-sm text-ink-muted">{tLayers(layer.key)}</p>
+                    <div className="flex flex-1 flex-col justify-center px-5 py-4">
+                      <div className="flex flex-wrap items-baseline gap-x-3">
+                        <span className="font-display text-xs font-semibold uppercase tracking-[0.18em] text-cyan">
+                          {layer.title}
+                        </span>
+                        <span className="font-mono text-xs text-ink-muted2">
+                          {layer.sub}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm text-ink-muted">{tLayers(layer.key)}</p>
+                    </div>
                   </div>
-                </div>
+                </Tilt>
               </Reveal>
             ))}
           </div>

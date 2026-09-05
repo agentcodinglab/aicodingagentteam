@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Card } from "../ui/Card";
 import { Reveal } from "../ui/Reveal";
+import { Tilt } from "../ui/Tilt";
 import {
   Bot,
   Container,
@@ -32,17 +33,19 @@ export function FeatureGrid() {
         const Icon = ICONS[i];
         return (
           <Reveal key={k} delay={i * 60}>
-            <Card className="flex h-full flex-col">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-cyan-line bg-cyan/10 text-cyan">
-                <Icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-5 text-base font-semibold text-ink">
-                {t(`${k}.title`)}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-ink-muted">
-                {t(`${k}.body`)}
-              </p>
-            </Card>
+            <Tilt className="h-full">
+              <Card className="flex h-full flex-col">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-cyan-line bg-cyan/10 text-cyan">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-5 text-base font-semibold text-ink">
+                  {t(`${k}.title`)}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-ink-muted">
+                  {t(`${k}.body`)}
+                </p>
+              </Card>
+            </Tilt>
           </Reveal>
         );
       })}
