@@ -37,7 +37,7 @@ jobs:
           if [ -f package-lock.json ]; then
             git config user.email 'github-actions[bot]@users.noreply.github.com'
             git config user.name 'github-actions[bot]'
-            git add website/package-lock.json || true
+            git add package-lock.json || true
             git diff --staged --quiet || git commit -m 'chore(website): regenerate package-lock.json'
             git push || true
           fi
@@ -53,7 +53,7 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: website/out
+          path: out
 
   deploy:
     needs: build
