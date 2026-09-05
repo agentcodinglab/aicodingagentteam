@@ -1,0 +1,116 @@
+{
+  "brand": {
+    "name": "AiCodingAgentTeam",
+    "tagline": "基于 Golang 的 AI 编码编排平台。"
+  },
+  "nav": {
+    "home": "首页",
+    "features": "特性",
+    "architecture": "架构",
+    "quickstart": "快速上手",
+    "docs": "文档",
+    "github": "GitHub"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "v0.2.1 · 9 语言 · MIT",
+      "title": "用 AI 编码 CLI 调度一支 9 角色软件团队。",
+      "subtitle": "AiCodingAgentTeam 是一个 Go 编写的编排器，分发任务给 Codex、OpenCode、Claude-Code 与 DeepSeek-DSH —— 不持有任何 API Key —— 在确定性质量门禁下构建、评审与交付代码。",
+      "ctaPrimary": "快速上手",
+      "ctaSecondary": "阅读文档"
+    },
+    "featuresTitle": "为什么团队选择它",
+    "architectureTitle": "如何协同",
+    "quickstartTitle": "从零到第一条流水线",
+    "footerNote": "MIT 协议发布 · 静态导出经 GitHub Pages 部署"
+  },
+  "features": {
+    "title": "核心特性",
+    "subtitle": "编排 AI 编码所需的一切，同时不放弃对代码的控制权。",
+    "items": {
+      "separation": {
+        "title": "编排与执行分离",
+        "body": "Coordinator 只编排不写代码；宿主 CLI 只执行不决策。无耦合，职责清晰。"
+      },
+      "containerRoles": {
+        "title": "容器即角色",
+        "body": "9 个团队角色——PM / Architect / Frontend / Backend / QA / Security / DevOps——各自独立容器，可独立伸缩与替换。"
+      },
+      "a2a": {
+        "title": "A2A 协议协作",
+        "body": "结构化的 Agent 间消息。开发用 InProc 模式，容器化部署用 Redis Pub/Sub。"
+      },
+      "quality": {
+        "title": "确定性质量门禁",
+        "body": "golangci-lint、go vet 与 go test 由机器硬执行。不依赖模型自评。"
+      },
+      "rag": {
+        "title": "RAG + 项目记忆",
+        "body": "BM25 检索注入上下文；记忆库跨任务累积失败教训与历史方案。"
+      },
+      "protocols": {
+        "title": "四协议对外暴露",
+        "body": "gRPC 对接 TUI，MCP 集成外部工具，ACP 对接标准 Agent 客户端，A2A 实现跨实例互联。"
+      },
+      "local": {
+        "title": "本地优先 · 不持密钥",
+        "body": "代码不出容器；不存任何 API Key；所有鉴权全部交由底层宿主 CLI 完成。"
+      }
+    }
+  },
+  "architecture": {
+    "title": "架构",
+    "subtitle": "五层流程：路由 → 计划 → 调度 → 执行 → 校验。",
+    "layers": {
+      "router": "意图路由器对用户请求分类并选择工作流。",
+      "planner": "计划器构建由写者与评审者节点组成的 DAG。",
+      "scheduler": "调度器并行派发评审者节点；写者节点在单写者锁下串行执行。",
+      "knowledge": "知识库（BM25 RAG）与记忆向每个节点注入相关上下文。",
+      "qualityGate": "质量门禁执行机器可校验的检查；失败以结构化细节呈现。"
+    }
+  },
+  "quickstart": {
+    "title": "快速上手",
+    "subtitle": "单二进制模式最快；TUI 与容器是可叠加的层。",
+    "steps": {
+      "build": {
+        "title": "1. 编译二进制",
+        "body": "从源码编译——纯 Go，无运行时依赖。"
+      },
+      "init": {
+        "title": "2. 初始化项目",
+        "body": "在当前目录生成工作区配置。"
+      },
+      "run": {
+        "title": "3. 运行完整流水线",
+        "body": "传入自然语言需求并选择后端（Codex 是真实驱动）。"
+      },
+      "verify": {
+        "title": "4. 校验质量",
+        "body": "对产出物运行确定性质量门禁。"
+      }
+    }
+  },
+  "docs": {
+    "title": "文档",
+    "subtitle": "深度阅读：需求、架构、计划、决策。",
+    "nav": {
+      "requirements": "需求分析",
+      "architecture": "架构设计",
+      "implementationPlan": "实施规划",
+      "qualityConstraints": "质量红线",
+      "domainModel": "领域模型"
+    },
+    "tableOfContents": "本页目录",
+    "notFound": "文档未找到",
+    "backToDocs": "返回文档"
+  },
+  "common": {
+    "language": "语言",
+    "theme": "切换主题",
+    "viewOnGithub": "在 GitHub 上查看"
+  },
+  "footer": {
+    "copyright": "© AiCodingAgentTeam 贡献者"
+  }
+}

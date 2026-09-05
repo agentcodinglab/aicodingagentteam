@@ -1,0 +1,67 @@
+{
+  "brand": { "name": "AiCodingAgentTeam", "tagline": "Go 言語で実装された AI コーディング・オーケストレーション・プラットフォーム。" },
+  "nav": { "home": "ホーム", "features": "機能", "architecture": "アーキテクチャ", "quickstart": "クイックスタート", "docs": "ドキュメント", "github": "GitHub" },
+  "home": {
+    "hero": {
+      "eyebrow": "v0.2.1 · 9 言語 · MIT",
+      "title": "AI コーディング CLI で 9 ロールの開発チームを編成。",
+      "subtitle": "AiCodingAgentTeam は Go 製のオーケストレーターで、Codex・OpenCode・Claude-Code・DeepSeek-DSH に API キーを保持せずタスクを委譲し、決定論的な品質ゲートのもとでコードを構築・レビュー・出荷します。",
+      "ctaPrimary": "クイックスタート",
+      "ctaSecondary": "ドキュメントを読む"
+    },
+    "featuresTitle": "チームが選ぶ理由",
+    "architectureTitle": "全体がどう動くか",
+    "quickstartTitle": "ゼロから最初のパイプラインへ",
+    "footerNote": "MIT ライセンスで公開 · GitHub Pages で静的エクスポートをデプロイ"
+  },
+  "features": {
+    "title": "コア機能",
+    "subtitle": "AI コーディングを統率しながら、コードへの統制を手放さない。",
+    "items": {
+      "separation": { "title": "オーケストレーションと実行の分離", "body": "Coordinator はオーケストレーションのみ、コードは書きません。ホスト CLI は実行のみ、決定は行いません。結合も曖昧さもありません。" },
+      "containerRoles": { "title": "コンテナー = ロール", "body": "9 つのロール（PM / Architect / Frontend / Backend / QA / Security / DevOps）が独立コンテナーで動作し、スケールや差し替えが自在です。" },
+      "a2a": { "title": "A2A プロトコル協働", "body": "構造化されたエージェント間メッセージ。開発は InProc、コンテナー展開は Redis Pub/Sub を使用。" },
+      "quality": { "title": "決定論的品質ゲート", "body": "golangci-lint・go vet・go test を機械的に実行。モデルの自己評価に依存しません。" },
+      "rag": { "title": "RAG + プロジェクトメモリ", "body": "BM25 検索で文脈を注入。メモリは失敗教訓と過去の手案を実行間で蓄積します。" },
+      "protocols": { "title": "4 種の外部プロトコル", "body": "gRPC（TUI）・MCP（外部ツール）・ACP（標準 Agent）・A2A（インスタンス間メッシュ）。" },
+      "local": { "title": "ローカル優先・キー非保持", "body": "コードはコンテナーを出ません。API キーを保持せず、すべての認証はホスト CLI に委譲します。" }
+    }
+  },
+  "architecture": {
+    "title": "アーキテクチャ",
+    "subtitle": "5 層フロー：ルート → 計画 → スケジュール → 実行 → 検証。",
+    "layers": {
+      "router": "インテント・ルーターがリクエストを分類し、ワークフローを選択。",
+      "planner": "プランナーがライターとレビュアーの DAG を構築。",
+      "scheduler": "スケジューラーはレビュアーを並列実行、ライターは単一ライタ・ロック下で直列実行。",
+      "knowledge": "ナレッジ（BM25 RAG）とメモリが各ノードに関連文脈を注入。",
+      "qualityGate": "品質ゲートが機械可検証なチェックを実行。失敗は構造化詳細で返されます。"
+    }
+  },
+  "quickstart": {
+    "title": "クイックスタート",
+    "subtitle": "最も速いのは単一バイナリ・モード。TUI とコンテナーは任意の追加層です。",
+    "steps": {
+      "build": { "title": "1. バイナリのビルド", "body": "ソースからコンパイル——純 Go、ランタイム依存なし。" },
+      "init": { "title": "2. プロジェクトの初期化", "body": "現在のディレクトリにワークスペース設定をスキャフォールド。" },
+      "run": { "title": "3. パイプライン全体を実行", "body": "自然言語で要件を渡し、バックエンドを選択（Codex は実駆動）。" },
+      "verify": { "title": "4. 品質検証", "body": "成果物に対して決定論的な品質ゲートを実行。" }
+    }
+  },
+  "docs": {
+    "title": "ドキュメント",
+    "subtitle": "詳細：要件・アーキテクチャ・計画・意思決定。",
+    "nav": {
+      "requirements": "要件",
+      "architecture": "アーキテクチャ",
+      "implementationPlan": "実装計画",
+      "qualityConstraints": "品質制約",
+      "domainModel": "ドメインモデル"
+    },
+    "tableOfContents": "目次",
+    "notFound": "ドキュメントが見つかりません",
+    "backToDocs": "ドキュメントに戻る"
+  },
+  "common": { "language": "言語", "theme": "テーマ切替", "viewOnGithub": "GitHub で見る" },
+  "footer": { "copyright": "© AiCodingAgentTeam 貢献者" }
+}

@@ -1,0 +1,67 @@
+{
+  "brand": { "name": "AiCodingAgentTeam", "tagline": "Go 기반 AI 코딩 오케스트레이션 플랫폼." },
+  "nav": { "home": "홈", "features": "기능", "architecture": "아키텍처", "quickstart": "빠른 시작", "docs": "문서", "github": "GitHub" },
+  "home": {
+    "hero": {
+      "eyebrow": "v0.2.1 · 9 개 언어 · MIT",
+      "title": "AI 코딩 CLI 로 9 개 역할의 개발 팀을 오케스트레이션.",
+      "subtitle": "AiCodingAgentTeam 은 Go 기반 오케스트레이터로, API 키를 보유하지 않고 Codex · OpenCode · Claude-Code · DeepSeek-DSH 에 작업을 위임하여 결정론적 품질 게이트 아래에서 코드를 구축 · 리뷰 · 출하합니다.",
+      "ctaPrimary": "빠른 시작",
+      "ctaSecondary": "문서 읽기"
+    },
+    "featuresTitle": "팀이 선택하는 이유",
+    "architectureTitle": "전체 동작 방식",
+    "quickstartTitle": "제로에서 첫 파이프라인까지",
+    "footerNote": "MIT 라이선스로 배포 · GitHub Pages 로 정적 익스포트 배포"
+  },
+  "features": {
+    "title": "핵심 기능",
+    "subtitle": "AI 코딩을 오케스트레이션하면서 통제권을 유지하세요.",
+    "items": {
+      "separation": { "title": "오케스트레이션과 실행의 분리", "body": "Coordinator 는 오케스트레이션만 하고 코드를 작성하지 않습니다. 호스트 CLI 는 실행만 하며 결정하지 않습니다. 결합도 모호함도 없습니다." },
+      "containerRoles": { "title": "컨테이너 = 역할", "body": "9 개 팀 역할(PM · Architect · Frontend · Backend · QA · Security · DevOps)이 각각의 컨테이너에서 독립적으로 실행 · 확장 · 교체됩니다." },
+      "a2a": { "title": "A2A 프로토콜 협업", "body": "구조화된 에이전트 간 메시징. 개발은 InProc, 컨테이너 배포는 Redis Pub/Sub." },
+      "quality": { "title": "결정론적 품질 게이트", "body": "golangci-lint · go vet · go test 를 기계적으로 실행. 모델 자체 평가에 의존하지 않습니다." },
+      "rag": { "title": "RAG + 프로젝트 메모리", "body": "BM25 검색이 컨텍스트를 주입하고, 메모리는 실패 교훈과 과거 해결책을 실행 간 누적합니다." },
+      "protocols": { "title": "4 종 외부 프로토콜", "body": "gRPC(TUI) · MCP(외부 도구) · ACP(표준 Agent) · A2A(인스턴스 메시)." },
+      "local": { "title": "로컬 우선 · 키 비보관", "body": "코드는 컨테이너 밖으로 나가지 않습니다. API 키를 보관하지 않으며, 인증은 모두 호스트 CLI 에 위임됩니다." }
+    }
+  },
+  "architecture": {
+    "title": "아키텍처",
+    "subtitle": "5 계층 흐름: 라우팅 → 계획 → 스케줄 → 실행 → 검증.",
+    "layers": {
+      "router": "인텐트 라우터가 요청을 분류하고 워크플로를 선택.",
+      "planner": "플래너가 라이터와 리뷰어의 DAG 를 구성.",
+      "scheduler": "스케줄러는 리뷰어를 병렬 실행하고 라이터는 단일 라이터 락 아래에서 직렬 실행.",
+      "knowledge": "지식 베이스(BM25 RAG)와 메모리가 각 노드에 컨텍스트를 주입.",
+      "qualityGate": "품질 게이트가 기계 검증 가능한 체크를 수행. 실패는 구조화된 상세 정보로 반환됩니다."
+    }
+  },
+  "quickstart": {
+    "title": "빠른 시작",
+    "subtitle": "가장 빠른 경로는 단일 바이너리 모드. TUI 와 컨테이너는 선택적 레이어입니다.",
+    "steps": {
+      "build": { "title": "1. 바이너리 빌드", "body": "소스에서 컴파일 — 순수 Go, 런타임 의존성 없음." },
+      "init": { "title": "2. 프로젝트 초기화", "body": "현재 디렉터리에 워크스페이스 구성을 스캐폴드." },
+      "run": { "title": "3. 전체 파이프라인 실행", "body": "자연어 요구사항을 전달하고 백엔드 선택(Codex 가 실제 드라이버)." },
+      "verify": { "title": "4. 품질 검증", "body": "산출물에 대해 결정론적 품질 게이트 실행." }
+    }
+  },
+  "docs": {
+    "title": "문서",
+    "subtitle": "심층 자료: 요구사항 · 아키텍처 · 계획 · 결정.",
+    "nav": {
+      "requirements": "요구사항",
+      "architecture": "아키텍처",
+      "implementationPlan": "구현 계획",
+      "qualityConstraints": "품질 제약",
+      "domainModel": "도메인 모델"
+    },
+    "tableOfContents": "목차",
+    "notFound": "문서를 찾을 수 없음",
+    "backToDocs": "문서로 돌아가기"
+  },
+  "common": { "language": "언어", "theme": "테마 전환", "viewOnGithub": "GitHub 에서 보기" },
+  "footer": { "copyright": "© AiCodingAgentTeam 기여자" }
+}

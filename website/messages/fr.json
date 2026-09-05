@@ -1,0 +1,67 @@
+{
+  "brand": { "name": "AiCodingAgentTeam", "tagline": "Une plateforme d’orchestration de codage IA écrite en Go." },
+  "nav": { "home": "Accueil", "features": "Fonctionnalités", "architecture": "Architecture", "quickstart": "Démarrage rapide", "docs": "Documentation", "github": "GitHub" },
+  "home": {
+    "hero": {
+      "eyebrow": "v0.2.1 · 9 langues · MIT",
+      "title": "Orchestrez une équipe logicielle à 9 rôles via des CLI IA.",
+      "subtitle": "AiCodingAgentTeam est un orchestrateur en Go qui délègue à Codex, OpenCode, Claude-Code et DeepSeek-DSH — sans détenir de clé API — pour construire, relire et livrer du code sous une porte de qualité déterministe.",
+      "ctaPrimary": "Démarrage rapide",
+      "ctaSecondary": "Lire la documentation"
+    },
+    "featuresTitle": "Pourquoi les équipes l’adoptent",
+    "architectureTitle": "Comment tout s’articule",
+    "quickstartTitle": "De zéro au premier pipeline",
+    "footerNote": "Sous licence MIT · Export statique déployé via GitHub Pages"
+  },
+  "features": {
+    "title": "Fonctionnalités clés",
+    "subtitle": "Tout ce qu’il faut pour orchestrer du code IA sans perdre le contrôle.",
+    "items": {
+      "separation": { "title": "Orchestration vs exécution", "body": "Le Coordinator orchestre sans écrire de code. Les CLI hôtes exécutent sans décider. Aucun couplage, aucune ambiguïté." },
+      "containerRoles": { "title": "Conteneur = rôle", "body": "9 rôles d’équipe (PM, Architect, Frontend, Backend, QA, Security, DevOps) chacun dans son propre conteneur, scalable et remplaçable indépendamment." },
+      "a2a": { "title": "Collaboration via A2A", "body": "Messagerie structurée entre agents. Mode InProc pour le développement, Redis Pub/Sub pour le déploiement conteneurisé." },
+      "quality": { "title": "Porte de qualité déterministe", "body": "golangci-lint, go vet et go test exécutés comme une vérification machine stricte. Aucune autoévaluation du modèle." },
+      "rag": { "title": "RAG + mémoire projet", "body": "La recherche BM25 injecte du contexte. La mémoire accumule les leçons d’échec et les solutions passées entre les exécutions." },
+      "protocols": { "title": "Quatre protocoles externes", "body": "gRPC pour le TUI, MCP pour les outils externes, ACP pour les clients Agent standard, A2A pour le maillage inter-instances." },
+      "local": { "title": "Local d’abord, sans clé", "body": "Le code reste dans le conteneur. Aucune clé API conservée. Toute l’authentification est déléguée à la CLI hôte." }
+    }
+  },
+  "architecture": {
+    "title": "Architecture",
+    "subtitle": "Un flux en cinq couches : router → planifier → ordonnancer → exécuter → vérifier.",
+    "layers": {
+      "router": "Le routeur d’intention classifie la requête et choisit le flux.",
+      "planner": "Le planificateur construit un DAG de nœuds écrivain et relecteur.",
+      "scheduler": "L’ordonnanceur exécute les relecteurs en parallèle ; les écrivains en série sous un verrou single-writer.",
+      "knowledge": "La base de connaissances (BM25 RAG) et la mémoire injectent le contexte pertinent à chaque nœud.",
+      "qualityGate": "La porte de qualité exécute des vérifications machine ; les échecs sont remontés avec un détail structuré."
+    }
+  },
+  "quickstart": {
+    "title": "Démarrage rapide",
+    "subtitle": "Le mode binaire unique est le plus rapide ; TUI et conteneurs sont des couches optionnelles.",
+    "steps": {
+      "build": { "title": "1. Compiler le binaire", "body": "Depuis les sources — Go pur, aucune dépendance d’exécution." },
+      "init": { "title": "2. Initialiser un projet", "body": "Génère la configuration de l’espace de travail dans le répertoire courant." },
+      "run": { "title": "3. Exécuter un pipeline complet", "body": "Passez une exigence en langage naturel et choisissez un backend (Codex est le driver réel)." },
+      "verify": { "title": "4. Vérifier la qualité", "body": "Lancez la porte de qualité déterministe sur les artefacts produits." }
+    }
+  },
+  "docs": {
+    "title": "Documentation",
+    "subtitle": "Approfondissements : exigences, architecture, plans, décisions.",
+    "nav": {
+      "requirements": "Exigences",
+      "architecture": "Architecture",
+      "implementationPlan": "Plan d’implémentation",
+      "qualityConstraints": "Contraintes qualité",
+      "domainModel": "Modèle du domaine"
+    },
+    "tableOfContents": "Sur cette page",
+    "notFound": "Document introuvable",
+    "backToDocs": "Retour aux documents"
+  },
+  "common": { "language": "Langue", "theme": "Basculer le thème", "viewOnGithub": "Voir sur GitHub" },
+  "footer": { "copyright": "© Contributeurs AiCodingAgentTeam" }
+}

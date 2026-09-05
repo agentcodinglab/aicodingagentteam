@@ -1,0 +1,67 @@
+{
+  "brand": { "name": "AiCodingAgentTeam", "tagline": "Una piattaforma di orchestrazione per il coding con IA scritta in Go." },
+  "nav": { "home": "Home", "features": "Caratteristiche", "architecture": "Architettura", "quickstart": "Avvio rapido", "docs": "Documentazione", "github": "GitHub" },
+  "home": {
+    "hero": {
+      "eyebrow": "v0.2.1 · 9 lingue · MIT",
+      "title": "Orchestra un team di sviluppo a 9 ruoli con CLI IA.",
+      "subtitle": "AiCodingAgentTeam è un orchestratore in Go che delega a Codex, OpenCode, Claude-Code e DeepSeek-DSH — senza conservare chiavi API — per costruire, revisionare e consegnare codice sotto una porta di qualità deterministica.",
+      "ctaPrimary": "Avvio rapido",
+      "ctaSecondary": "Leggi la documentazione"
+    },
+    "featuresTitle": "Perché i team lo scelgono",
+    "architectureTitle": "Come si compone il tutto",
+    "quickstartTitle": "Da zero alla prima pipeline",
+    "footerNote": "Rilasciato sotto licenza MIT · Export statico distribuito tramite GitHub Pages"
+  },
+  "features": {
+    "title": "Caratteristiche principali",
+    "subtitle": "Tutto ciò che serve per orchestrare coding con IA senza cedere il controllo.",
+    "items": {
+      "separation": { "title": "Orchestrazione vs esecuzione", "body": "Il Coordinator orchestra e non scrive codice. Le CLI host eseguono e non decidono. Nessun accoppiamento, nessuna ambiguità." },
+      "containerRoles": { "title": "Container = ruolo", "body": "9 ruoli di team (PM, Architect, Frontend, Backend, QA, Security, DevOps), ciascuno nel proprio container, scalabile e sostituibile in modo indipendente." },
+      "a2a": { "title": "Collaborazione tramite A2A", "body": "Messaggistica strutturata tra agent. Modalità InProc per lo sviluppo, Redis Pub/Sub per il deployment containerizzato." },
+      "quality": { "title": "Porta di qualità deterministica", "body": "golangci-lint, go vet e go test come verifica meccanica rigorosa. Nessuna autovalutazione del modello." },
+      "rag": { "title": "RAG + memoria di progetto", "body": "La ricerca BM25 inietta contesto. La memoria accumula lezioni sugli errori e soluzioni storiche tra le esecuzioni." },
+      "protocols": { "title": "Quattro protocolli esterni", "body": "gRPC per la TUI, MCP per strumenti esterni, ACP per client Agent standard, A2A per il mesh tra istanze." },
+      "local": { "title": "Local-first, senza chiavi", "body": "Il codice resta nel container. Nessuna chiave API conservata. Tutta l’autenticazione è delegata alla CLI host." }
+    }
+  },
+  "architecture": {
+    "title": "Architettura",
+    "subtitle": "Un flusso a cinque livelli: instradare → pianificare → schedulare → eseguire → verificare.",
+    "layers": {
+      "router": "Il router delle intenzioni classifica la richiesta e sceglie il flusso.",
+      "planner": "Il planner costruisce un DAG di nodi writer e reviewer.",
+      "scheduler": "Lo scheduler esegue i reviewer in parallelo; i writer in serie sotto un lock single-writer.",
+      "knowledge": "La base di conoscenza (BM25 RAG) e la memoria iniettano contesto rilevante in ogni nodo.",
+      "qualityGate": "La porta di qualità esegue verifiche macchina; gli errori vengono restituiti con dettaglio strutturato."
+    }
+  },
+  "quickstart": {
+    "title": "Avvio rapido",
+    "subtitle": "La modalità binario singolo è il percorso più rapido; TUI e container sono layer opzionali.",
+    "steps": {
+      "build": { "title": "1. Compila il binario", "body": "Dal sorgente — Go puro, nessuna dipendenza runtime." },
+      "init": { "title": "2. Inizializza un progetto", "body": "Genera la configurazione dell’area di lavoro nella directory corrente." },
+      "run": { "title": "3. Esegui una pipeline completa", "body": "Passa un requisito in linguaggio naturale e scegli un backend (Codex è il driver reale)." },
+      "verify": { "title": "4. Verifica la qualità", "body": "Esegui la porta di qualità deterministica sugli artefatti prodotti." }
+    }
+  },
+  "docs": {
+    "title": "Documentazione",
+    "subtitle": "Approfondimenti: requisiti, architettura, piani, decisioni.",
+    "nav": {
+      "requirements": "Requisiti",
+      "architecture": "Architettura",
+      "implementationPlan": "Piano di implementazione",
+      "qualityConstraints": "Vincoli di qualità",
+      "domainModel": "Modello di dominio"
+    },
+    "tableOfContents": "In questa pagina",
+    "notFound": "Documento non trovato",
+    "backToDocs": "Torna alla documentazione"
+  },
+  "common": { "language": "Lingua", "theme": "Cambia tema", "viewOnGithub": "Vedi su GitHub" },
+  "footer": { "copyright": "© Contributori di AiCodingAgentTeam" }
+}

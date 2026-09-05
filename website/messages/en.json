@@ -1,0 +1,116 @@
+{
+  "brand": {
+    "name": "AiCodingAgentTeam",
+    "tagline": "A Golang-based AI coding orchestration platform."
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "architecture": "Architecture",
+    "quickstart": "Quick Start",
+    "docs": "Docs",
+    "github": "GitHub"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "v0.2.1 · 9 locales · MIT",
+      "title": "Coordinate a 9-role software team with AI coding CLIs.",
+      "subtitle": "AiCodingAgentTeam is a Go-based orchestrator that dispatches Codex, OpenCode, Claude-Code and DeepSeek-DSH — without holding any API key — to build, review, and ship code under a deterministic quality gate.",
+      "ctaPrimary": "Quick Start",
+      "ctaSecondary": "Read the Docs"
+    },
+    "featuresTitle": "Why teams use it",
+    "architectureTitle": "How it fits together",
+    "quickstartTitle": "From zero to first pipeline",
+    "footerNote": "Released under the MIT License · Static export deployed via GitHub Pages"
+  },
+  "features": {
+    "title": "Core features",
+    "subtitle": "Everything you need to orchestrate AI coding without giving up control.",
+    "items": {
+      "separation": {
+        "title": "Orchestration vs execution",
+        "body": "The Coordinator orchestrates and never writes code. Host CLIs execute and never decide. No coupling, no blurred responsibility."
+      },
+      "containerRoles": {
+        "title": "Container-as-role",
+        "body": "9 team roles — PM, Architect, Frontend, Backend, QA, Security, DevOps — each in its own container, independently scalable and replaceable."
+      },
+      "a2a": {
+        "title": "A2A protocol collaboration",
+        "body": "Structured inter-agent messaging. InProc mode for development, Redis Pub/Sub for containerized deployment."
+      },
+      "quality": {
+        "title": "Deterministic quality gate",
+        "body": "golangci-lint, go vet and go test run as a hard machine check. No relying on the model to grade itself."
+      },
+      "rag": {
+        "title": "RAG + project memory",
+        "body": "BM25 retrieval injects context. Memory accumulates failure lessons and historical solutions across runs."
+      },
+      "protocols": {
+        "title": "Four external protocols",
+        "body": "gRPC for the TUI, MCP for external tools, ACP for standard Agent clients, A2A for cross-instance mesh."
+      },
+      "local": {
+        "title": "Local-first, keyless",
+        "body": "Code stays inside the container. No API keys held. All authentication is delegated to the underlying host CLI."
+      }
+    }
+  },
+  "architecture": {
+    "title": "Architecture",
+    "subtitle": "A five-layer flow: route → plan → schedule → execute → verify.",
+    "layers": {
+      "router": "Intent router classifies the user's request and chooses the workflow.",
+      "planner": "Planner builds a DAG of writer and reviewer nodes.",
+      "scheduler": "Scheduler dispatches reviewer nodes in parallel; writer nodes serially under a single-writer lock.",
+      "knowledge": "Knowledge (BM25 RAG) and Memory inject relevant context into each node.",
+      "qualityGate": "Quality gate runs machine-checkable verifications; failures surface with structured detail."
+    }
+  },
+  "quickstart": {
+    "title": "Quick Start",
+    "subtitle": "Single-binary mode is the fastest path; TUI and containers are optional layers.",
+    "steps": {
+      "build": {
+        "title": "1. Build the binary",
+        "body": "Compile from source — pure Go, no runtime dependencies."
+      },
+      "init": {
+        "title": "2. Initialize a project",
+        "body": "Scaffold the workspace configuration in the current directory."
+      },
+      "run": {
+        "title": "3. Run a full pipeline",
+        "body": "Pass a natural-language requirement and pick a backend (Codex is the real driver)."
+      },
+      "verify": {
+        "title": "4. Verify quality",
+        "body": "Run the deterministic quality gate on the artifacts produced."
+      }
+    }
+  },
+  "docs": {
+    "title": "Documentation",
+    "subtitle": "Deep dives: requirements, architecture, plans, decisions.",
+    "nav": {
+      "requirements": "Requirements",
+      "architecture": "Architecture",
+      "implementationPlan": "Implementation Plan",
+      "qualityConstraints": "Quality Constraints",
+      "domainModel": "Domain Model"
+    },
+    "tableOfContents": "On this page",
+    "notFound": "Document not found",
+    "backToDocs": "Back to docs"
+  },
+  "common": {
+    "language": "Language",
+    "theme": "Toggle theme",
+    "viewOnGithub": "View on GitHub"
+  },
+  "footer": {
+    "copyright": "© AiCodingAgentTeam contributors"
+  }
+}

@@ -45,3 +45,9 @@ cover_all
 cover_latest
 cover_mcp
 cover_mcp.out
+
+# Next.js website build artifacts
+website/.next/
+website/out/
+website/next-env.d.ts
+website/.vercel/
