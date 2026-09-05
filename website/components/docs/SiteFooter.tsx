@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "../ui/LocaleLink";
 import { useTranslations } from "next-intl";
 import { Github } from "lucide-react";
 
@@ -26,19 +26,19 @@ export function SiteFooter() {
             </h4>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
-                <Link href="/features" className="text-ink-muted transition-colors hover:text-cyan">
+                <LocaleLink href="/features" className="text-ink-muted transition-colors hover:text-cyan">
                   {tLinks("features")}
-                </Link>
+                </LocaleLink>
               </li>
               <li>
-                <Link href="/architecture" className="text-ink-muted transition-colors hover:text-cyan">
+                <LocaleLink href="/architecture" className="text-ink-muted transition-colors hover:text-cyan">
                   {tLinks("architecture")}
-                </Link>
+                </LocaleLink>
               </li>
               <li>
-                <Link href="/quickstart" className="text-ink-muted transition-colors hover:text-cyan">
+                <LocaleLink href="/quickstart" className="text-ink-muted transition-colors hover:text-cyan">
                   {tLinks("quickstart")}
-                </Link>
+                </LocaleLink>
               </li>
             </ul>
           </div>
@@ -48,24 +48,24 @@ export function SiteFooter() {
             </h4>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
-                <Link href="/docs/requirements" className="text-ink-muted transition-colors hover:text-cyan">
+                <LocaleLink href="/docs/requirements" className="text-ink-muted transition-colors hover:text-cyan">
                   {tLinks("requirements")}
-                </Link>
+                </LocaleLink>
               </li>
               <li>
-                <Link href="/docs/implementation-plan" className="text-ink-muted transition-colors hover:text-cyan">
+                <LocaleLink href="/docs/implementation-plan" className="text-ink-muted transition-colors hover:text-cyan">
                   {tLinks("implementation")}
-                </Link>
+                </LocaleLink>
               </li>
               <li>
-                <Link href="/docs/quality-constraints" className="text-ink-muted transition-colors hover:text-cyan">
+                <LocaleLink href="/docs/quality-constraints" className="text-ink-muted transition-colors hover:text-cyan">
                   {tLinks("quality")}
-                </Link>
+                </LocaleLink>
               </li>
               <li>
-                <Link href="/docs/domain-model" className="text-ink-muted transition-colors hover:text-cyan">
+                <LocaleLink href="/docs/domain-model" className="text-ink-muted transition-colors hover:text-cyan">
                   {tLinks("domain")}
-                </Link>
+                </LocaleLink>
               </li>
             </ul>
           </div>

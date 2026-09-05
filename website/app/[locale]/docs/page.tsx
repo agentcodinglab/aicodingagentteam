@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
-export default function DocsIndex() {
-  redirect('/docs/requirements');
+export default function DocsIndex({ params: { locale } }: { params: { locale: string } }) {
+  redirect(`/${locale}/docs/requirements`);
 }

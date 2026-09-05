@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "../ui/LocaleLink";
 import { ChevronLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Reveal } from "../ui/Reveal";
@@ -25,13 +25,13 @@ export function PageHero({ eyebrow, title, subtitle }: Props) {
       <div className="absolute -top-32 left-1/2 -z-10 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-duo opacity-20 blur-3xl" />
       <div className="container mx-auto max-w-5xl px-6">
         <Reveal>
-          <Link
+          <LocaleLink
             href="/"
             className="mb-6 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-muted2 transition-colors hover:text-cyan"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             {t("backToHome")}
-          </Link>
+          </LocaleLink>
         </Reveal>
         <Reveal delay={80}>
           <p className="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-cyan">
