@@ -12,17 +12,15 @@
 module.exports = {
   ci: {
     collect: {
-      // Static export directory produced by `next build`.
-      staticDistDir: './out',
-      // Test the 4 highest-priority locales + the root redirect target.
+            // Test the 4 highest-priority locales + the root redirect target.
       // URLs use root-relative paths because lhci+staticDistDir auto-
       // prefixes the dynamic port assigned by treosh's internal server.
       url: [
-        '/',
-        '/en/',
-        '/zh/',
-        '/ja/',
-        '/ko/',
+        'http://localhost:3000/',
+        'http://localhost:3000/en/',
+        'http://localhost:3000/zh/',
+        'http://localhost:3000/ja/',
+        'http://localhost:3000/ko/',
       ],
       numberOfRuns: 1,
       settings: {
@@ -58,4 +56,6 @@ module.exports = {
     },
   },
 };
+
+
 
