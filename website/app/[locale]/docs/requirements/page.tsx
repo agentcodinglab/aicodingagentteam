@@ -7,10 +7,15 @@ type Props = { params: { locale: string } };
 
 export default async function Page({ params: { locale } }: Props) {
   setRequestLocale(locale);
-  const file = locale === 'zh' ? 'requirements.md' : 'requirements.md';
-  const full = path.join(process.cwd(), 'content', 'docs', locale, file);
-  const raw = await fs.readFile(full, 'utf8');
-  // Strip leading '# ' title because the layout already shows the page title
+  const file = 'requirements.md';
+  const localized = path.join(process.cwd(), 'content', 'docs', locale, file);
+  const en = path.join(process.cwd(), 'content', 'docs', 'en', file);
+  let raw: string;
+  try {
+    raw = await fs.readFile(localized, 'utf8');
+  } catch {
+    raw = await fs.readFile(en, 'utf8');
+  }
   const stripped = raw.replace(/^#\s+.*\n/, '');
   return (
     <DocContent>
@@ -20,7 +25,6 @@ export default async function Page({ params: { locale } }: Props) {
 }
 
 function Markdown({ source }: { source: string }) {
-  // Minimal markdown renderer (headings, paragraphs, lists, code, tables, blockquote, links)
   const lines = source.split(/\r?\n/);
   const blocks: { type: string; lines: string[] }[] = [];
   let cur: { type: string; lines: string[] } | null = null;
@@ -29,13 +33,8 @@ function Markdown({ source }: { source: string }) {
       if (cur) blocks.push(cur);
       cur = { type: 'h' + ln.match(/^#{1,6}/)![0].length, lines: [ln.replace(/^#{1,6}\s+/, '')] };
     } else if (/^`/.test(ln)) {
-      if (cur && cur.type === 'code') {
-        blocks.push(cur);
-        cur = null;
-      } else {
-        if (cur) blocks.push(cur);
-        cur = { type: 'code', lines: [] };
-      }
+      if (cur && cur.type === 'code') { blocks.push(cur); cur = null; }
+      else { if (cur) blocks.push(cur); cur = { type: 'code', lines: [] }; }
     } else if (/^\s*[-*]\s+/.test(ln)) {
       if (cur && cur.type === 'ul') cur.lines.push(ln.replace(/^\s*[-*]\s+/, ''));
       else { if (cur) blocks.push(cur); cur = { type: 'ul', lines: [ln.replace(/^\s*[-*]\s+/, '')] }; }
