@@ -41,7 +41,7 @@ jobs:
       - name: Secret scan (gitleaks)
         run: |
           go install github.com/gitleaks/gitleaks/v8/cmd/gitleaks@latest
-          gitleaks detect --source . --no-banner --redact
+          gitleaks detect --source . --config .gitleaks.toml --no-banner --redact
       - name: SAST (semgrep)
         uses: returntocorp/semgrep-action@v1
         with:

@@ -1,0 +1,19 @@
+title = "AiCodingAgentTeam gitleaks config"
+
+[extend]
+useDefault = true
+
+# Ignore test files that intentionally contain fake secrets for rule testing
+[[allowlist]]
+description = "Test files with intentional fake secrets"
+paths = [
+  "internal/governance/rules_test.go",
+  "internal/governance/governance_test.go",
+  "internal/mcp/mcp_test.go",
+  "internal/a2a/schema_test.go",
+]
+
+# Ignore the governance rule pattern itself
+[[allowlist]]
+description = "Governance rule definitions"
+paths = ["internal/governance/rules.go"]
