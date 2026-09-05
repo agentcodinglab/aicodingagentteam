@@ -40,8 +40,7 @@ jobs:
           govulncheck ./...
       - name: Secret scan (gitleaks)
         run: |
-          go install github.com/gitleaks/gitleaks/v8/cmd/gitleaks@latest
-          gitleaks detect --no-git --source . --config .gitleaks.toml --no-banner --redact
+          docker run --rm -v "${GITHUB_WORKSPACE}:/path" -w /path zricethezav/gitleaks:latest detect --no-git --source . --config .gitleaks.toml --no-banner --redact
       - name: SAST (semgrep)
         uses: returntocorp/semgrep-action@v1
         with:
