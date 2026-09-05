@@ -8,6 +8,8 @@ const nextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   reactStrictMode: true,
+  basePath: '/aicodingagentteam',
+  assetPrefix: '/aicodingagentteam/',
 };
 
 module.exports = withNextIntl(nextConfig);
