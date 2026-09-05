@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Go E2E integration tests (quick edit + build + park/continue + API surface)
+- proof-pack zip generation (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)
+- Fail-open governance fault injection tests (closed engine + excluded path + disabled rule)
+- Concurrent write-lock mutex enforcement tests
+- A2A contract JSON schema validation (AgentCard / Task / Result / ProgressEvent round-trip)
+- CI: gitleaks secret scanning step
+- CI: Semgrep SAST static analysis step
+- CI: Trivy container image scanning job
+- CLI smoke tests (version, init, memory show, knowledge demo, verify, knowledge index)
+- TUI component render tests (StatusBar + ResultPanel + HelpPanel via ink-testing-library)
+- RAG spec 13 acceptance checkboxes closed
 - Root README.md with architecture overview and quick start guide
 - MIT LICENSE file
 - CONTRIBUTING.md with development workflow
@@ -34,6 +45,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-09-02
 
 ### Added
+- Go E2E integration tests (quick edit + build + park/continue + API surface)
+- proof-pack zip generation (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)
+- Fail-open governance fault injection tests (closed engine + excluded path + disabled rule)
+- Concurrent write-lock mutex enforcement tests
+- A2A contract JSON schema validation (AgentCard / Task / Result / ProgressEvent round-trip)
+- CI: gitleaks secret scanning step
+- CI: Semgrep SAST static analysis step
+- CI: Trivy container image scanning job
+- CLI smoke tests (version, init, memory show, knowledge demo, verify, knowledge index)
+- TUI component render tests (StatusBar + ResultPanel + HelpPanel via ink-testing-library)
+- RAG spec 13 acceptance checkboxes closed
 - Go orchestration engine: router to planner to scheduler to coordinator 5-layer flow
 - Host drivers: Codex (real exec), OpenCode (real exec), Claude (stub), DSH (stub)
 - A2A protocol: InProcBus + RedisBus Pub/Sub

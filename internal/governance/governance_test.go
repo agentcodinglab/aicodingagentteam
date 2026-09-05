@@ -321,3 +321,46 @@ func TestItoa(t *testing.T) {
 		}
 	}
 }
+
+func TestFailOpen_ClosedEngine(t *testing.T) {
+	e := New()
+	e.Close()
+	// A closed engine should return no violations (fail-open)
+	violations := e.Check(context.Background(), "test.go", "package main")
+	if len(violations) != 0 {
+		t.Errorf("closed engine should return 0 violations, got %d", len(violations))
+	}
+}
+
+func TestFailOpen_ExcludedPath(t *testing.T) {
+	e := NewWithConfig("", nil)
+	// Manually set an exclusion
+	e.mu.Lock()
+	e.config.Exclusions.Paths = []string{"*test*"}
+	e.mu.Unlock()
+
+	violations := e.Check(context.Background(), "main_test.go", "package main\nvar apiKey = \"sk-1234567890abcdef1234567890abcdef12345678\"")
+	if len(violations) != 0 {
+		t.Errorf("excluded path should return 0 violations, got %d", len(violations))
+	}
+}
+
+func TestFailOpen_DisabledRule(t *testing.T) {
+	e := NewWithConfig("", nil)
+	// Disable sec-secret-leak
+	e.mu.Lock()
+	for i, r := range e.rules {
+		if r.ID == "sec-secret-leak" {
+			e.rules[i].Enabled = false
+		}
+	}
+	e.mu.Unlock()
+
+	content := "package main\nvar apiKey = \"sk-1234567890abcdef1234567890abcdef12345678\""
+	violations := e.Check(context.Background(), "leaky.go", content)
+	for _, v := range violations {
+		if v.RuleID == "sec-secret-leak" {
+			t.Error("disabled rule should not produce violations")
+		}
+	}
+}

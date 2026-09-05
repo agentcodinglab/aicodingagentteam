@@ -253,3 +253,54 @@ func TestNew_WorkspaceDefaultsToCwd(t *testing.T) {
 		t.Error("expected workspace to default to cwd")
 	}
 }
+
+func TestConcurrentWriteLock_MutexEnforced(t *testing.T) {
+	ws := t.TempDir()
+	bus := a2a.NewBus()
+	s := NewWithBus(ws, bus)
+
+	// Pre-create a write.lock to simulate contention
+	lockDir := filepath.Join(ws, ".aicodingagentteam")
+	_ = os.MkdirAll(lockDir, 0o755)
+	_ = os.WriteFile(filepath.Join(lockDir, "write.lock"), []byte("other|backend|2026-09-03T10:00:00Z"), 0o644)
+
+	plan := &types.Plan{
+		ID: "test-plan",
+		Nodes: []types.TaskNode{
+			{ID: "n1", Phase: types.PhaseFrontend, Role: types.RoleFrontend, Writer: true, ArtifactsOut: []string{"src/"}},
+		},
+	}
+
+	result, err := s.Execute(context.Background(), plan)
+	if err != nil {
+		t.Fatalf("Execute failed: %v", err)
+	}
+	// Writer node should be parked due to lock
+	if !result.Parked {
+		t.Error("expected plan to be parked when write lock is held")
+	}
+}
+
+func TestConcurrentWriteLock_ReleasedAfterExecute(t *testing.T) {
+	ws := t.TempDir()
+	bus := a2a.NewBus()
+	s := NewWithBus(ws, bus)
+
+	plan := &types.Plan{
+		ID: "test-plan",
+		Nodes: []types.TaskNode{
+			{ID: "n1", Phase: types.PhaseFrontend, Role: types.RoleFrontend, Writer: true, ArtifactsOut: []string{"src/"}},
+		},
+	}
+
+	_, err := s.Execute(context.Background(), plan)
+	if err != nil {
+		t.Fatalf("Execute failed: %v", err)
+	}
+
+	// Lock should be released after execution
+	lockPath := filepath.Join(ws, ".aicodingagentteam", "write.lock")
+	if _, err := os.Stat(lockPath); !os.IsNotExist(err) {
+		t.Error("write lock should be released after execution completes")
+	}
+}

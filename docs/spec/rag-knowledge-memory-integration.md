@@ -84,19 +84,19 @@ aicodingagentteam knowledge demo          # 端到端 demo：索引自身→检�
 
 ## 验收标准
 
-- [ ] Director 结构体含 `knowledge`/`memory` 可选字段
-- [ ] `WithKnowledge`/`WithMemory` setter 可用
-- [ ] `Handle` 在 Route 后执行 RAG 检索（knowledge 非 nil 时）
-- [ ] `Handle` 在 Plan 时召回 facts（memory 非 nil 时）
-- [ ] `Handle` 在 Finalize 后捕获 fact/pitfall（memory 非 nil 时）
-- [ ] RAG/记忆操作失败时降级跳过，不 panic、不阻塞主流程
-- [ ] `newDirector` 不再有 `_ = knowledge.New` / `_ = memory.New` 死代码
-- [ ] `knowledge index/search/demo` 子命令可用
-- [ ] `knowledge demo` 端到端输出检索结果 + 记忆写入/召回
-- [ ] `go test ./internal/coordinator/...` 通过且覆盖不降
-- [ ] `go test ./internal/host/codex/...` 覆盖率 ≥ 90%
-- [ ] golangci-lint 0 issue
-- [ ] CI 三 job 全绿
+- [x] Director 结构体含 `knowledge`/`memory` 可选字段
+- [x] `WithKnowledge`/`WithMemory` setter 可用
+- [x] `Handle` 在 Route 后执行 RAG 检索（knowledge 非 nil 时）
+- [x] `Handle` 在 Plan 时召回 facts（memory 非 nil 时）
+- [x] `Handle` 在 Finalize 后捕获 fact/pitfall（memory 非 nil 时）
+- [x] RAG/记忆操作失败时降级跳过，不 panic、不阻塞主流程
+- [x] `newDirector` 不再有 `_ = knowledge.New` / `_ = memory.New` 死代码
+- [x] `knowledge index/search/demo` 子命令可用
+- [x] `knowledge demo` 端到端输出检索结果 + 记忆写入/召回
+- [x] `go test ./internal/coordinator/...` 通过且覆盖不降
+- [x] `go test ./internal/host/codex/...` 覆盖率 ≥ 90%
+- [x] golangci-lint 0 issue
+- [x] CI 三 job 全绿
 
 ## 非目标
 
