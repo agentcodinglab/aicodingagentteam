@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { TextProvider } from "ink";
 import { render } from "ink-testing-library";
 import React from "react";
 import { useStore } from "../store.js";
