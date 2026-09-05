@@ -51,3 +51,7 @@ website/.next/
 website/out/
 website/next-env.d.ts
 website/.vercel/
+
+# TypeScript incremental cache
+*.tsbuildinfo
+website/tsconfig.tsbuildinfo
