@@ -50,6 +50,11 @@ func (r *Registry) List() []runtime.Backend {
 	return out
 }
 
+// Count returns the number of registered drivers.
+func (r *Registry) Count() int {
+	return len(r.drivers)
+}
+
 // AuthCheck verifies that a backend is ready before scheduling.
 func (r *Registry) AuthCheck(ctx context.Context, b runtime.Backend) error {
 	rt, err := r.Get(b)

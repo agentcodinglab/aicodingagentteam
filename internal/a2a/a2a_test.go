@@ -145,3 +145,36 @@ func TestCount(t *testing.T) {
 		t.Error("should have 1 agent")
 	}
 }
+
+func BenchmarkDelegateParallel(b *testing.B) {
+	bus := NewBus()
+	bus.Register(&mockAgent{
+		card:    AgentCard{ID: "qa-1", Role: types.RoleQA},
+		verdict: types.Verdict{Decision: types.DecisionAccept},
+	})
+	bus.Register(&mockAgent{
+		card:    AgentCard{ID: "pm-1", Role: types.RolePM},
+		verdict: types.Verdict{Decision: types.DecisionAccept},
+	})
+	tasks := []Task{
+		{TaskID: "t1", Role: types.RoleQA},
+		{TaskID: "t2", Role: types.RolePM},
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = bus.DelegateParallel(context.Background(), tasks)
+	}
+}
+
+func BenchmarkDelegate(b *testing.B) {
+	bus := NewBus()
+	bus.Register(&mockAgent{
+		card:    AgentCard{ID: "qa-1", Role: types.RoleQA},
+		verdict: types.Verdict{Decision: types.DecisionAccept},
+	})
+	task := Task{TaskID: "t1", Role: types.RoleQA}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = bus.Delegate(context.Background(), task)
+	}
+}

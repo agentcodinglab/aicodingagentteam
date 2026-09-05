@@ -1,43 +1,84 @@
-# 贡献指南 — AiCodingAgentTeam
+# Contributing to AiCodingAgentTeam
 
-> 本文件补充 `aicoding_docs/docs/standards/git/git-workflow.md` 的项目专属约定。
+Thank you for your interest in contributing! This project follows the Vibe Coding methodology: **人对意图负责，AI 对实现负责**.
 
-## 开发流程
+## Development Workflow
 
-1. **Spec-first**：新功能先写 `docs/spec/`，遵循 `aicoding_docs/docs/templates/SPEC.md`
-2. **Plan**：再写 `docs/plan/`，遵循 `aicoding_docs/docs/templates/PLAN.md`
-3. **Implement**：按计划逐步实现，测试先行
-4. **Verify**：`make all`（lint + vet + test + build）全绿
-5. **ADR**：非平凡决策记 `docs/adr/`
-
-## 提交规范
-
-遵循 Conventional Commits（见 git-workflow.md）：
+This project follows a three-phase closed loop for every feature:
 
 ```
-feat(coordinator): add DAG persistence to planner
-fix(host): handle codex stderr noise filtering
-docs(adr): record ADR-0007 host CLI spike
+规格(Spec) → 计划(Plan) → 实现(Implement) → 验证(Verify)
 ```
 
-## 分支模型
+1. **Spec-first**: Write requirements to `docs/spec/{feature}.md` before coding.
+2. **Plan**: Break down into atomic, verifiable steps in `docs/plan/{feature}.md`.
+3. **Implement**: Test-first (TDD), one step at a time.
+4. **Verify**: `make all` (lint + vet + test + build) must pass.
 
-- `main`：稳定主干，PR 合入
-- `feat/*`：功能分支
-- `fix/*`：修复分支
+See [AGENTS.md](AGENTS.md) for the full specification.
 
-## 本地开发
+## Prerequisites
+
+- Go ≥ 1.25
+- Node.js ≥ 20 (TUI client only)
+- golangci-lint v2.13+
+- Docker ≥ 24.0 (containerized deployment only)
+
+## Getting Started
 
 ```bash
-make all       # lint + vet + test + build
-make test      # 仅测试
-make run       # 启动服务
-make clean     # 清理产物
+git clone https://github.com/agentcodinglab/aicodingagentteam.git
+cd aicodingagentteam
+
+# Build
+make build
+
+# Run all checks
+make all
+
+# Run coordinator
+make run
+
+# TUI client
+cd tui && npm install && npm run build && node dist/cli.js --demo
 ```
 
-## 代码规范
+## Coding Standards
 
-- Go：遵循 `aicoding_docs/docs/standards/languages/go.md`
-- TypeScript（TUI）：遵循 `aicoding_docs/docs/standards/languages/typescript.md`
-- 通用：遵循 `aicoding_docs/docs/standards/general.md`
-- 质量红线：`docs/CONSTRAINTS.md`，不得静默降级
+- **Go**: Follow `aicoding_docs/docs/standards/languages/go.md` — `internal/` + `pkg/` + `cmd/` layout, lowercase package names, explicit error handling.
+- **TypeScript**: Follow `aicoding_docs/docs/standards/languages/typescript.md` — strict mode, no `any`, explicit types.
+- **Tests**: Follow `aicoding_docs/docs/standards/testing/testing.md` — TDD, test pyramid, ≥80% Go coverage (core ≥90%).
+
+## Quality Gates (do not silently lower)
+
+- Go coverage ≥ 80% (coordinator/scheduler/router ≥ 90%)
+- Lint: 0 new warnings (golangci-lint + eslint)
+- Security: 0 high-severity vulnerabilities (govulncheck + npm audit)
+- No hardcoded API keys in Coordinator or Agent code
+- See [docs/CONSTRAINTS.md](docs/CONSTRAINTS.md) for full thresholds
+
+## Git Workflow
+
+- Branch from `main`, name as `feat/{scope}`, `fix/{scope}`, or `docs/{scope}`
+- Commit message: `type(scope): description` (e.g., `feat(coordinator): wire RAG into Handle`)
+- Squash-merge to `main` after CI passes
+- Do not push directly to `main` without review
+
+## Pull Request Checklist
+
+- [ ] Spec written to `docs/spec/` (if new feature)
+- [ ] Plan written to `docs/plan/` (if multi-step)
+- [ ] Tests written and passing (`go test ./... -count=1`)
+- [ ] Lint passes (`golangci-lint run ./...`)
+- [ ] Build passes (`go build ./...`)
+- [ ] No quality gate thresholds lowered
+- [ ] Documentation updated (if behavior changed)
+- [ ] No hardcoded secrets or API keys
+
+## Reporting Issues
+
+Use the issue templates in `.github/ISSUE_TEMPLATE/`. Provide:
+- Expected vs actual behavior
+- Steps to reproduce
+- Environment (OS, Go version, backend CLI)
+- Logs or error output

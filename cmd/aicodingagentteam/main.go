@@ -27,6 +27,13 @@ import (
 	"github.com/agentcodinglab/aicodingagentteam/pkg/api"
 )
 
+// Build metadata (injected by goreleaser ldflags).
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
 	if len(os.Args) < 2 {
 		printUsage()
@@ -55,7 +62,7 @@ func main() {
 	case "knowledge":
 		cmdKnowledge(ctx, os.Args[2:])
 	case "version":
-		fmt.Println("aicodingagentteam v0.1.0")
+		fmt.Printf("aicodingagentteam %s (commit=%s, built=%s)\n", version, commit, date)
 	default:
 		printUsage()
 	}
