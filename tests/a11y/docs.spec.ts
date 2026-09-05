@@ -18,7 +18,9 @@ test.afterAll(async () => {
   await server.close();
 });
 
-const DOCS_PATHS = ['docs', 'docs/architecture', 'docs/changelog'] as const;
+// Note: `/docs/` itself is a server-side redirect (not statically exportable),
+// so we test the actual document pages.
+const DOCS_PATHS = ['docs/requirements', 'docs/architecture', 'docs/changelog'] as const;
 
 for (const locale of LOCALES) {
   for (const path of DOCS_PATHS) {

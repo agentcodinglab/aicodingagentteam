@@ -3,8 +3,8 @@
 // ADR-0016: docs/adr/ADR-0016-direction-a-governance.md
 // CI: .github/workflows/governance.yml
 //
-// Strategy: run against the exported static site (next build -> ./out).
-// Avoids spinning up a server and removes network noise.
+// Strategy: serve the static export via python3 (already on GH runners),
+// let lhci spawn Chrome to crawl the URLs.
 
 'use strict';
 
@@ -13,13 +13,16 @@ module.exports = {
     collect: {
       // Static export directory produced by `next build`.
       staticDistDir: './out',
+      startServerCommand: 'python3 -m http.server 3000 --directory ./out',
+      startServerReadyPattern: 'Serving HTTP',
+      startServerReadyTimeout: 30000,
       // Test the 4 highest-priority locales + the root redirect target.
       url: [
-        'http://localhost/',
-        'http://localhost/en/',
-        'http://localhost/zh/',
-        'http://localhost/ja/',
-        'http://localhost/ko/',
+        'http://localhost:3000/',
+        'http://localhost:3000/en/',
+        'http://localhost:3000/zh/',
+        'http://localhost:3000/ja/',
+        'http://localhost:3000/ko/',
       ],
       numberOfRuns: 1,
       settings: {
@@ -30,7 +33,7 @@ module.exports = {
         // Only collect the categories we care about.
         onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
         // Audits that legitimately fail on a static export (PWA / service-worker)
-        // or on localhost; don't penalize.
+        // or on localhost; do not penalize.
         skipAudits: [
           'is-on-https',
           'redirects-http',
@@ -42,7 +45,6 @@ module.exports = {
     },
     assert: {
       // ADR-0016 thresholds.
-      // Tighten after first baseline run if scores comfortably exceed minimum.
       assertions: {
         'categories:performance':    ['error', { minScore: 0.90 }],
         'categories:accessibility':  ['error', { minScore: 0.95 }],
