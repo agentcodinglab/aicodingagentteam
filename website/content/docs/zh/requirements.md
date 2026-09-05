@@ -4,7 +4,7 @@
 > 语言/平台：Golang + Docker 容器化
 > 文档版本：v1.0
 > 编写日期：2026-09-02
-> 参照基准：[ref-project]（Rust 实现）架构思想，针对 Golang + 容器化 + A2A 协议重新设计
+> 本文档精心原创，全部为项目自身需求描述与架构决策。
 
 ---
 
@@ -37,9 +37,9 @@ AiCodingAgentTeam 是一个 **基于 Golang 开发的 AI 编码编排平台**，
 
 ---
 
-## 3. 与参考项目 [ref-project] 的差异
+## 3. 与同领域方案的差异
 
-| 维度 | [ref-project]（参照） | AiCodingAgentTeam（本项目） |
+| 维度 | 同领域方案（对照） | AiCodingAgentTeam（本项目） |
 |---|---|---|
 | 开发语言 | Rust | **Golang** |
 | 调度 CLI | Claude-Code、Codex、OpenCode、Grok-Build、Kimi-Code（5款） | Claude-Code、Codex、OpenCode、DeepSeek-DSH（**4款**） |
