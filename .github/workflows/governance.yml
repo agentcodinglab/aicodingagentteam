@@ -80,7 +80,11 @@ jobs:
       - name: Serve static export
         working-directory: website
         run: python3 -m http.server 3000 --directory ./out &
+        shell: bash
+
       - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v9
+        with:
           configPath: website/.lighthouserc.cjs
           uploadArtifacts: true
           temporaryPublicStorage: true
