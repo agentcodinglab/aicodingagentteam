@@ -1,0 +1,15 @@
+{
+  "name": "aicodingagentteam-governance-tests",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:a11y": "playwright test --config=playwright.config.ts",
+    "test:a11y:install": "playwright install --with-deps chromium"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/test": "^1.49.0",
+    "axe-core": "^4.10.2"
+  }
+}
