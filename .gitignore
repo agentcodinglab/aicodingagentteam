@@ -38,3 +38,6 @@ serve.log
 serve.err
 output/quality-gate.md
 
+codex_cov
+cover_codex
+cover_codex.out

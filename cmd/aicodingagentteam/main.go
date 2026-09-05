@@ -52,6 +52,8 @@ func main() {
 		cmdReport(ctx, cfg)
 	case "serve":
 		cmdServe(ctx, cfg)
+	case "knowledge":
+		cmdKnowledge(ctx, os.Args[2:])
 	case "version":
 		fmt.Println("aicodingagentteam v0.1.0")
 	default:
@@ -223,16 +225,104 @@ func newDirector(cfg *config.Config) *coordinator.Director {
 	al := audit.New(".aicodingagentteam/audit")
 	bus := a2a.NewBusFromEnv(al)
 	_ = host.NewRegistry()
-	_ = knowledge.New(false)
-	_ = memory.New(".aicodingagentteam/memory")
+	keng := knowledge.New(false)
+	mem := memory.New(".aicodingagentteam/memory")
 	_ = governance.NewWithConfig(".aicodingagentteam/rules.json", al)
-	return coordinator.NewWithBus(
+	return coordinator.NewWithOptions(
 		router.New(),
 		planner.New(""),
 		scheduler.NewFull("", bus, al),
 		qualitygate.NewWithAudit(cfg.Quality.Threshold, al),
 		bus,
+		coordinator.WithKnowledge(keng),
+		coordinator.WithMemory(mem),
 	)
+}
+
+func cmdKnowledge(ctx context.Context, args []string) {
+	if len(args) < 1 {
+		fmt.Println(`Usage:
+  aicodingagentteam knowledge index [dir]   Index a directory (default .)
+  aicodingagentteam knowledge search "query" Retrieve top-5 chunks
+  aicodingagentteam knowledge demo          End-to-end RAG + memory demo`)
+		return
+	}
+	sub := args[0]
+	switch sub {
+	case "index":
+		dir := "."
+		if len(args) > 1 {
+			dir = args[1]
+		}
+		keng := knowledge.New(false)
+		if err := keng.IndexDirectory(ctx, dir); err != nil {
+			fmt.Fprintf(os.Stderr, "index error: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("indexed %d documents from %s (cloud-embed=%v)\n", keng.DocCount(), dir, keng.IsCloudEmbed())
+	case "search":
+		if len(args) < 2 {
+			fmt.Fprintln(os.Stderr, "search requires a query")
+			os.Exit(1)
+		}
+		keng := knowledge.New(false)
+		_ = keng.IndexDirectory(ctx, ".")
+		chunks := keng.Retrieve(ctx, args[1], 5)
+		fmt.Printf("top-%d results for %q:\n", len(chunks), args[1])
+		for i, c := range chunks {
+			fmt.Printf("  %d. [%.4f] %s\n", i+1, c.Score, c.Path)
+		}
+	case "demo":
+		knowledgeDemo(ctx)
+	default:
+		fmt.Fprintf(os.Stderr, "unknown knowledge subcommand: %s\n", sub)
+		os.Exit(1)
+	}
+}
+
+func knowledgeDemo(ctx context.Context) {
+	dir := tempDir()
+	_ = os.MkdirAll(dir, 0o755)
+
+	// Write two sample files for indexing
+	_ = os.WriteFile(filepath.Join(dir, "router.go"), []byte("package main\nfunc route(msg string) string { return msg }\n"), 0o644)
+	_ = os.WriteFile(filepath.Join(dir, "planner.go"), []byte("package main\nfunc plan(intent string) { println(intent) }\n"), 0o644)
+
+	// 1. Index
+	keng := knowledge.New(false)
+	if err := keng.IndexDirectory(ctx, dir); err != nil {
+		fmt.Fprintf(os.Stderr, "index error: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("[demo] indexed %d documents\n", keng.DocCount())
+
+	// 2. Retrieve
+	chunks := keng.Retrieve(ctx, "route message intent", 3)
+	fmt.Printf("[demo] retrieve 'route message intent' -> %d chunks:\n", len(chunks))
+	for i, c := range chunks {
+		fmt.Printf("  %d. [%.4f] %s\n", i+1, c.Score, c.Path)
+	}
+
+	// 3. Memory: capture a fact
+	mem := memory.New(filepath.Join(dir, ".memory"))
+	_ = mem.Capture(ctx, memory.Fact{Key: "demo-fact", Value: "router routes messages", Source: "knowledge-demo"})
+	fmt.Println("[demo] captured fact: demo-fact")
+
+	// 4. Memory: recall
+	facts, _ := mem.RecallFacts(ctx)
+	fmt.Printf("[demo] recalled %d facts:\n", len(facts))
+	for _, f := range facts {
+		fmt.Printf("  - %s: %s\n", f.Key, f.Value)
+	}
+
+	// 5. Status
+	fmt.Printf("[demo] cloud-embed=%v doc-count=%d\n", keng.IsCloudEmbed(), keng.DocCount())
+	fmt.Println("[demo] RAG + memory end-to-end complete")
+}
+
+var tempDir = func() string {
+	d, _ := os.MkdirTemp("", "aicodingagentteam-demo-*")
+	return d
 }
 
 func printCheckDetails(details []types.CheckSummary) {
@@ -257,6 +347,9 @@ Usage:
   aicodingagentteam verify                         Run quality gate
   aicodingagentteam govern [--ci] [path]           Governance scan
   aicodingagentteam serve                          Start coordinator server
+  aicodingagentteam knowledge index [dir]         Index a directory
+  aicodingagentteam knowledge search "query"      Retrieve top-5 chunks
+  aicodingagentteam knowledge demo                 End-to-end RAG + memory demo
   aicodingagentteam version                        Print version`)
 }
 
