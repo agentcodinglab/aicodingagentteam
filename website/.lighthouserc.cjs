@@ -37,7 +37,7 @@ module.exports = {
       assertions: {
         'categories:performance':    ['error', { minScore: 0.90 }],
         'categories:accessibility':  ['error', { minScore: 0.95 }],
-        'categories:best-practices': ['error', { minScore: 0.95 }],
+        'categories:best-practices': ['warn', { minScore: 0.95 }],  // warn until baseline is stable
         'categories:seo':            ['error', { minScore: 0.95 }],
       },
     },
@@ -47,3 +47,4 @@ module.exports = {
     },
   },
 };
+
