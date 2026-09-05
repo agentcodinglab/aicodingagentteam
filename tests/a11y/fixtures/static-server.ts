@@ -1,11 +1,14 @@
 // fixtures/static-server.ts - serves ./website/out on an ephemeral port.
 //
 // Used by Playwright + axe-core to crawl the static export without
-// spinning up a real Next.js server.
+// spinning up a real Next.js server. Resolves the output directory
+// by walking up from cwd, so the suite works whether run from
+// repo root or from tests/.
 
 import { createServer, type Server } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { extname, join, normalize } from 'node:path';
+import { existsSync } from 'node:fs';
+import { extname, join, normalize, dirname } from 'node:path';
 
 export type StaticServer = {
   url: string;
@@ -29,8 +32,20 @@ const MIME: Record<string, string> = {
   '.xml': 'application/xml; charset=utf-8',
 };
 
+function resolveOutDir(): string {
+  if (process.env.WEBSITE_OUT_DIR) return normalize(process.env.WEBSITE_OUT_DIR);
+  let dir = process.cwd();
+  for (let i = 0; i < 6; i++) {
+    const candidate = normalize(join(dir, 'website/out'));
+    if (existsSync(candidate)) return candidate;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return normalize(join(process.cwd(), 'website/out'));
+}
+
 async function resolveFile(rootDir: string, urlPath: string): Promise<string | null> {
-  // Map "/" -> "/index.html"; "/en/" -> "/en/index.html"; etc.
   const cleaned = urlPath.split('?')[0].split('#')[0];
   const candidates = [cleaned, join(cleaned, 'index.html')];
   for (const c of candidates) {
@@ -47,7 +62,7 @@ async function resolveFile(rootDir: string, urlPath: string): Promise<string | n
 }
 
 export async function startStaticServer(): Promise<StaticServer> {
-  const rootDir = normalize(join(process.cwd(), 'website/out'));
+  const rootDir = resolveOutDir();
   const server: Server = createServer(async (req, res) => {
     try {
       const urlPath = req.url ?? '/';
@@ -71,7 +86,7 @@ export async function startStaticServer(): Promise<StaticServer> {
   if (!addr || typeof addr === 'string') throw new Error('static-server: bad address');
 
   return {
-    url: `http://127.0.0.1:${addr.port}`,
+    url: 'http://127.0.0.1:' + addr.port,
     close: () =>
       new Promise<void>((resolve, reject) =>
         server.close((err) => (err ? reject(err) : resolve())),
