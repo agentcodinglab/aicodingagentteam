@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import { Sidebar } from '../../../components/docs/Sidebar';
-import { TOC } from '../../../components/docs/TOC';
+import { Sidebar } from '../@/components/docs/Sidebar';
+import { TOC } from '../@/components/docs/TOC';
 
 export default function DocsLayout({ children }: { children: ReactNode }) {
   return (

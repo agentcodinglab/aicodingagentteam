@@ -1,6 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
-import { Card } from '../../components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Bot, Container, GitBranch, ShieldCheck, Database, Network, Lock } from 'lucide-react';
 
 const ICONS = [Bot, Container, GitBranch, ShieldCheck, Database, Network, Lock];

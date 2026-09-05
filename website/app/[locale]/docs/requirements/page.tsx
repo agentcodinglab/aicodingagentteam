@@ -1,5 +1,5 @@
 import { setRequestLocale } from 'next-intl/server';
-import { DocContent } from '../../../../components/docs/DocContent';
+import { DocContent } from '@/components/docs/DocContent';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 

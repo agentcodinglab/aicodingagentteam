@@ -1,9 +1,9 @@
 import { setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
-import { Hero } from '../../components/marketing/Hero';
-import { FeatureGrid } from '../../components/marketing/FeatureGrid';
-import { ArchitectureOverview } from '../../components/marketing/ArchitectureOverview';
-import { Quickstart } from '../../components/marketing/Quickstart';
+import { Hero } from '@/components/marketing/Hero';
+import { FeatureGrid } from '@/components/marketing/FeatureGrid';
+import { ArchitectureOverview } from '@/components/marketing/ArchitectureOverview';
+import { Quickstart } from '@/components/marketing/Quickstart';
 
 export default function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);

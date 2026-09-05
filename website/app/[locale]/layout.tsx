@@ -2,9 +2,9 @@ import { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { locales, type Locale } from '../../lib/i18n';
-import { SiteHeader } from '../../components/docs/SiteHeader';
-import { SiteFooter } from '../../components/docs/SiteFooter';
+import { locales, type Locale } from '@/lib/i18n';
+import { SiteHeader } from '@/components/docs/SiteHeader';
+import { SiteFooter } from '@/components/docs/SiteFooter';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
