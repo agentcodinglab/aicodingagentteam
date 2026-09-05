@@ -27,7 +27,15 @@
         "→ Router классифицировал намерение → Planner построил DAG из 9 узлов → Scheduler отправил рецензентов параллельно → Quality gate: 0 lint, 0 vet, 0 сбоев тестов",
         "✓ proof-pack.zip (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
       ],
-      "ctaGithub": "Поставить звёздочку на GitHub"
+      "ctaGithub": "Поставить звёздочку на GitHub",
+      "titlePrefix": "Оркестрируйте ",
+      "titleHighlight": "команду из 9 ролей",
+      "titleSuffix": " с помощью AI-CLI.",
+      "meta1": "9 ролей",
+      "meta2": "4 протокола",
+      "meta3": "0 ключей",
+      "restart": "перезапустить",
+      "scrollCue": "прокрутить"
     },
     "featuresTitle": "Почему команды выбирают это",
     "architectureTitle": "Пять слоёв, один поток",
@@ -61,7 +69,8 @@
     "quickstartSubtitle": "Режим единого бинарника — самый быстрый путь; TUI и контейнеры — опциональные слои.",
     "ctaTitle": "Соберите команду из 9 ролей за 60 секунд",
     "ctaSubtitle": "Получите бинарник, напишите одну команду — получите детерминированный артефакт проверки.",
-    "ctaButton": "Начать"
+    "ctaButton": "Начать",
+    "scrollCue": "прокрутить"
   },
   "features": {
     "title": "Ключевые возможности",
@@ -151,7 +160,8 @@
   "common": {
     "language": "Язык",
     "theme": "Переключить тему",
-    "viewOnGithub": "Открыть на GitHub"
+    "viewOnGithub": "Открыть на GitHub",
+    "backToHome": "На главную"
   },
   "footer": {
     "copyright": "© Участники AiCodingAgentTeam",

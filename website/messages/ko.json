@@ -27,7 +27,15 @@
         "→ Router가 의도 분류 → Planner가 9 개 노드 DAG 구축 → Scheduler가 리뷰어를 방행 배핑 → Quality gate: 0 lint, 0 vet, 0 test failure",
         "✓ proof-pack.zip(plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
       ],
-      "ctaGithub": "GitHub 에서 Star"
+      "ctaGithub": "GitHub 에서 Star",
+      "titlePrefix": "AI 코딩 CLI로 ",
+      "titleHighlight": "9개 역하의 개발 팀",
+      "titleSuffix": "을 오켈스트레이트하십시오.",
+      "meta1": "9개 역하",
+      "meta2": "4개 프로토콜",
+      "meta3": "키 미보관",
+      "restart": "재생",
+      "scrollCue": "스크롤"
     },
     "featuresTitle": "팀이 선택하는 이유",
     "architectureTitle": "5 개 계층, 하나의 흐름",
@@ -61,7 +69,8 @@
     "quickstartSubtitle": "단일 바이너리 모드가 가장 빠른 경로이며, TUI 와 컨테이너는 선택적 레이어입니다.",
     "ctaTitle": "60 초 만에 9 개 역할의 팀을 구축",
     "ctaSubtitle": "바이너리를 받고 한 줄의 명령을 내리면 결정론적 검증 산출물을 얻습니다.",
-    "ctaButton": "시작하기"
+    "ctaButton": "시작하기",
+    "scrollCue": "스크롤"
   },
   "features": {
     "title": "핵심 기능",
@@ -151,7 +160,8 @@
   "common": {
     "language": "언어",
     "theme": "테마 전환",
-    "viewOnGithub": "GitHub 에서 보기"
+    "viewOnGithub": "GitHub 에서 보기",
+    "backToHome": "홈으로"
   },
   "footer": {
     "copyright": "© AiCodingAgentTeam 기여자",

@@ -27,7 +27,15 @@
         "→ Router classifie l’intention → Planner construit un DAG à 9 nœuds → Scheduler dispatche les relecteurs en parallèle → Quality gate : 0 lint, 0 vet, 0 échec de test",
         "✓ proof-pack.zip (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
       ],
-      "ctaGithub": "Star sur GitHub"
+      "ctaGithub": "Star sur GitHub",
+      "titlePrefix": "Orchestrez une ",
+      "titleHighlight": "équipe logicielle à 9 rôles",
+      "titleSuffix": " avec des CLI IA.",
+      "meta1": "9 rôles",
+      "meta2": "4 protocoles",
+      "meta3": "0 clé conservée",
+      "restart": "relancer",
+      "scrollCue": "défiler"
     },
     "featuresTitle": "Pourquoi les équipes l’adoptent",
     "architectureTitle": "Cinq couches, un seul flux",
@@ -61,7 +69,8 @@
     "quickstartSubtitle": "Le mode binaire unique est le plus rapide ; TUI et conteneurs sont des couches optionnelles.",
     "ctaTitle": "Constituez une équipe à 9 rôles en 60 secondes",
     "ctaSubtitle": "Récupérez le binaire, écrezissez une commande, obtenez un artefact de vérification déterministe.",
-    "ctaButton": "Commencer"
+    "ctaButton": "Commencer",
+    "scrollCue": "défiler"
   },
   "features": {
     "title": "Fonctionnalités clés",
@@ -151,7 +160,8 @@
   "common": {
     "language": "Langue",
     "theme": "Basculer le thème",
-    "viewOnGithub": "Voir sur GitHub"
+    "viewOnGithub": "Voir sur GitHub",
+    "backToHome": "Retour à l’accueil"
   },
   "footer": {
     "copyright": "© Contributeurs AiCodingAgentTeam",

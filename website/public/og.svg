@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#050508"/>
+      <stop offset="100%" stop-color="#0a0d18"/>
+    </linearGradient>
+    <linearGradient id="duo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00d2ff"/>
+      <stop offset="50%" stop-color="#3a7bd5"/>
+      <stop offset="100%" stop-color="#ff2a85"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.3" cy="0.2" r="0.7">
+      <stop offset="0%" stop-color="#00d2ff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#00d2ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.85" cy="0.85" r="0.6">
+      <stop offset="0%" stop-color="#ff2a85" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ff2a85" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M0 40V0H40" fill="none" stroke="rgba(0,210,255,0.06)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+  <g transform="translate(80,180)">
+    <rect x="-4" y="-4" width="80" height="80" rx="18" fill="url(#duo)"/>
+    <rect width="72" height="72" rx="16" fill="#050508" transform="translate(0,0)"/>
+    <text x="36" y="52" font-family="ui-sans-serif, system-ui" font-size="44" font-weight="700" text-anchor="middle" fill="url(#duo)">A</text>
+  </g>
+  <text x="80" y="320" font-family="ui-sans-serif, system-ui" font-size="28" font-weight="600" fill="#00d2ff" letter-spacing="2">v0.2.1 &#183; 9 LOCALES &#183; MIT</text>
+  <text x="80" y="400" font-family="ui-sans-serif, system-ui" font-size="68" font-weight="700" fill="#f8fcff">Coordinate a 9-role</text>
+  <text x="80" y="478" font-family="ui-sans-serif, system-ui" font-size="68" font-weight="700" fill="url(#duo)">software team with CLIs</text>
+  <text x="80" y="548" font-family="ui-sans-serif, system-ui" font-size="24" font-weight="500" fill="#aebfd0">A Go-based orchestrator. No API keys. Deterministic quality gate.</text>
+  <g transform="translate(900,500)" font-family="ui-monospace, Menlo, monospace" font-size="20" fill="#aebfd0">
+    <rect x="0" y="-30" width="220" height="40" rx="6" fill="rgba(0,210,255,0.1)" stroke="rgba(0,210,255,0.4)"/>
+    <text x="14" y="0" fill="#00d2ff">$ aicat run &#8220;build api&#8221;</text>
+  </g>
+</svg>

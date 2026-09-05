@@ -27,7 +27,15 @@
         "./bin/aicodingagentteam run \"Build a REST API\" --backend codex",
         "→ Router classified intent → Planner built 9-node DAG → Scheduler dispatched reviewers in parallel → Quality gate: 0 lint, 0 vet, 0 test failures",
         "✓ proof-pack.zip (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
-      ]
+      ],
+      "titlePrefix": "Coordinate a ",
+      "titleHighlight": "9-role software team",
+      "titleSuffix": " with AI coding CLIs.",
+      "meta1": "9 roles",
+      "meta2": "4 protocols",
+      "meta3": "0 keys held",
+      "restart": "restart",
+      "scrollCue": "scroll"
     },
     "trustedBy": "Works with your favourite AI coding CLIs",
     "featuresTitle": "Why teams use it",
@@ -60,7 +68,8 @@
     "quickstartSubtitle": "Single-binary mode is the fastest path; TUI and containers are optional layers.",
     "ctaTitle": "Ship a 9-role team in 60 seconds",
     "ctaSubtitle": "Pull the binary, write one command, get a deterministic verification artifact. That's the whole pitch.",
-    "ctaButton": "Get Started"
+    "ctaButton": "Get Started",
+    "scrollCue": "scroll"
   },
   "features": {
     "title": "Core features",
@@ -171,6 +180,7 @@
     "language": "Language",
     "theme": "Toggle theme",
     "viewOnGithub": "View on GitHub",
-    "viewRelease": "Latest release"
+    "viewRelease": "Latest release",
+    "backToHome": "Back to home"
   }
 }

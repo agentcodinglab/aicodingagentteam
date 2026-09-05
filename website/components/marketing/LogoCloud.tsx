@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { Reveal } from "../ui/Reveal";
 
 const ITEMS = [
   "Codex",
@@ -14,22 +15,25 @@ const ITEMS = [
 export function LogoCloud() {
   const t = useTranslations("home");
   return (
-    <section className="border-b border-slate-200 bg-slate-50/60 py-12 dark:border-slate-800 dark:bg-slate-900/40">
-      <div className="container mx-auto max-w-6xl px-6">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-          {t("trustedBy")}
-        </p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-          {ITEMS.map((name) => (
-            <span
-              key={name}
-              className="font-mono text-sm font-semibold tracking-wide text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-            >
-              {name}
-            </span>
-          ))}
+    <section className="border-b border-cyan-line/60 bg-bg-2/40 py-12">
+      <Reveal>
+        <div className="container mx-auto max-w-6xl px-6">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.22em] text-ink-muted2">
+            {t("trustedBy")}
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+            {ITEMS.map((name, i) => (
+              <span
+                key={name}
+                className="font-mono text-sm font-medium tracking-wide text-ink-muted transition-colors hover:text-duo"
+                style={{ transitionDelay: `${i * 30}ms` } as React.CSSProperties}
+              >
+                {name}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

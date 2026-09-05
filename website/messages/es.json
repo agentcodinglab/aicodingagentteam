@@ -27,7 +27,15 @@
         "→ Router clasificó la intención → Planner construyó DAG de 9 nodos → Scheduler despachó revisores en paralelo → Quality gate: 0 lint, 0 vet, 0 fallos de test",
         "✓ proof-pack.zip (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
       ],
-      "ctaGithub": "Star en GitHub"
+      "ctaGithub": "Star en GitHub",
+      "titlePrefix": "Orquesta un ",
+      "titleHighlight": "equipo de software de 9 roles",
+      "titleSuffix": " con CLI de IA.",
+      "meta1": "9 roles",
+      "meta2": "4 protocolos",
+      "meta3": "0 claves",
+      "restart": "reiniciar",
+      "scrollCue": "desplazar"
     },
     "featuresTitle": "Por qué lo adoptan los equipos",
     "architectureTitle": "Cinco capas, un único flujo",
@@ -61,7 +69,8 @@
     "quickstartSubtitle": "El modo binario único es la ruta más rápida; TUI y contenedores son capas opcionales.",
     "ctaTitle": "Despliega un equipo de 9 roles en 60 segundos",
     "ctaSubtitle": "Toma el binario, escribe un comando y obtén un artefacto de verificación determinista.",
-    "ctaButton": "Empezar"
+    "ctaButton": "Empezar",
+    "scrollCue": "desplazar"
   },
   "features": {
     "title": "Características principales",
@@ -151,7 +160,8 @@
   "common": {
     "language": "Idioma",
     "theme": "Cambiar tema",
-    "viewOnGithub": "Ver en GitHub"
+    "viewOnGithub": "Ver en GitHub",
+    "backToHome": "Volver al inicio"
   },
   "footer": {
     "copyright": "© Contribuyentes de AiCodingAgentTeam",

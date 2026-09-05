@@ -1,48 +1,59 @@
 import { Terminal } from "lucide-react";
+import { Reveal } from "../ui/Reveal";
 
 const LINES: Array<{ prompt?: string; body: string; kind?: "out" | "ok" | "dim" }> = [
-  { prompt: "$", body: "./bin/aicodingagentteam run \"Build a REST API\" --backend codex" },
+  { prompt: "$", body: "./bin/aicat run \"Build a REST API\" --backend codex" },
   { kind: "dim", body: "[router]  intent=build_api   workflow=full_team   backend=codex" },
   { kind: "dim", body: "[planner] nodes=9   writers=3   reviewers=6   dag=built (12ms)" },
   { kind: "dim", body: "[sched]   dispatched reviewer:qa + reviewer:security + reviewer:arch (parallel)" },
-  { kind: "dim", body: "[sched]   dispatched writer:backend → writer:frontend → writer:devops (serial)" },
-  { kind: "out", body: "→ 3 writers · 6 reviewers · 1 quality gate · 1 proof-pack" },
-  { kind: "ok", body: "✓ proof-pack.zip  plan.json · verify.jsonl · scorecard.md · delivery-summary.md" },
-  { kind: "dim", body: "  gate: 0 lint · 0 vet · 0 test · score=98 / 100" },
+  { kind: "dim", body: "[sched]   dispatched writer:backend \u2192 writer:frontend \u2192 writer:devops (serial)" },
+  { kind: "out", body: "\u2192 3 writers \u00b7 6 reviewers \u00b7 1 quality gate \u00b7 1 proof-pack" },
+  { kind: "ok", body: "\u2713 proof-pack.zip  plan.json \u00b7 verify.jsonl \u00b7 scorecard.md \u00b7 delivery-summary.md" },
+  { kind: "dim", body: "  gate: 0 lint \u00b7 0 vet \u00b7 0 test \u00b7 score=98 / 100" },
 ];
+
+function colorClass(kind?: "out" | "ok" | "dim"): string {
+  switch (kind) {
+    case "ok":
+      return "text-ok";
+    case "out":
+      return "text-magenta";
+    case "dim":
+      return "text-ink-muted";
+    default:
+      return "text-ink";
+  }
+}
 
 export function CodeExample() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl shadow-brand-950/20">
-      <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-4 py-2.5 text-xs">
-        <div className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-full bg-red-500/80" />
-          <span className="h-3 w-3 rounded-full bg-yellow-500/80" />
-          <span className="h-3 w-3 rounded-full bg-green-500/80" />
+    <Reveal>
+      <div className="overflow-hidden rounded-2xl border border-cyan-line bg-bg-panel shadow-duo">
+        <div className="flex items-center justify-between border-b border-cyan-line bg-bg-2/80 px-4 py-2.5 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="h-3 w-3 rounded-full bg-[#ff5f56]/80" />
+            <span className="h-3 w-3 rounded-full bg-[#ffbd2e]/80" />
+            <span className="h-3 w-3 rounded-full bg-[#27c93f]/80" />
+          </div>
+          <div className="flex items-center gap-1.5 font-mono text-ink-muted2">
+            <Terminal className="h-3.5 w-3.5" />aicat run
+          </div>
+          <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted2/60">
+            bash
+          </span>
         </div>
-        <div className="flex items-center gap-1.5 font-mono text-slate-400">
-          <Terminal className="h-3.5 w-3.5" />aicodingagentteam run
-        </div>
-        <span className="w-10" />
-      </div>
-      <pre className="overflow-x-auto p-6 font-mono text-[13px] leading-7 text-slate-100">
-        {LINES.map((l, i) => {
-          const cls =
-            l.kind === "ok"
-              ? "text-emerald-400"
-              : l.kind === "out"
-              ? "text-brand-300"
-              : l.kind === "dim"
-              ? "text-slate-400"
-              : "text-slate-100";
-          return (
-            <div key={i} className={cls}>
-              {l.prompt ? <span className="text-brand-400">{l.prompt} </span> : null}
+        <pre className="overflow-x-auto bg-[#04060a] p-6 font-mono text-[13px] leading-7 text-ink">
+          {LINES.map((l, i) => (
+            <div key={i} className={colorClass(l.kind)}>
+              {l.prompt ? <span className="text-cyan">{l.prompt} </span> : null}
               {l.body}
             </div>
-          );
-        })}
-      </pre>
-    </div>
+          ))}
+          <div className="mt-1 inline-flex items-center gap-1 text-cyan">
+            <span className="inline-block h-3.5 w-2 animate-cursor-blink bg-cyan align-middle" />
+          </div>
+        </pre>
+      </div>
+    </Reveal>
   );
 }

@@ -27,7 +27,15 @@
         "→ 路由器完成意图分类 → 计划器构建 9 节点 DAG → 调度器并行派发评审者 → 质量门禁：0 lint，0 vet，0 测试失败",
         "✓ proof-pack.zip（plan.json + verify.jsonl + scorecard.md + delivery-summary.md）"
       ],
-      "ctaGithub": "在 GitHub 上 Star"
+      "ctaGithub": "在 GitHub 上 Star",
+      "titlePrefix": "用 AI 编码 CLI 调度一支",
+      "titleHighlight": "9 角色软件团队",
+      "titleSuffix": "。",
+      "meta1": "9 个角色",
+      "meta2": "4 套协议",
+      "meta3": "不持密钥",
+      "restart": "重新播放",
+      "scrollCue": "下拉"
     },
     "featuresTitle": "为什么团队选择它",
     "architectureTitle": "五层架构，一个流程",
@@ -61,7 +69,8 @@
     "quickstartSubtitle": "单二进制模式是最快路径；TUI 与容器是可叠加的层。",
     "ctaTitle": "60 秒内组建你的 9 角色团队",
     "ctaSubtitle": "下载二进制，写一行命令，得到一份确定性校验产物。这就是全部要点。",
-    "ctaButton": "立即开始"
+    "ctaButton": "立即开始",
+    "scrollCue": "下拉"
   },
   "features": {
     "title": "核心特性",
@@ -151,7 +160,8 @@
   "common": {
     "language": "语言",
     "theme": "切换主题",
-    "viewOnGithub": "在 GitHub 上查看"
+    "viewOnGithub": "在 GitHub 上查看",
+    "backToHome": "返回首页"
   },
   "footer": {
     "copyright": "© AiCodingAgentTeam 贡献者",

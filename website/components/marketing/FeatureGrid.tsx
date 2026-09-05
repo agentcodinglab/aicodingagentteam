@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Card } from "../ui/Card";
+import { Reveal } from "../ui/Reveal";
 import {
   Bot,
   Container,
@@ -26,19 +27,23 @@ const KEYS = [
 export function FeatureGrid() {
   const t = useTranslations("features.items");
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
       {KEYS.map((k, i) => {
         const Icon = ICONS[i];
         return (
-          <Card key={k} className="flex h-full flex-col">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-950/40 dark:text-brand-300">
-              <Icon className="h-5 w-5" />
-            </span>
-            <h3 className="mt-5 text-base font-semibold">{t(`${k}.title`)}</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-              {t(`${k}.body`)}
-            </p>
-          </Card>
+          <Reveal key={k} delay={i * 60}>
+            <Card className="flex h-full flex-col">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-cyan-line bg-cyan/10 text-cyan">
+                <Icon className="h-5 w-5" />
+              </span>
+              <h3 className="mt-5 text-base font-semibold text-ink">
+                {t(`${k}.title`)}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-ink-muted">
+                {t(`${k}.body`)}
+              </p>
+            </Card>
+          </Reveal>
         );
       })}
     </div>

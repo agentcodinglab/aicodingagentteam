@@ -27,7 +27,15 @@
         "→ Router klassifiziert Intent → Planner baut 9-Knoten-DAG → Scheduler dispatcht Reviewer parallel → Quality Gate: 0 lint, 0 vet, 0 Testfehler",
         "✓ proof-pack.zip (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
       ],
-      "ctaGithub": "Star auf GitHub"
+      "ctaGithub": "Star auf GitHub",
+      "titlePrefix": "Orchestrieren Sie ein ",
+      "titleHighlight": "9-Rollen-Entwicklungsteam",
+      "titleSuffix": " mit KI-Coding-CLIs.",
+      "meta1": "9 Rollen",
+      "meta2": "4 Protokolle",
+      "meta3": "0 Schlüssel",
+      "restart": "neustart",
+      "scrollCue": "scrollen"
     },
     "featuresTitle": "Warum Teams es nutzen",
     "architectureTitle": "Fünf Schichten, ein Fluss",
@@ -61,7 +69,8 @@
     "quickstartSubtitle": "Der Einzel-Binärmodus ist der schnellste Weg; TUI und Container sind optionale Schichten.",
     "ctaTitle": "Ein 9-Rollen-Team in 60 Sekunden",
     "ctaSubtitle": "Binary holen, einen Befehl schreiben, ein deterministisches Verifikations-Artefakt erhalten.",
-    "ctaButton": "Loslegen"
+    "ctaButton": "Loslegen",
+    "scrollCue": "scrollen"
   },
   "features": {
     "title": "Kernfunktionen",
@@ -151,7 +160,8 @@
   "common": {
     "language": "Sprache",
     "theme": "Design umschalten",
-    "viewOnGithub": "Auf GitHub ansehen"
+    "viewOnGithub": "Auf GitHub ansehen",
+    "backToHome": "Zurück zur Startseite"
   },
   "footer": {
     "copyright": "© AiCodingAgentTeam-Mitwirkende",

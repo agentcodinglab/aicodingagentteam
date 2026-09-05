@@ -1,8 +1,20 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
-export function Badge({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function Badge({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <span className={`inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-medium text-slate-700 backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200 ${className}`}>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full border border-cyan-line bg-bg-2/70 px-3 py-1 text-xs font-medium uppercase text-ink-muted backdrop-blur",
+        className,
+      )}
+    >
       {children}
     </span>
   );

@@ -27,7 +27,15 @@
         "→ Router が意図を分類 → Planner が 9 ノード DAG を構築 → Scheduler がレビュアーを並行配信 → Quality gate：0 lint、0 vet、0 test failure",
         "✓ proof-pack.zip（plan.json + verify.jsonl + scorecard.md + delivery-summary.md）"
       ],
-      "ctaGithub": "GitHub で Star"
+      "ctaGithub": "GitHub で Star",
+      "titlePrefix": "AI コーディング CLI で",
+      "titleHighlight": "9 ロール開発チーム",
+      "titleSuffix": "を締出します。",
+      "meta1": "9 ロール",
+      "meta2": "4 プロトコル",
+      "meta3": "鍵を保持せず",
+      "restart": "再生",
+      "scrollCue": "スクロール"
     },
     "featuresTitle": "選ばれる理由",
     "architectureTitle": "5 つの層、1 つの流れ",
@@ -61,7 +69,8 @@
     "quickstartSubtitle": "単一バイナリ・モードが最短経路。TUI とコンテナーは任意の追加層です。",
     "ctaTitle": "60 秒で 9 ロールのチームを立ち上げる",
     "ctaSubtitle": "バイナリを取得し、1 つのコマンドを書けば、決定論的な検証成果物が手放ります。",
-    "ctaButton": "はじめる"
+    "ctaButton": "はじめる",
+    "scrollCue": "スクロール"
   },
   "features": {
     "title": "コア機能",
@@ -151,7 +160,8 @@
   "common": {
     "language": "言語",
     "theme": "テーマ切替",
-    "viewOnGithub": "GitHub で見る"
+    "viewOnGithub": "GitHub で見る",
+    "backToHome": "ホームへ"
   },
   "footer": {
     "copyright": "© AiCodingAgentTeam 貢献者",

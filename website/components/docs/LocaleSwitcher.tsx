@@ -24,7 +24,7 @@ export function LocaleSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+        className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-ink-muted hover:bg-bg-2/80  "
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -33,7 +33,7 @@ export function LocaleSwitcher() {
         <ChevronDown className="h-3 w-3" />
       </button>
       {open && (
-        <div role="menu" className="absolute right-0 top-full z-50 mt-1 max-h-80 w-44 overflow-y-auto rounded-md border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-800 dark:bg-slate-900">
+        <div role="menu" className="absolute right-0 top-full z-50 mt-1 max-h-80 w-44 overflow-y-auto rounded-md border border-cyan-line/60 bg-bg-2 py-1 shadow-lg  ">
           {locales.map((l) => (
             <Link
               key={l}
@@ -44,7 +44,7 @@ export function LocaleSwitcher() {
                   window.location.href = (l === 'en' ? '' : `/${l}`) + (rest === '/' ? '/' : rest);
                 }
               }}
-              className={`block px-3 py-1.5 text-sm hover:bg-slate-100 dark:hover:bg-slate-800 ${l === current ? 'font-semibold text-brand-600 dark:text-brand-400' : 'text-slate-700 dark:text-slate-200'}`}
+              className={`block px-3 py-1.5 text-sm hover:bg-bg-2/80  ${l === current ? 'font-semibold text-cyan ' : 'text-ink-muted '}`}
               role="menuitem"
             >
               {localeNames[l]}

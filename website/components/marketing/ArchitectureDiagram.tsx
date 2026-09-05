@@ -1,11 +1,12 @@
 import { useTranslations } from "next-intl";
+import { Reveal } from "../ui/Reveal";
 
 const LAYERS = [
-  { key: "router",      title: "Router",      sub: "Intent → workflow" },
-  { key: "planner",     title: "Planner",     sub: "DAG of writers + reviewers" },
-  { key: "scheduler",   title: "Scheduler",   sub: "Parallel reviewers · serial writers" },
-  { key: "knowledge",   title: "Knowledge",   sub: "BM25 RAG + project memory" },
-  { key: "qualityGate", title: "Quality Gate", sub: "golangci-lint · vet · test (machine)" },
+  { key: "router", title: "Router", sub: "Intent \u2192 workflow" },
+  { key: "planner", title: "Planner", sub: "DAG of writers + reviewers" },
+  { key: "scheduler", title: "Scheduler", sub: "Parallel reviewers \u00b7 serial writers" },
+  { key: "knowledge", title: "Knowledge", sub: "BM25 RAG + project memory" },
+  { key: "qualityGate", title: "Quality Gate", sub: "golangci-lint \u00b7 vet \u00b7 test (machine)" },
 ] as const;
 
 export function ArchitectureDiagram() {
@@ -13,26 +14,27 @@ export function ArchitectureDiagram() {
   return (
     <div className="grid gap-3">
       {LAYERS.map((layer, i) => (
-        <div
-          key={layer.key}
-          className="group relative flex items-stretch overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
-        >
-          <div className="flex w-14 flex-shrink-0 items-center justify-center bg-gradient-to-br from-brand-600 to-brand-700 text-lg font-bold text-white">
-            {i + 1}
-          </div>
-          <div className="flex flex-1 flex-col justify-center px-5 py-4">
-            <div className="flex flex-wrap items-baseline gap-x-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">
-                {layer.title}
-              </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">{layer.sub}</span>
+        <Reveal key={layer.key} delay={i * 80}>
+          <div className="group relative flex items-stretch overflow-hidden rounded-xl border border-cyan-line bg-bg-panel transition-all transition-all hover:border-cyan/60">
+            <div className="flex w-16 flex-shrink-0 items-center justify-center bg-duo text-lg font-bold text-bg">
+              {i + 1}
             </div>
-            <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">{t(layer.key)}</p>
+            <div className="flex flex-1 flex-col justify-center px-5 py-3">
+              <div className="flex flex-wrap items-baseline gap-x-3">
+                <span className="font-display text-xs font-semibold uppercase tracking-[0.18em] text-cyan">
+                  {layer.title}
+                </span>
+                <span className="font-mono text-xs text-ink-muted2">
+                  {layer.sub}
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-ink-muted">{t(layer.key)}</p>
+            </div>
+            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase tracking-wider text-ink-muted2/50">
+              layer.{String(i + 1).padStart(2, "0")}
+            </div>
           </div>
-          {i < LAYERS.length - 1 ? (
-            <div className="pointer-events-none absolute -bottom-3 left-7 h-3 w-px bg-slate-300 dark:bg-slate-700 sm:left-7" />
-          ) : null}
-        </div>
+        </Reveal>
       ))}
     </div>
   );

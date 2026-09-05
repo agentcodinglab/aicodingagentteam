@@ -1,37 +1,73 @@
-import { setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
-import { Card } from '@/components/ui/Card';
-import { Bot, Container, GitBranch, ShieldCheck, Database, Network, Lock } from 'lucide-react';
+import { setRequestLocale } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { Card } from "@/components/ui/Card";
+import { Reveal } from "@/components/ui/Reveal";
+import { PageHero } from "@/components/marketing/PageHero";
+import {
+  Bot,
+  Container,
+  GitBranch,
+  ShieldCheck,
+  Database,
+  Network,
+  Lock,
+  Scaling,
+} from "lucide-react";
 
-const ICONS = [Bot, Container, GitBranch, ShieldCheck, Database, Network, Lock];
+const ICONS = [Bot, Container, GitBranch, ShieldCheck, Database, Network, Lock, Scaling];
+const KEYS = [
+  "separation",
+  "containerRoles",
+  "a2a",
+  "quality",
+  "rag",
+  "protocols",
+  "local",
+  "scale",
+] as const;
 
-export default function FeaturesPage({ params: { locale } }: { params: { locale: string } }) {
+export default function FeaturesPage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
   setRequestLocale(locale);
   return <Content />;
 }
 
 function Content() {
-  const t = useTranslations('features');
-  const items = useTranslations('features.items');
-  const keys = ['separation', 'containerRoles', 'a2a', 'quality', 'rag', 'protocols', 'local'] as const;
+  const t = useTranslations("features");
+  const items = useTranslations("features.items");
   return (
-    <section className="py-16">
-      <div className="container mx-auto max-w-5xl px-6">
-        <h1 className="text-4xl font-bold">{t('title')}</h1>
-        <p className="mt-3 text-lg text-slate-600 dark:text-slate-300">{t('subtitle')}</p>
-        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
-          {keys.map((k, i) => {
-            const Icon = ICONS[i];
-            return (
-              <Card key={k}>
-                <Icon className="h-6 w-6 text-brand-600 dark:text-brand-400" />
-                <h2 className="mt-4 text-lg font-semibold">{items(`${k}.title`)}</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{items(`${k}.body`)}</p>
-              </Card>
-            );
-          })}
+    <>
+      <PageHero eyebrow="// features" title={t("title")} subtitle={t("subtitle")} />
+      <section className="border-b border-cyan-line/60 py-20">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {KEYS.map((k, i) => {
+              const Icon = ICONS[i];
+              return (
+                <Reveal key={k} delay={i * 60}>
+                  <Card className="flex h-full flex-col">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-cyan-line bg-cyan/10 text-cyan">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <h2 className="mt-5 text-base font-semibold text-ink">
+                      {items(`${k}.title`)}
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-ink-muted">
+                      {items(`${k}.body`)}
+                    </p>
+                    <span className="mt-4 font-mono text-[10px] uppercase tracking-wider text-ink-muted2/60">
+                      {String(i + 1).padStart(2, "0")} / {KEYS.length}
+                    </span>
+                  </Card>
+                </Reveal>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

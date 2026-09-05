@@ -27,7 +27,15 @@
         "→ Router ha classificato l’intento → Planner ha costruito il DAG a 9 nodi → Scheduler ha dispatchato i reviewer in parallelo → Quality gate: 0 lint, 0 vet, 0 test falliti",
         "✓ proof-pack.zip (plan.json + verify.jsonl + scorecard.md + delivery-summary.md)"
       ],
-      "ctaGithub": "Star su GitHub"
+      "ctaGithub": "Star su GitHub",
+      "titlePrefix": "Orchestra un ",
+      "titleHighlight": "team di sviluppo a 9 ruoli",
+      "titleSuffix": " con CLI IA.",
+      "meta1": "9 ruoli",
+      "meta2": "4 protocolli",
+      "meta3": "0 chiavi",
+      "restart": "riavvia",
+      "scrollCue": "scorri"
     },
     "featuresTitle": "Perché i team lo scelgono",
     "architectureTitle": "Cinque livelli, un unico flusso",
@@ -61,7 +69,8 @@
     "quickstartSubtitle": "La modalità binario singolo è il percorso più rapido; TUI e container sono layer opzionali.",
     "ctaTitle": "Schiera un team di 9 ruoli in 60 secondi",
     "ctaSubtitle": "Prendi il binario, scrivi un comando, ottieni un artefatto di verifica deterministico.",
-    "ctaButton": "Inizia"
+    "ctaButton": "Inizia",
+    "scrollCue": "scorri"
   },
   "features": {
     "title": "Caratteristiche principali",
@@ -151,7 +160,8 @@
   "common": {
     "language": "Lingua",
     "theme": "Cambia tema",
-    "viewOnGithub": "Vedi su GitHub"
+    "viewOnGithub": "Vedi su GitHub",
+    "backToHome": "Torna alla home"
   },
   "footer": {
     "copyright": "© Contributori di AiCodingAgentTeam",
