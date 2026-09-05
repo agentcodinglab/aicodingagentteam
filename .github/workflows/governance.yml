@@ -86,7 +86,7 @@ jobs:
         uses: treosh/lighthouse-ci-action@v9
         with:
           configPath: website/.lighthouserc.cjs
-          uploadArtifacts: true
+          uploadArtifacts: false
           temporaryPublicStorage: true
 
   # ---- Soft gate: axe-core a11y across 9 locales. ----
@@ -169,6 +169,7 @@ jobs:
           echo "- lighthouse:  ${{ needs.lighthouse.result }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- a11y:        ${{ needs.a11y.result }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- godocgen:    ${{ needs.godocgen.result }}" >> "$GITHUB_STEP_SUMMARY"
+
 
 
 
