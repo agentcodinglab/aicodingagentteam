@@ -18,11 +18,11 @@ module.exports = {
       startServerReadyTimeout: 30000,
       // Test the 4 highest-priority locales + the root redirect target.
       url: [
-        'http://localhost:3000/',
-        'http://localhost:3000/en/',
-        'http://localhost:3000/zh/',
-        'http://localhost:3000/ja/',
-        'http://localhost:3000/ko/',
+        'http://localhost/',
+        'http://localhost/en/',
+        'http://localhost/zh/',
+        'http://localhost/ja/',
+        'http://localhost/ko/',
       ],
       numberOfRuns: 1,
       settings: {
@@ -58,3 +58,4 @@ module.exports = {
     },
   },
 };
+
