@@ -38,9 +38,7 @@ func TestGovernFile_NonexistentFile(t *testing.T) {
 func TestGovernFile_DetectsSecretLeak(t *testing.T) {
 	dir := t.TempDir()
 	p := filepath.Join(dir, "leaky.go")
-	_ = os.WriteFile(p, []byte(`package main
-var apiKey = "sk-1234567890abcdef1234567890abcdef12345678"
-`), 0o644)
+	_ = os.WriteFile(p, []byte("package main\nvar apiKey = \"sk-1234567890abcdef1234567890abcdef12345678\"\n"), 0o644)
 
 	s := New(governance.New())
 	result, err := s.GovernFile(context.Background(), p)
@@ -66,7 +64,31 @@ func TestGovernDirectory_CleanDir(t *testing.T) {
 		t.Fatalf("GovernDirectory failed: %v", err)
 	}
 	if len(results) != 0 {
-		t.Errorf("clean dir should have 0 results with violations, got %d", len(results))
+		t.Errorf("clean dir should have 0 results, got %d", len(results))
+	}
+}
+
+func TestGovernDirectory_WithSubdirectory(t *testing.T) {
+	dir := t.TempDir()
+	sub := filepath.Join(dir, "sub")
+	_ = os.MkdirAll(sub, 0o755)
+	_ = os.WriteFile(filepath.Join(sub, "file.go"), []byte("package main\nvar apiKey = \"sk-1234567890abcdef1234567890abcdef12345678\"\n"), 0o644)
+
+	s := New(governance.New())
+	results, err := s.GovernDirectory(context.Background(), dir)
+	if err != nil {
+		t.Fatalf("GovernDirectory failed: %v", err)
+	}
+	if len(results) == 0 {
+		t.Error("expected violations from subdirectory")
+	}
+}
+
+func TestGovernDirectory_NonexistentRoot(t *testing.T) {
+	s := New(governance.New())
+	_, err := s.GovernDirectory(context.Background(), "/nonexistent/path/xyz")
+	if err == nil {
+		t.Error("should fail on nonexistent root")
 	}
 }
 
@@ -108,6 +130,22 @@ func TestServeReader_ToolsList(t *testing.T) {
 	if len(tools) != 2 {
 		t.Errorf("expected 2 tools, got %d", len(tools))
 	}
+	// Verify each tool has name, description, inputSchema
+	for i, tool := range tools {
+		toolMap, ok := tool.(map[string]interface{})
+		if !ok {
+			t.Fatalf("tool %d: expected map", i)
+		}
+		if toolMap["name"] == nil {
+			t.Errorf("tool %d: missing name", i)
+		}
+		if toolMap["description"] == nil {
+			t.Errorf("tool %d: missing description", i)
+		}
+		if toolMap["inputSchema"] == nil {
+			t.Errorf("tool %d: missing inputSchema", i)
+		}
+	}
 }
 
 func TestServeReader_GovernFileTool(t *testing.T) {
@@ -134,6 +172,101 @@ func TestServeReader_GovernFileTool(t *testing.T) {
 	}
 	if resp.Error != nil {
 		t.Errorf("unexpected error: %s", resp.Error.Message)
+	}
+}
+
+func TestServeReader_GovernFileTool_NonexistentFile(t *testing.T) {
+	s := New(governance.New())
+	params := toolCallParams{Name: "govern_file"}
+	params.Arguments, _ = json.Marshal(governFileArgs{Path: "/nonexistent/file.go"})
+	req := jsonRPCRequest{
+		JSONRPC: "2.0",
+		ID:      json.RawMessage("1"),
+		Method:  "tools/call",
+		Params:  mustMarshal(params),
+	}
+	data, _ := json.Marshal(req)
+	var buf bytes.Buffer
+	_ = s.ServeReader(context.Background(), strings.NewReader(string(data)+"\n"), &buf)
+
+	var resp jsonRPCResponse
+	if err := json.Unmarshal(buf.Bytes(), &resp); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if resp.Error == nil {
+		t.Error("expected error for nonexistent file")
+	}
+}
+
+func TestServeReader_GovernFileTool_InvalidArgs(t *testing.T) {
+	s := New(governance.New())
+	params := toolCallParams{Name: "govern_file"}
+	params.Arguments = json.RawMessage("invalid")
+	req := jsonRPCRequest{
+		JSONRPC: "2.0",
+		ID:      json.RawMessage("1"),
+		Method:  "tools/call",
+		Params:  mustMarshal(params),
+	}
+	data, _ := json.Marshal(req)
+	var buf bytes.Buffer
+	_ = s.ServeReader(context.Background(), strings.NewReader(string(data)+"\n"), &buf)
+
+	var resp jsonRPCResponse
+	if err := json.Unmarshal(buf.Bytes(), &resp); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if resp.Error == nil {
+		t.Error("expected error for invalid args")
+	}
+}
+
+func TestServeReader_GovernDirectoryTool(t *testing.T) {
+	dir := t.TempDir()
+	_ = os.WriteFile(filepath.Join(dir, "main.go"), []byte("package main\nfunc main() {}\n"), 0o644)
+
+	s := New(governance.New())
+	params := toolCallParams{Name: "govern_directory"}
+	params.Arguments, _ = json.Marshal(governDirArgs{Root: dir})
+	req := jsonRPCRequest{
+		JSONRPC: "2.0",
+		ID:      json.RawMessage("1"),
+		Method:  "tools/call",
+		Params:  mustMarshal(params),
+	}
+	data, _ := json.Marshal(req)
+	var buf bytes.Buffer
+	_ = s.ServeReader(context.Background(), strings.NewReader(string(data)+"\n"), &buf)
+
+	var resp jsonRPCResponse
+	if err := json.Unmarshal(buf.Bytes(), &resp); err != nil {
+		t.Fatalf("unmarshal: %v\nraw: %s", err, buf.String())
+	}
+	if resp.Error != nil {
+		t.Errorf("unexpected error: %s", resp.Error.Message)
+	}
+}
+
+func TestServeReader_GovernDirectoryTool_InvalidArgs(t *testing.T) {
+	s := New(governance.New())
+	params := toolCallParams{Name: "govern_directory"}
+	params.Arguments = json.RawMessage("invalid")
+	req := jsonRPCRequest{
+		JSONRPC: "2.0",
+		ID:      json.RawMessage("1"),
+		Method:  "tools/call",
+		Params:  mustMarshal(params),
+	}
+	data, _ := json.Marshal(req)
+	var buf bytes.Buffer
+	_ = s.ServeReader(context.Background(), strings.NewReader(string(data)+"\n"), &buf)
+
+	var resp jsonRPCResponse
+	if err := json.Unmarshal(buf.Bytes(), &resp); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if resp.Error == nil {
+		t.Error("expected error for invalid args")
 	}
 }
 
@@ -169,13 +302,11 @@ func TestServeReader_InvalidJSON(t *testing.T) {
 
 func TestServeReader_Notification(t *testing.T) {
 	s := New(governance.New())
-	// Notification has no ID (null)
 	req := jsonRPCRequest{JSONRPC: "2.0", ID: json.RawMessage("null"), Method: "initialize"}
 	data, _ := json.Marshal(req)
 	var buf bytes.Buffer
 	_ = s.ServeReader(context.Background(), strings.NewReader(string(data)+"\n"), &buf)
-	// Notifications should not crash; just verify no panic
-	_ = buf.Len()
+	_ = buf.Len() // notifications should not crash
 }
 
 func TestServeReader_UnknownTool(t *testing.T) {

@@ -12,12 +12,15 @@ import (
 	"syscall"
 
 	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
+	"github.com/agentcodinglab/aicodingagentteam/internal/acp"
+	"github.com/agentcodinglab/aicodingagentteam/internal/agent"
 	"github.com/agentcodinglab/aicodingagentteam/internal/audit"
 	"github.com/agentcodinglab/aicodingagentteam/internal/config"
 	"github.com/agentcodinglab/aicodingagentteam/internal/coordinator"
 	"github.com/agentcodinglab/aicodingagentteam/internal/governance"
 	"github.com/agentcodinglab/aicodingagentteam/internal/host"
 	"github.com/agentcodinglab/aicodingagentteam/internal/knowledge"
+	"github.com/agentcodinglab/aicodingagentteam/internal/mcp"
 	"github.com/agentcodinglab/aicodingagentteam/internal/memory"
 	"github.com/agentcodinglab/aicodingagentteam/internal/planner"
 	"github.com/agentcodinglab/aicodingagentteam/internal/qualitygate"
@@ -61,6 +64,18 @@ func main() {
 		cmdServe(ctx, cfg)
 	case "knowledge":
 		cmdKnowledge(ctx, os.Args[2:])
+	case "continue":
+		cmdContinue(ctx, cfg, os.Args[2:])
+	case "mcp":
+		cmdMCPServe(ctx, cfg)
+	case "a2a":
+		cmdA2AServe(ctx, cfg)
+	case "acp":
+		cmdACPServe(ctx, cfg)
+	case "memory":
+		cmdMemory(ctx, os.Args[2:])
+	case "ci":
+		cmdGovern(ctx, append([]string{"--ci"}, os.Args[2:]...))
 	case "version":
 		fmt.Printf("aicodingagentteam %s (commit=%s, built=%s)\n", version, commit, date)
 	default:
@@ -332,6 +347,108 @@ var tempDir = func() string {
 	return d
 }
 
+func cmdContinue(ctx context.Context, cfg *config.Config, args []string) {
+	fs := flag.NewFlagSet("continue", flag.ExitOnError)
+	_ = fs.Parse(args)
+	d := newDirector(cfg)
+	resumed, msg, err := d.ContinuePlan(ctx, fs.Arg(0))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
+	if resumed {
+		fmt.Printf("workflow resumed: %s\n", msg)
+	} else {
+		fmt.Printf("cannot continue: %s\n", msg)
+	}
+}
+
+func cmdMCPServe(ctx context.Context, cfg *config.Config) {
+	govEngine := governance.NewWithConfig(".aicodingagentteam/rules.json", audit.New(".aicodingagentteam/audit"))
+	srv := mcp.New(govEngine)
+	fmt.Println("MCP server: stdio JSON-RPC (govern_file, govern_directory)")
+	if err := srv.Serve(ctx); err != nil && err != context.Canceled {
+		fmt.Fprintf(os.Stderr, "mcp server error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func cmdA2AServe(ctx context.Context, cfg *config.Config) {
+	bus := a2a.NewBusFromEnv(audit.New(".aicodingagentteam/audit"))
+	agent.RegisterAllReviewers(bus)
+	d := newDirector(cfg)
+	srv := api.NewServer(cfg.Coordinator.GRPC, cfg.Coordinator.MCP, cfg.Coordinator.ACP, cfg.Coordinator.A2A, d)
+	fmt.Printf("A2A server: listening on :%d\n", cfg.Coordinator.A2A)
+	if err := srv.Start(ctx); err != nil && err != context.Canceled {
+		fmt.Fprintf(os.Stderr, "a2a server error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func cmdACPServe(ctx context.Context, cfg *config.Config) {
+	srv := acp.New()
+	fmt.Println("ACP server: stdio JSON-RPC (session lifecycle)")
+	if err := srv.Serve(ctx); err != nil && err != context.Canceled {
+		fmt.Fprintf(os.Stderr, "acp server error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func cmdMemory(ctx context.Context, args []string) {
+	if len(args) < 1 {
+		fmt.Println("Usage:")
+		fmt.Println("  aicodingagentteam memory show              Show all memories (facts/pitfalls/lessons)")
+		fmt.Println("  aicodingagentteam memory capture on|off    Enable/disable fact capture")
+		fmt.Println("  aicodingagentteam memory recall on|off     Enable/disable recipe recall")
+		return
+	}
+	mem := memory.New(".aicodingagentteam/memory")
+	sub := args[0]
+	switch sub {
+	case "show":
+		facts, _ := mem.RecallFacts(ctx)
+		fmt.Println("=== Facts ===")
+		for _, f := range facts {
+			fmt.Printf("  [%s] %s: %s\n", f.Source, f.Key, f.Value)
+		}
+		if len(facts) == 0 {
+			fmt.Println("  (none)")
+		}
+		pitfalls, _ := mem.RecallPitfalls(ctx)
+		fmt.Println("=== Pitfalls ===")
+		for _, p := range pitfalls {
+			fmt.Printf("  [%s] count=%d verified=%v: %s\n", p.ID, p.Count, p.Verified, p.Detail)
+		}
+		if len(pitfalls) == 0 {
+			fmt.Println("  (none)")
+		}
+		lessons, _ := mem.RecallLessons(ctx)
+		fmt.Println("=== Lessons ===")
+		for _, l := range lessons {
+			fmt.Printf("  [%s] verified=%v: %s\n", l.ID, l.Verified, l.Rule)
+		}
+		if len(lessons) == 0 {
+			fmt.Println("  (none)")
+		}
+	case "capture":
+		if len(args) < 2 {
+			fmt.Fprintln(os.Stderr, "usage: memory capture on|off")
+			os.Exit(1)
+		}
+		mem.SetCaptureOn(args[1] == "on")
+		fmt.Printf("memory capture: %s\n", args[1])
+	case "recall":
+		if len(args) < 2 {
+			fmt.Fprintln(os.Stderr, "usage: memory recall on|off")
+			os.Exit(1)
+		}
+		mem.SetRecallOn(args[1] == "on")
+		fmt.Printf("memory recall: %s\n", args[1])
+	default:
+		fmt.Fprintf(os.Stderr, "unknown memory subcommand: %s\n", sub)
+		os.Exit(1)
+	}
+}
 func printCheckDetails(details []types.CheckSummary) {
 	for _, d := range details {
 		if d.Status == "pass" {
