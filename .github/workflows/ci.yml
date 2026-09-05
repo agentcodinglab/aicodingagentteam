@@ -39,9 +39,9 @@ jobs:
           go install golang.org/x/vuln/cmd/govulncheck@latest
           govulncheck ./...
       - name: Secret scan (gitleaks)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          go install github.com/gitleaks/gitleaks/v8/cmd/gitleaks@latest
+          gitleaks detect --source . --no-banner --redact
       - name: SAST (semgrep)
         uses: returntocorp/semgrep-action@v1
         with:
