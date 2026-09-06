@@ -240,7 +240,7 @@ ENTRYPOINT ["aicodingagentteam"]
 |---|---|
 | Codex JSON-RPC 驱动 | `internal/host/codex/` |
 | Claude-Code 流协议驱动 | `internal/host/claude/` |
-| OpenCode HTTP-SSE 驱动 | `internal/host/opencode/` |
+| OpenCode ACP stdio JSON-RPC 驱动 | `internal/host/opencode/` (ADR-0021) |
 | DeepSeek-DSH 驱动 | `internal/host/dsh/` |
 | 能力差异处理 | Capabilities 查询 + 降级逻辑 |
 | 宿主容器 Dockerfile | `deploy/docker/host-*` |

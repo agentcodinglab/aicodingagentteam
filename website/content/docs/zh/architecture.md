@@ -141,7 +141,7 @@ aicodingaicodingagentteam/
 │   ├── host/              # 宿主驱动（4 款 CLI 适配）
 │   │   ├── claude/        # Claude-Code 驱动
 │   │   ├── codex/         # Codex JSON-RPC 驱动
-│   │   ├── opencode/      # OpenCode HTTP-SSE 驱动
+│   │   ├── opencode/      # OpenCode ACP stdio JSON-RPC 驱动 (ADR-0021)
 │   │   └── dsh/           # DeepSeek-DSH 驱动
 │   ├── a2a/               # A2A 协议（Agent Card / RPC / Bus）
 │   ├── mcp/               # MCP Server 适配
@@ -469,7 +469,7 @@ Coordinator                    Agent (QA)
 |---|---|---|---|
 | Claude-Code | 私有流协议 | `host-claude` | stdio 流式交互 |
 | Codex | JSON-RPC | `host-codex` | OpenAI Codex CLI 协议 |
-| OpenCode | HTTP-SSE | `host-opencode` | Server-Sent Events 流 |
+| OpenCode | ACP stdio JSON-RPC | `host-opencode` | notifications/session/update 流 (ADR-0021) |
 | DeepSeek-DSH | ACP v1 / 私有 | `host-dsh` | DeepSeek CLI 驱动 |
 
 ### 6.2 Runtime Trait（Go 接口）

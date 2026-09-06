@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- docs: revised host-driver spec + 02/03 architecture docs to reflect ADR-0021 (opencode serve is Web UI, not JSON API; driver uses opencode acp)
+- docs: ADR-0007 cross-referenced as superseded by ADR-0021 for the OpenCode serve recommendation
+- docs: ADR README table extended to ADR-0021
+
+
 ### Added
 - P5: opencode driver now drives `opencode acp` (stdio JSON-RPC) instead of `opencode run --format json` (ADR-0021 B)
 - testdata/stubbin/opencode-acp stub binary (Unix + Windows) simulating ACP server
