@@ -155,6 +155,37 @@ jobs:
             .aicodingagentteam/demo-report.json
           retention-days: 14
 
+  # ---- Soft gate: real host driver end-to-end (codex stub binary, no API key). ----
+  host-e2e:
+    name: Host driver e2e (codex stub binary)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+
+      - name: Make stub binary executable
+        run: chmod +x testdata/stubbin/codex
+
+      - name: Build CLI
+        run: go build ./cmd/aicodingagentteam/...
+
+      - name: Run host driver e2e tests
+        run: go test ./internal/scheduler/... -run "TestScheduler_HostE2E" -v
+
+      - name: Upload host artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-e2e
+          path: |
+            .aicodingagentteam/host/
+          retention-days: 14
+          if-no-files-found: ignore
+
   # ---- Soft gate: regenerate Go API docs and upload artifact. ----
   godocgen:
     name: Go public API docs (godocgen)
@@ -186,7 +217,7 @@ jobs:
   summary:
     name: Governance summary
     runs-on: ubuntu-latest
-    needs: [perf-budget, lighthouse, a11y, rag-demo, godocgen]
+    needs: [perf-budget, lighthouse, a11y, rag-demo, host-e2e, godocgen]
     if: always()
     steps:
       - name: Summarize
@@ -197,6 +228,7 @@ jobs:
           echo "- lighthouse:  ${{ needs.lighthouse.result }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- a11y:        ${{ needs.a11y.result }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- godocgen:    ${{ needs.godocgen.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- host-e2e:    ${{ needs.host-e2e.result }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- rag-demo:    ${{ needs.rag-demo.result }}" >> "$GITHUB_STEP_SUMMARY"
 
 

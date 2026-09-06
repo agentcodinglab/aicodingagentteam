@@ -16,6 +16,7 @@ import (
 	"github.com/agentcodinglab/aicodingagentteam/internal/qualitygate"
 	"github.com/agentcodinglab/aicodingagentteam/internal/router"
 	"github.com/agentcodinglab/aicodingagentteam/internal/scheduler"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 	"github.com/agentcodinglab/aicodingagentteam/pkg/api"
 )
@@ -42,6 +43,12 @@ func WithKnowledge(e *knowledge.Engine) DirectorOption {
 // WithMemory attaches a memory store for fact/pitfall recall and capture.
 func WithMemory(s *memory.Store) DirectorOption {
 	return func(d *Director) { d.memory = s }
+}
+
+// WithDriver attaches a host driver so writer nodes dispatch to a real backend.
+// When omitted, writer nodes use the legacy stub (just record planned artifacts).
+func WithDriver(drv runtime.Runtime) DirectorOption {
+	return func(d *Director) { d.sched.SetDriver(drv) }
 }
 
 // New creates a Director wiring all engine components.

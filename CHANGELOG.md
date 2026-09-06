@@ -8,6 +8,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Direction C: real host driver end-to-end verification via codex stub binary (Scheduler.WithDriver + Director.WithDriver)
+- Scheduler writer nodes now dispatch to host driver.SendTask, persist stdout artifact to .aicodingagentteam/host/<nodeID>.txt
+- Director.WithDriver option propagates driver to scheduler
+- testdata/stubbin/codex (Unix) + codex.cmd (Windows) stub binaries for CI e2e (no API key)
+- TestScheduler_HostE2E_StubBinary + TestScheduler_HostE2E_NilDriver_NoPanic
+- governance CI: host-e2e job (soft-fail, codex stub binary)
+- scripts/e2e-real-codex.ps1 for local real codex verification
+- ADR-0018: Direction C real host e2e decision record
+- Implementation plan: docs/plan/direction-c-real-host-e2e.md
+
+### Changed
+- Scheduler driver=nil degrades to legacy stub path (backward compatible)
+
+## [0.5.0] - 2026-09-06
+
+### Added
+- Direction C: real host driver end-to-end verification via codex stub binary
+- Scheduler writer nodes dispatch to host driver.SendTask, stdout artifact persisted
+- Director.WithDriver option; testdata/stubbin stub binaries for CI
+- TestScheduler_HostE2E_StubBinary + NilDriver_NoPanic
+- governance CI host-e2e job (soft-fail)
+- scripts/e2e-real-codex.ps1 for local real codex
+- ADR-0018 + docs/plan/direction-c-real-host-e2e.md
+
+### Changed
+- Scheduler driver=nil degrades to legacy stub path
+
+
+### Added
 - End-to-end RAG + memory demo through Director.Handle (cmd `knowledge demo`)
 - IndexDirectoryWithLimit API for capped repo indexing
 - RegisterAllReviewers nil-bus guard for standalone demo use

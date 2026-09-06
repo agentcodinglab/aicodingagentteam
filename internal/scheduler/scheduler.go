@@ -13,6 +13,8 @@ import (
 
 	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
 	"github.com/agentcodinglab/aicodingagentteam/internal/audit"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
+	"strings"
 	"github.com/agentcodinglab/aicodingagentteam/internal/types"
 )
 
@@ -22,6 +24,7 @@ type Scheduler struct {
 	workspace string
 	audit     *audit.Logger
 	bus       a2a.Bus // A2A message bus for reviewer dispatch
+	driver    runtime.Runtime // optional host driver for writer nodes (nil = legacy stub)
 	verdicts  map[string][]types.Verdict
 }
 
@@ -56,6 +59,26 @@ func NewFull(workspace string, bus a2a.Bus, al *audit.Logger) *Scheduler {
 	s.bus = bus
 	s.audit = al
 	return s
+}
+
+// NewWithDriver creates a Scheduler with a host driver for writer nodes.
+func NewWithDriver(workspace string, drv runtime.Runtime) *Scheduler {
+	s := New(workspace)
+	s.driver = drv
+	return s
+}
+
+// Option configures a Scheduler.
+type Option func(*Scheduler)
+
+// WithDriver injects a host driver into an existing Scheduler.
+func WithDriver(drv runtime.Runtime) Option {
+	return func(s *Scheduler) { s.driver = drv }
+}
+
+// SetDriver wires a host driver after construction (used by Director.WithDriver).
+func (s *Scheduler) SetDriver(drv runtime.Runtime) {
+	s.driver = drv
 }
 
 // Result is the output of a scheduled plan execution.
@@ -159,15 +182,76 @@ func (s *Scheduler) Execute(ctx context.Context, plan *types.Plan) (*Result, err
 			res.Verdicts = append(res.Verdicts, verdict)
 			continue
 		}
-		s.mu.Lock()
-		res.Artifacts = append(res.Artifacts, node.ArtifactsOut...)
-		s.mu.Unlock()
+		// If a host driver is wired, dispatch the writer task to the real backend
+		// (codex exec subprocess). Fail-open: on driver error we still record the
+		// planned artifacts so the pipeline does not break in stub/CI mode.
+		if s.driver != nil {
+			if out, derr := s.dispatchToDriver(ctx, node); derr == nil {
+				s.mu.Lock()
+				res.Artifacts = append(res.Artifacts, out...)
+				s.mu.Unlock()
+				verdict.Artifacts = append(verdict.Artifacts, out...)
+			} else {
+				verdict.Findings = append(verdict.Findings, types.Finding{
+					Check: "driver", Status: "warn", Detail: derr.Error(),
+					})
+			}
+		} else {
+			s.mu.Lock()
+			res.Artifacts = append(res.Artifacts, node.ArtifactsOut...)
+			s.mu.Unlock()
+		}
 		s.releaseWriteLock(node)
 		res.Verdicts = append(res.Verdicts, verdict)
 		s.logAudit(node, "write-complete", "pass")
 	}
 
 	return res, nil
+}
+
+// dispatchToDriver runs the writer task on the wired host driver and
+// returns artifact paths written into the workspace. Errors are non-fatal
+// (fail-open) so CI/stub mode keeps working.
+func (s *Scheduler) dispatchToDriver(ctx context.Context, node types.TaskNode) ([]string, error) {
+	sid, err := s.driver.StartSession(ctx, runtime.SessionOpts{Workspace: s.workspace})
+	if err != nil {
+		return nil, fmt.Errorf("start session: %w", err)
+	}
+	defer s.driver.DestroySession(ctx, sid)
+
+	ch, err := s.driver.SendTask(ctx, sid, runtime.TaskPayload{
+		Instruction: fmt.Sprintf("execute task %s in phase %s", node.ID, node.Phase),
+		WritePaths: node.ArtifactsOut,
+		Timeout:   300,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("send task: %w", err)
+	}
+
+	var stdout strings.Builder
+	for ev := range ch {
+		switch ev.Type {
+		case runtime.EventMessage, runtime.EventDone:
+			stdout.WriteString(ev.Content)
+		case runtime.EventError:
+			if ev.Err != nil {
+				return nil, fmt.Errorf("host error: %w", ev.Err)
+			}
+			return nil, fmt.Errorf("host error: %s", ev.Content)
+		}
+	}
+
+	// Persist the host stdout as an artifact so quality gate can inspect it.
+	artDir := filepath.Join(s.workspace, ".aicodingagentteam", "host")
+	_ = os.MkdirAll(artDir, 0o755)
+	artPath := filepath.Join(artDir, node.ID+".txt")
+	if werr := os.WriteFile(artPath, []byte(stdout.String()), 0o644); werr != nil {
+		return nil, fmt.Errorf("write artifact: %w", werr)
+	}
+
+	arts := []string{artPath}
+	arts = append(arts, node.ArtifactsOut...)
+	return arts, nil
 }
 
 // acquireWriteLock obtains a file lock for the writer role.
