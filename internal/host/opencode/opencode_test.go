@@ -2,21 +2,22 @@ package opencode
 
 import (
 	"context"
+	"runtime"
+	"time"
 	"testing"
 
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
-	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
+	rt "github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
 func TestCapabilities(t *testing.T) {
 	d := New()
 	caps := d.Capabilities()
-	if caps.SessionResume {
-		t.Error("opencode should not support session resume")
+	if !caps.SessionResume {
+		t.Error("opencode (ACP mode) should support session resume")
 	}
 	if !caps.ToolCalls {
 		t.Error("opencode should support tool calls")
@@ -34,11 +35,11 @@ func TestModelInfo(t *testing.T) {
 	}
 }
 
-func TestResumeReturnsError(t *testing.T) {
+func TestResumeSucceeds(t *testing.T) {
 	d := New()
 	err := d.Resume(context.Background(), "test")
-	if err == nil {
-		t.Error("opencode Resume should return error")
+	if err != nil {
+		t.Errorf("opencode Resume should succeed (ACP mode): %v", err)
 	}
 }
 
@@ -109,7 +110,7 @@ func TestWithOptions(t *testing.T) {
 func TestStartAndDestroySession(t *testing.T) {
 	d := New()
 	ctx := context.Background()
-	id, err := d.StartSession(ctx, runtime.SessionOpts{})
+	id, err := d.StartSession(ctx, rt.SessionOpts{})
 	if err != nil {
 		t.Fatalf("StartSession error: %v", err)
 	}
@@ -137,85 +138,42 @@ func indexString(s, substr string) int {
 // writeMockOpencode builds a tiny Go program that prints jsonl to stdout.
 const NewLine = "\n"
 
-func writeMockOpencode(t *testing.T, dir, jsonl string) string {
+
+// acpStub returns the absolute path to the opencode-acp stub binary.
+func acpStub(t *testing.T) string {
 	t.Helper()
-	// Use a sentinel to avoid quote escaping issues when jsonl contains ".
-	const sentinel = "SENTINEL_TOKEN_HERE"
-	src := "package main" + NewLine + "import \"fmt\"" + NewLine + "func main() { fmt.Println(`" + sentinel + "`) }" + NewLine
-	src = strings.ReplaceAll(src, sentinel, jsonl)
-	mockSrc := filepath.Join(dir, "mockopencode.go")
-	if err := os.WriteFile(mockSrc, []byte(src), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	binPath := filepath.Join(dir, "mockopencode")
-	if os.PathSeparator == '\\' {
-		binPath += ".exe"
-	}
-	cmd := exec.Command("go", "build", "-o", binPath, mockSrc)
-	cmd.Dir = dir
-	if out, err := cmd.CombinedOutput(); err != nil {
-		t.Fatalf("build mock: %v\n%s", err, out)
-	}
-	return binPath
+	name := "opencode-acp"
+	if runtime.GOOS == "windows" { name = "opencode-acp.cmd" }
+	_, thisFile, _, _ := runtime.Caller(0)
+	// internal/host/opencode -> repo root
+	root := filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(thisFile))))
+	p := filepath.Join(root, "testdata", "stubbin", name)
+	if _, err := os.Stat(p); err != nil { t.Skipf("stub binary not found: %s", p) }
+	return p
 }
 
-func TestSendTask_HappyPath(t *testing.T) {
-	dir := t.TempDir()
-	// Emit a valid JSONL event that the driver recognizes
-	mockBin := writeMockOpencode(t, dir, `{"type":"text","part":{"text":"hello from mock"}}`)
-	d := New(WithBinary(mockBin))
-	ch, err := d.SendTask(context.Background(), "s1", runtime.TaskPayload{Instruction: "test", Timeout: 10})
-	if err != nil {
-		t.Fatalf("SendTask: %v", err)
-	}
-	var got []runtime.Event
+// TestOpenCode_ACP_StubServer drives the real opencode driver against the stub
+// acp binary (ADR-0021 B) and asserts that a streamed EventMessage arrives
+// before EventDone and that the aggregated Done content is non-empty.
+func TestOpenCode_ACP_StubServer(t *testing.T) {
+	d := New(WithBinary(acpStub(t)), WithTimeout(30))
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	ch, err := d.SendTask(ctx, "opencode", rt.TaskPayload{Instruction: "hello", Timeout: 30})
+	if err != nil { t.Fatalf("SendTask: %v", err) }
+	var msgs []string
+	var gotDone bool
+	var doneContent string
 	for ev := range ch {
-		got = append(got, ev)
-	}
-	if len(got) == 0 {
-		t.Fatal("expected events, got none")
-	}
-	if got[0].Type != runtime.EventStart {
-		t.Errorf("expected first event Start, got %s", got[0].Type)
-	}
-	if got[len(got)-1].Type != runtime.EventDone {
-		t.Errorf("expected last event Done, got %s", got[len(got)-1].Type)
-	}
-}
-
-func TestIsTransient_AllBranches(t *testing.T) {
-	tests := []struct {
-		name   string
-		stderr string
-		err    error
-		want   bool
-	}{
-		{"503", "503 Service Unavailable", nil, true},
-		{"deadline exceeded", "context deadline exceeded", nil, true},
-		{"connection refused", "connection refused", nil, true},
-		{"service temporarily unavailable", "Service temporarily unavailable", nil, true},
-		{"ECONNREFUSED", "ECONNREFUSED", nil, true},
-		{"permanent error", "syntax error: bad prompt", nil, false},
-		{"empty", "", nil, false},
-	}
-	for _, tc := range tests {
-		if got := isTransient(tc.stderr, tc.err); got != tc.want {
-			t.Errorf("isTransient(%q) = %v, want %v", tc.name, got, tc.want)
+		switch ev.Type {
+		case rt.EventMessage: msgs = append(msgs, ev.Content)
+		case rt.EventDone:
+			gotDone = true; doneContent = ev.Content
+		case rt.EventError: t.Fatalf("error event: %s", ev.Content)
 		}
 	}
-}
-
-func TestRunOnce_Direct(t *testing.T) {
-	dir := t.TempDir()
-	mockBin := writeMockOpencode(t, dir, `{"type":"text","part":{"text":"hi"}}`)
-	d := New(WithBinary(mockBin))
-	evCh := make(chan runtime.Event, 8)
-	out, stderr, err := d.runOnceStreaming(context.Background(), "test", 10, evCh)
-	close(evCh)
-	if err != nil {
-		t.Fatalf("runOnce failed: %v (stderr: %s)", err, stderr)
-	}
-	if !strings.Contains(out, "text") {
-		t.Errorf("expected JSONL output containing text, got %s", out)
-	}
+	if !gotDone { t.Fatal("expected EventDone") }
+	if len(msgs) == 0 { t.Error("expected at least one EventMessage from the stub (no streaming?)") }
+	for _, m := range msgs { if !strings.Contains(m, "acp stub") { t.Errorf("unexpected message: %s", m) } }
+	if doneContent == "" { t.Error("expected non-empty Done content") }
 }

@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- P5: opencode driver now drives `opencode acp` (stdio JSON-RPC) instead of `opencode run --format json` (ADR-0021 B)
+- testdata/stubbin/opencode-acp stub binary (Unix + Windows) simulating ACP server
+- TestOpenCode_ACP_StubServer drives the real opencode driver against the stub acp binary
+- scripts/e2e-real-opencode.ps1 for local real opencode verification
+- spike/opencode-serve/notes.md: OpenCode v1.18.18 serve is Web UI, not JSON API; opencode acp is the programming interface
+
+### Changed
+- opencode driver rewritten: runOnceStreaming -> runACPSession (initialize/session/new/session/prompt + notifications/session/update streaming)
+- opencode Capabilities.SessionResume now true (ACP supports session reuse)
+- TestCapabilities + TestResumeReturnsError updated for ACP mode
+
+## [0.8.0] - 2026-09-06
+
+### Added
+- P5: opencode driver drives `opencode acp` (stdio JSON-RPC, ADR-0021 B)
+- testdata/stubbin/opencode-acp stub + TestOpenCode_ACP_StubServer
+- scripts/e2e-real-opencode.ps1; spike/opencode-serve/notes.md
+
+### Changed
+- opencode driver rewritten (runOnceStreaming -> runACPSession)
+- opencode SessionResume true; TestCapabilities/TestResume updated
+
+
+### Added
 - P6: ACP v1 session/newTask method dispatching to Director in a goroutine
 - ACP Server NewWithDirector constructor + DirectorLike interface
 - notifications/session/update JSON-RPC push (no ID) for streamed TaskEvents (start/message/tool_call/done/error)

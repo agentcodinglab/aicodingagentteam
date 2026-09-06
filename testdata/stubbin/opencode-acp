@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# opencode acp stub (ADR-0021 B). Uses single-quoted echo to avoid quote escaping.
+while IFS= read -r line; do
+  if echo "$line" | grep -q initialize; then echo '{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-03-26"}}'
+  elif echo "$line" | grep -q session/new; then echo '{"jsonrpc":"2.0","id":2,"result":{"sessionId":"s-stub"}}'
+  elif echo "$line" | grep -q session/prompt; then
+    echo '{"jsonrpc":"2.0","method":"notifications/session/update","params":{"sessionId":"s-stub","update":{"type":"agent_message_chunk","content":"hello from acp stub"}}}'
+    echo '{"jsonrpc":"2.0","id":3,"result":{"stopReason":"end_turn"}}'
+  fi
+done
+exit 0
