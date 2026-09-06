@@ -90,32 +90,11 @@ func (d *Driver) SendTask(ctx context.Context, id runtime.SessionID, task runtim
 
 			ch <- runtime.Event{Type: runtime.EventStart, Content: fmt.Sprintf("opencode attempt %d", attempt+1)}
 
-			out, stderr, err := d.runOnce(ctx, prompt, timeout)
+			out, stderr, err := d.runOnceStreaming(ctx, prompt, timeout, ch)
 			if err == nil {
-				// Parse JSON Lines and emit events
-				for _, line := range strings.Split(out, "\n") {
-					line = strings.TrimSpace(line)
-					if line == "" {
-						continue
-					}
-					var ev opencodeEvent
-					if err := json.Unmarshal([]byte(line), &ev); err != nil {
-						continue
-					}
-					switch ev.Type {
-					case "text":
-						if ev.Part.Text != "" {
-							ch <- runtime.Event{Type: runtime.EventMessage, Content: ev.Part.Text}
-						}
-					case "step_finish":
-						// Task completed
-					case "tool_call", "tool_result":
-						ch <- runtime.Event{Type: runtime.EventToolCall, Content: ev.Part.Type}
-					}
-				}
+								// events were streamed inline by runOnceStreaming (ADR-0019)
 				ch <- runtime.Event{Type: runtime.EventDone, Content: out}
-				return
-			}
+				return			}
 
 			if isTransient(stderr, err) && attempt < d.maxRetries {
 				lastErr = fmt.Errorf("attempt %d transient: %w; stderr: %s", attempt+1, err, stderr)
@@ -133,21 +112,57 @@ func (d *Driver) SendTask(ctx context.Context, id runtime.SessionID, task runtim
 	return ch, nil
 }
 
-// runOnce executes a single opencode run call and returns (stdout, stderr, error).
-func (d *Driver) runOnce(ctx context.Context, prompt string, timeoutSecs int) (string, string, error) {
+// runOnceStreaming executes a single opencode run call, streaming JSON Lines
+// stdout to the event channel as they arrive (ADR-0019). Each line is parsed as
+// a JSON event and emitted immediately; the aggregated stdout is returned for Done.
+func (d *Driver) runOnceStreaming(ctx context.Context, prompt string, timeoutSecs int, ch chan<- runtime.Event) (string, string, error) {
 	taskCtx, cancel := context.WithTimeout(ctx, time.Duration(timeoutSecs)*time.Second)
 	defer cancel()
 
 	args := []string{"run", "--format", "json", prompt}
 	cmd := exec.CommandContext(taskCtx, d.binary, args...)
 
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
+	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 
-	err := cmd.Run()
+	pipe, err := cmd.StdoutPipe()
+	if err != nil {
+		return "", filterStderr(stderr.String()), err
+	}
+	if err := cmd.Start(); err != nil {
+		return "", filterStderr(stderr.String()), err
+	}
 
-	return stdout.String(), filterStderr(stderr.String()), err
+	var agg strings.Builder
+	scanner := bufio.NewScanner(pipe)
+	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
+	for scanner.Scan() {
+		raw := strings.TrimSpace(scanner.Text())
+		if raw == "" {
+			continue
+		}
+		agg.WriteString(raw)
+		agg.WriteByte('\n')
+		var ev opencodeEvent
+		if err := json.Unmarshal([]byte(raw), &ev); err != nil {
+			continue
+		}
+		switch ev.Type {
+			case "text":
+				if ev.Part.Text != "" {
+					ch <- runtime.Event{Type: runtime.EventMessage, Content: ev.Part.Text}
+				}
+			case "step_finish":
+				// task completed signal
+			case "tool_call", "tool_result":
+				ch <- runtime.Event{Type: runtime.EventToolCall, Content: ev.Part.Type}
+			}
+	}
+	werr := cmd.Wait()
+	if werr != nil {
+		return agg.String(), filterStderr(stderr.String()), werr
+	}
+	return agg.String(), filterStderr(stderr.String()), scanner.Err()
 }
 
 // filterStderr removes known noise lines from opencode stderr.

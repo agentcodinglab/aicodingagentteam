@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# codex-stream stub: prints multiple lines to stdout so streaming tests can verify incremental EventMessage events (ADR-0019).
+for i in 1 2 3; do
+  echo "line $i from codex-stream stub"
+done
+exit 0

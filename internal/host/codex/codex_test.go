@@ -264,7 +264,9 @@ func TestRunOnce_Direct(t *testing.T) {
 	dir := t.TempDir()
 	mockBin := writeMockCodex(t, dir, "codex output here")
 	d := New(WithBinary(mockBin))
-	out, stderr, err := d.runOnce(context.Background(), "test prompt", 10)
+	evCh := make(chan runtime.Event, 8)
+	out, stderr, err := d.runOnceStreaming(context.Background(), "test prompt", 10, evCh)
+	close(evCh)
 	if err != nil {
 		t.Fatalf("runOnce failed: %v (stderr: %s)", err, stderr)
 	}
@@ -302,7 +304,9 @@ func main() {
 		t.Fatalf("build mock: %v\n%s", err, out)
 	}
 	d := New(WithBinary(binPath))
-	out, stderr, err := d.runOnce(context.Background(), "test", 10)
+	evCh := make(chan runtime.Event, 8)
+	out, stderr, err := d.runOnceStreaming(context.Background(), "test", 10, evCh)
+	close(evCh)
 	if err != nil {
 		t.Fatalf("runOnce failed: %v", err)
 	}

@@ -4,6 +4,7 @@
 package codex
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"fmt"
@@ -76,10 +77,9 @@ func (d *Driver) SendTask(ctx context.Context, id runtime.SessionID, task runtim
 
 			ch <- runtime.Event{Type: runtime.EventStart, Content: fmt.Sprintf("codex attempt %d", attempt+1)}
 
-			out, stderr, err := d.runOnce(ctx, prompt, timeout)
+			out, stderr, err := d.runOnceStreaming(ctx, prompt, timeout, ch)
 
 			if err == nil {
-				ch <- runtime.Event{Type: runtime.EventMessage, Content: out}
 				ch <- runtime.Event{Type: runtime.EventDone, Content: out}
 				return
 			}
@@ -100,24 +100,45 @@ func (d *Driver) SendTask(ctx context.Context, id runtime.SessionID, task runtim
 	return ch, nil
 }
 
-// runOnce executes a single codex exec call and returns (stdout, stderr, error).
-func (d *Driver) runOnce(ctx context.Context, prompt string, timeoutSecs int) (string, string, error) {
+// runOnceStreaming executes a single codex exec call, streaming stdout to the
+// event channel as EventMessage events while the subprocess runs, and returns
+// the aggregated stdout, filtered stderr, and final error (ADR-0019).
+func (d *Driver) runOnceStreaming(ctx context.Context, prompt string, timeoutSecs int, ch chan<- runtime.Event) (string, string, error) {
 	taskCtx, cancel := context.WithTimeout(ctx, time.Duration(timeoutSecs)*time.Second)
 	defer cancel()
 
 	args := []string{"exec", "--skip-git-repo-check", prompt}
 	cmd := exec.CommandContext(taskCtx, d.binary, args...)
 
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
+	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 
-	err := cmd.Run()
+	pipe, err := cmd.StdoutPipe()
+	if err != nil {
+		return "", filterStderr(stderr.String()), err
+	}
+	if err := cmd.Start(); err != nil {
+		return "", filterStderr(stderr.String()), err
+	}
 
-	// Filter stderr noise: keep only meaningful lines
+	var agg strings.Builder
+	scanner := bufio.NewScanner(pipe)
+	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line != "" {
+			ch <- runtime.Event{Type: runtime.EventMessage, Content: line}
+		}
+		agg.WriteString(line)
+		agg.WriteByte('\n')
+	}
+	// scanner error (e.g. pipe closed early) is non-fatal; the wait result decides.
+	werr := cmd.Wait()
 	filteredStderr := filterStderr(stderr.String())
-
-	return stdout.String(), filteredStderr, err
+	if werr != nil {
+		return agg.String(), filteredStderr, werr
+	}
+	return agg.String(), filteredStderr, scanner.Err()
 }
 
 // filterStderr removes known noise lines (plugin sync warnings, model metadata warnings).

@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- P4: codex + opencode driver stdout streaming (StdoutPipe + bufio.Scanner, ADR-0019)
+- testdata/stubbin/codex-stream multi-line stub for streaming tests
+- TestCodex_SendTask_StreamingEvents verifying incremental EventMessage before EventDone
+
+### Changed
+- codex runOnce -> runOnceStreaming (aggregated stdout preserved for EventDone)
+- opencode runOnce -> runOnceStreaming (JSON Lines parsed inline as they arrive)
+
+## [0.6.0] - 2026-09-06
+
+### Added
+- P4: codex + opencode driver stdout streaming
+- testdata/stubbin/codex-stream multi-line stub
+- TestCodex_SendTask_StreamingEvents
+
+### Changed
+- codex + opencode runOnce -> runOnceStreaming
+
+
+### Added
 - Direction C: real host driver end-to-end verification via codex stub binary (Scheduler.WithDriver + Director.WithDriver)
 - Scheduler writer nodes now dispatch to host driver.SendTask, persist stdout artifact to .aicodingagentteam/host/<nodeID>.txt
 - Director.WithDriver option propagates driver to scheduler
