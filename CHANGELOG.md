@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- P6: ACP v1 session/newTask method dispatching to Director in a goroutine
+- ACP Server NewWithDirector constructor + DirectorLike interface
+- notifications/session/update JSON-RPC push (no ID) for streamed TaskEvents (start/message/tool_call/done/error)
+- Task + TaskEvent types for in-memory event history
+- TestACP_SessionNewTask_StreamsEvents e2e over in-process stdio pipe
+
+### Changed
+- ACP Session struct now tracks active tasks per session
+
+## [0.7.0] - 2026-09-06
+
+### Added
+- P6: ACP session/newTask + notifications/session/update (ADR-0020)
+- DirectorLike abstraction; NewWithDirector constructor
+- Task + TaskEvent types; TestACP_SessionNewTask_StreamsEvents
+
+### Changed
+- ACP Session struct now tracks active tasks per session
+
+
+### Added
 - P4: codex + opencode driver stdout streaming (StdoutPipe + bufio.Scanner, ADR-0019)
 - testdata/stubbin/codex-stream multi-line stub for streaming tests
 - TestCodex_SendTask_StreamingEvents verifying incremental EventMessage before EventDone
