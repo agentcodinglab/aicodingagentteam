@@ -105,3 +105,43 @@ func TestLoad_NonExistentReturnsError(t *testing.T) {
 		t.Error("should return error for non-existent plan")
 	}
 }
+
+func TestNew_EmptyWorkspace(t *testing.T) {
+	p := New("")
+	if p == nil {
+		t.Fatal("New returned nil")
+	}
+	if p.workspace == "" {
+		t.Error("workspace should be set to cwd")
+	}
+}
+
+func TestLoadState_NonExistentReturnsError(t *testing.T) {
+	p := New(t.TempDir())
+	_, err := p.LoadState()
+	if err == nil {
+		t.Error("should return error for non-existent state")
+	}
+}
+
+func TestLoadState_CorruptedReturnsError(t *testing.T) {
+	dir := t.TempDir()
+	p := New(dir)
+	os.MkdirAll(filepath.Join(dir, ".aicodingagentteam"), 0o755)
+	os.WriteFile(filepath.Join(dir, ".aicodingagentteam", "workflow-state.json"), []byte("invalid json"), 0o644)
+	_, err := p.LoadState()
+	if err == nil {
+		t.Error("should return error for corrupted state")
+	}
+}
+
+func TestLoad_CorruptedReturnsError(t *testing.T) {
+	dir := t.TempDir()
+	p := New(dir)
+	os.MkdirAll(filepath.Join(dir, ".aicodingagentteam"), 0o755)
+	os.WriteFile(filepath.Join(dir, ".aicodingagentteam", "plan.json"), []byte("invalid"), 0o644)
+	_, err := p.Load()
+	if err == nil {
+		t.Error("should return error for corrupted plan")
+	}
+}

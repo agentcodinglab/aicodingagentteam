@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -92,5 +93,41 @@ func TestAgentCardFields(t *testing.T) {
 	}
 	if len(card.Capabilities) == 0 {
 		t.Error("should have capabilities")
+	}
+}
+
+func TestReviewerAgent_Status(t *testing.T) {
+	agent := NewReviewer(a2a.AgentCard{ID: "test", Role: types.RoleQA}, nil)
+	if s := agent.Status(context.Background()); s != "idle" {
+		t.Errorf("expected idle, got %s", s)
+	}
+}
+
+func TestReviewerAgent_Execute_Error(t *testing.T) {
+	agent := NewReviewer(a2a.AgentCard{ID: "test", Role: types.RoleQA}, func(ctx context.Context, task a2a.Task) (types.Verdict, error) {
+		return types.Verdict{}, fmt.Errorf("check failed")
+	})
+	_, err := agent.Execute(context.Background(), a2a.Task{TaskID: "t1", Role: types.RoleQA})
+	if err == nil {
+		t.Error("expected error from check fn")
+	}
+}
+
+func TestReviewerAgent_Execute_EmptyVerdictFields(t *testing.T) {
+	agent := NewReviewer(a2a.AgentCard{ID: "test", Role: types.RoleQA}, func(ctx context.Context, task a2a.Task) (types.Verdict, error) {
+		return types.Verdict{Decision: types.DecisionAccept}, nil
+	})
+	res, err := agent.Execute(context.Background(), a2a.Task{TaskID: "t1", Role: types.RoleQA})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if res.TaskID != "t1" {
+		t.Errorf("expected t1, got %s", res.TaskID)
+	}
+	if res.Verdict.TaskID != "t1" {
+		t.Errorf("verdict task id not set, got %s", res.Verdict.TaskID)
+	}
+	if res.Verdict.Role != types.RoleQA {
+		t.Errorf("verdict role not set")
 	}
 }

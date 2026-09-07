@@ -43,6 +43,41 @@ make run
 cd tui && npm install && npm run build && node dist/cli.js --demo
 ```
 
+## Local Development Quick Start
+
+```bash
+# 1. Clone and enter the repo
+git clone https://github.com/agentcodinglab/aicodingagentteam.git
+cd aicodingagentteam
+
+# 2. Run all checks (lint + vet + test + build)
+make all
+
+# 3. Run Go tests with coverage
+go test ./... -cover -count=1
+
+# 4. Run the coordinator in demo mode (no API key needed)
+go run ./cmd/aicodingagentteam knowledge demo
+
+# 5. Website development (optional)
+cd website && npm install && npm run dev
+
+# 6. Generate OG images for social sharing
+cd website && node scripts/gen-og-images.mjs
+```
+
+### Common test commands
+
+| Command | What it does |
+|---|---|
+| `make all` | Full CI pipeline: lint + vet + test + build |
+| `go test ./... -cover` | All Go tests with coverage report |
+| `go test ./cmd/... -cover` | CLI smoke tests only |
+| `go test ./internal/godocgen/... -cover` | Godocgen package only |
+| `cd website && npm test` | Website perf-budget check |
+| `cd website && npx tsc --noEmit` | TypeScript type check |
+
+
 ## Coding Standards
 
 - **Go**: Follow `aicoding_docs/docs/standards/languages/go.md` — `internal/` + `pkg/` + `cmd/` layout, lowercase package names, explicit error handling.

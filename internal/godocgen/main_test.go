@@ -157,3 +157,245 @@ func mustDoc(t *testing.T, pkg *ast.Package) *doc.Package {
 
 
 
+
+// --- Coverage gap tests (P7.3) ---
+
+func TestGenerate_NonDirEntries(t *testing.T) {
+	t.Parallel()
+	tmp := t.TempDir()
+	pkgRoot := filepath.Join(tmp, "pkg")
+	outRoot := filepath.Join(tmp, "out")
+	mustMkdir(t, pkgRoot, "realpkg")
+	mustWrite(t, filepath.Join(pkgRoot, "realpkg", "real.go"), `package realpkg
+
+// Real is exported.
+type Real struct{}
+`)
+	// drop a stray file in pkgDir root — should be skipped by !e.IsDir()
+	mustWrite(t, filepath.Join(pkgRoot, "README.md"), "not a package")
+	opts := Options{PkgDir: pkgRoot, OutDir: outRoot, Locale: "en", Version: "test"}
+	if err := Generate(opts); err != nil {
+		t.Fatalf("Generate with stray file: %v", err)
+	}
+}
+
+func TestGenerate_BadPackageDir(t *testing.T) {
+	t.Parallel()
+	opts := Options{PkgDir: "/nonexistent/path/xyz", OutDir: t.TempDir(), Locale: "en", Version: "test"}
+	if err := Generate(opts); err == nil {
+		t.Error("expected error for nonexistent pkg dir")
+	}
+}
+
+func TestGenerate_MkdirAllFail(t *testing.T) {
+	t.Parallel()
+	tmp := t.TempDir()
+	pkgRoot := filepath.Join(tmp, "pkg")
+	mustMkdir(t, pkgRoot, "ok")
+	mustWrite(t, filepath.Join(pkgRoot, "ok", "ok.go"), `package ok
+type T struct{}
+`)
+	// point OutDir at a file to force MkdirAll failure
+	mustWrite(t, filepath.Join(tmp, "blocker"), "x")
+	opts := Options{PkgDir: pkgRoot, OutDir: filepath.Join(tmp, "blocker"), Locale: "en", Version: "test"}
+	if err := Generate(opts); err == nil {
+		t.Error("expected mkdir error")
+	}
+}
+
+func TestCollectPackage_NameMismatch(t *testing.T) {
+	t.Parallel()
+	tmp := t.TempDir()
+	pkgRoot := filepath.Join(tmp, "pkg")
+	dirName := "mydir"
+	mustMkdir(t, pkgRoot, dirName)
+	// source declares package "different" but dir is "mydir" -> name mismatch
+	mustWrite(t, filepath.Join(pkgRoot, dirName, "f.go"), `package different
+type X struct{}
+`)
+	fset := token.NewFileSet()
+	_, err := collectPackage(fset, filepath.Join(pkgRoot, dirName), dirName, pkgRoot)
+	if err == nil {
+		t.Error("expected error for package name mismatch")
+	}
+}
+
+func TestCollectPackage_ParseError(t *testing.T) {
+	t.Parallel()
+	tmp := t.TempDir()
+	pkgRoot := filepath.Join(tmp, "pkg")
+	dirName := "badpkg"
+	mustMkdir(t, pkgRoot, dirName)
+	mustWrite(t, filepath.Join(pkgRoot, dirName, "broken.go"), `package badpkg
+this is not valid go syntax !!!
+`)
+	fset := token.NewFileSet()
+	_, err := collectPackage(fset, filepath.Join(pkgRoot, dirName), dirName, pkgRoot)
+	if err == nil {
+		t.Error("expected parse error for broken go source")
+	}
+}
+
+func TestCollectPackage_VarsAndFuncs(t *testing.T) {
+	t.Parallel()
+	tmp := t.TempDir()
+	pkgRoot := filepath.Join(tmp, "pkg")
+	dirName := "mixedpkg"
+	mustMkdir(t, pkgRoot, dirName)
+	mustWrite(t, filepath.Join(pkgRoot, dirName, "mixed.go"), `package mixedpkg
+
+// Holder has a var and methods.
+type Holder struct {
+	Val int
+}
+
+// Get returns Val.
+func (h Holder) Get() int { return h.Val }
+
+// Default is an exported var on the type group.
+var Default = Holder{Val: 1}
+
+// Pi is a package-level exported var.
+var Pi = 3.14
+
+// MaxQ is a package-level exported const.
+const MaxQ = 100
+
+// unexportedVar should not appear.
+var unexportedVar = 1
+`)
+	fset := token.NewFileSet()
+	info, err := collectPackage(fset, filepath.Join(pkgRoot, dirName), dirName, pkgRoot)
+	if err != nil {
+		t.Fatalf("collectPackage: %v", err)
+	}
+	found := make(map[string]string)
+	for _, d := range info.Decls {
+		found[d.Name] = d.Kind
+	}
+	if _, ok := found["Pi"]; !ok {
+		t.Error("expected package-level var Pi in decls")
+	}
+	if _, ok := found["MaxQ"]; !ok {
+		t.Error("expected package-level const MaxQ in decls")
+	}
+	if _, ok := found["Get"]; !ok {
+		t.Error("expected method Get in decls")
+	}
+	if _, ok := found["unexportedVar"]; ok {
+		t.Error("unexportedVar should not appear")
+	}
+}
+
+func TestPrintDecl_NilSafe(t *testing.T) {
+	t.Parallel()
+	// passing nil decl should return empty string, not panic
+	got := printDecl(token.NewFileSet(), nil)
+	if got != "" {
+		t.Errorf("expected empty for nil decl, got %q", got)
+	}
+}
+
+func TestTitleCaser_Empty(t *testing.T) {
+	t.Parallel()
+	if got := titleCaser(""); got != "" {
+		t.Errorf("expected empty, got %q", got)
+	}
+}
+
+func TestTitleCaser_Lower(t *testing.T) {
+	t.Parallel()
+	if got := titleCaser("func"); got != "Func" {
+		t.Errorf("expected Func, got %q", got)
+	}
+}
+
+// --- Additional coverage tests (P7.3 continued) ---
+
+func TestCollectPackage_PackageLevelFuncsAndTypeConsts(t *testing.T) {
+	t.Parallel()
+	tmp := t.TempDir()
+	pkgRoot := filepath.Join(tmp, "pkg")
+	dirName := "fullpkg"
+	mustMkdir(t, pkgRoot, dirName)
+	mustWrite(t, filepath.Join(pkgRoot, dirName, "full.go"), `package fullpkg
+
+// Color is a type with associated consts.
+type Color int
+
+const (
+	// Red is a color.
+	Red Color = iota
+	// Blue is a color.
+	Blue
+)
+
+// Standalone is a package-level exported func.
+func Standalone() string { return "standalone" }
+
+// unexported should not appear.
+func unexported() {}
+`)
+	fset := token.NewFileSet()
+	info, err := collectPackage(fset, filepath.Join(pkgRoot, dirName), dirName, pkgRoot)
+	if err != nil {
+		t.Fatalf("collectPackage: %v", err)
+	}
+	found := make(map[string]string)
+	for _, d := range info.Decls {
+		found[d.Name] = d.Kind
+	}
+	if _, ok := found["Standalone"]; !ok {
+		t.Error("expected package-level func Standalone in decls")
+	}
+	if _, ok := found["Red"]; !ok {
+		t.Error("expected type-level const Red in decls")
+	}
+	if _, ok := found["Blue"]; !ok {
+		t.Error("expected type-level const Blue in decls")
+	}
+	if _, ok := found["unexported"]; ok {
+		t.Error("unexported func should not appear")
+	}
+}
+
+func TestGenerate_SkipsBadPackageButContinues(t *testing.T) {
+	t.Parallel()
+	tmp := t.TempDir()
+	pkgRoot := filepath.Join(tmp, "pkg")
+	outRoot := filepath.Join(tmp, "out")
+	mustMkdir(t, pkgRoot, "good")
+	mustWrite(t, filepath.Join(pkgRoot, "good", "good.go"), `package good
+type T struct{}
+`)
+	// "bad" dir has a package name mismatch — Generate should skip it and continue
+	mustMkdir(t, pkgRoot, "bad")
+	mustWrite(t, filepath.Join(pkgRoot, "bad", "f.go"), `package mismatched
+type X struct{}
+`)
+	opts := Options{PkgDir: pkgRoot, OutDir: outRoot, Locale: "en", Version: "test"}
+	if err := Generate(opts); err != nil {
+		t.Fatalf("Generate should skip bad pkg and succeed: %v", err)
+	}
+	// good package should still be rendered
+	if _, err := os.Stat(filepath.Join(outRoot, "en", "pkg-good.md")); err != nil {
+		t.Errorf("pkg-good.md should exist: %v", err)
+	}
+}
+
+func TestGenerate_MkdirLocaleFail(t *testing.T) {
+	t.Parallel()
+	tmp := t.TempDir()
+	pkgRoot := filepath.Join(tmp, "pkg")
+	mustMkdir(t, pkgRoot, "ok")
+	mustWrite(t, filepath.Join(pkgRoot, "ok", "ok.go"), `package ok
+type T struct{}
+`)
+	// Create a file, then use it as OutDir/locale path to force MkdirAll failure
+	blocker := filepath.Join(tmp, "blocker")
+	mustWrite(t, blocker, "x")
+	opts := Options{PkgDir: pkgRoot, OutDir: blocker, Locale: "en", Version: "test"}
+	if err := Generate(opts); err == nil {
+		t.Error("expected mkdir error when locale dir cannot be created")
+	}
+}

@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-07
+
+### Added (P7 -- CLI smoke + coverage gap fill, ADR-0022)
+- cmd/aicodingagentteam smoke tests (coverage_test.go): printUsage, cmdInit, printCheckDetails, cmdMemory, cmdKnowledge, writeDemoReport, cmdGovern, cmdReport, toGateDetails, tempDir -- 0% to 60.2%
+- cmd/godocgen smoke tests (main_test.go): GenerateSingleLocale, GenerateMultipleLocales, BuildBinary, CLI_Help, RunGodocGen -- 0% to 60.0%
+- cmd/godocgen main.go refactored: runGodocGen extracted for testability
+- internal/godocgen tests: NonDirEntries, BadPackageDir, MkdirAllFail, NameMismatch, ParseError, VarsAndFuncs, PackageLevelFuncsAndTypeConsts, SkipsBadPackage, PrintDecl_NilSafe -- 73.5% to 90.3%
+- internal/planner tests: New_EmptyWorkspace, LoadState NonExistent/Corrupted, Load_Corrupted -- 82.4% to 90.2%
+- internal/host/opencode tests: Driver_Pause/Resume, IsTransient_Empty/Transient, FilterStderr_Empty -- 84.1% to 85.3%
+- internal/agent tests: ReviewerAgent_Status/Execute_Error/EmptyVerdictFields -- 84.6% to 94.9%
+- CI governance.yml: cli-smoke job (soft-fail) -- version, knowledge demo, godocgen, cmd unit tests
+
+### Added (P8 -- website test entry + SEO deepening, ADR-0022)
+- website/package.json: `test` script running perf-budget check
+- website/scripts/gen-og-images.mjs: 9 locale OG images (SVG, no external deps)
+- website/app/structured-data.tsx: JSON-LD SoftwareApplication + BreadcrumbList
+- website/app/layout.tsx: StructuredData component wired in, OG image path updated to generated SVG
+- public/og/: 9 locale SVGs + default OG image
+
+### Added (P9 -- v0.9.0 release preparation, ADR-0022)
+- CHANGELOG: [Unreleased] promoted to [0.9.0]
+- .github/ISSUE_TEMPLATE/good-first-issue.md: beginner-friendly task template
+- CONTRIBUTING.md: Local Development Quick Start section + common test commands table
+
+
+
 ### Changed
 - docs: revised host-driver spec + 02/03 architecture docs to reflect ADR-0021 (opencode serve is Web UI, not JSON API; driver uses opencode acp)
 - docs: ADR-0007 cross-referenced as superseded by ADR-0021 for the OpenCode serve recommendation

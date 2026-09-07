@@ -3,8 +3,8 @@ package opencode
 import (
 	"context"
 	"runtime"
-	"time"
 	"testing"
+	"time"
 
 	"os"
 	"path/filepath"
@@ -138,17 +138,20 @@ func indexString(s, substr string) int {
 // writeMockOpencode builds a tiny Go program that prints jsonl to stdout.
 const NewLine = "\n"
 
-
 // acpStub returns the absolute path to the opencode-acp stub binary.
 func acpStub(t *testing.T) string {
 	t.Helper()
 	name := "opencode-acp"
-	if runtime.GOOS == "windows" { name = "opencode-acp.cmd" }
+	if runtime.GOOS == "windows" {
+		name = "opencode-acp.cmd"
+	}
 	_, thisFile, _, _ := runtime.Caller(0)
 	// internal/host/opencode -> repo root
 	root := filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(thisFile))))
 	p := filepath.Join(root, "testdata", "stubbin", name)
-	if _, err := os.Stat(p); err != nil { t.Skipf("stub binary not found: %s", p) }
+	if _, err := os.Stat(p); err != nil {
+		t.Skipf("stub binary not found: %s", p)
+	}
 	return p
 }
 
@@ -160,20 +163,66 @@ func TestOpenCode_ACP_StubServer(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	ch, err := d.SendTask(ctx, "opencode", rt.TaskPayload{Instruction: "hello", Timeout: 30})
-	if err != nil { t.Fatalf("SendTask: %v", err) }
+	if err != nil {
+		t.Fatalf("SendTask: %v", err)
+	}
 	var msgs []string
 	var gotDone bool
 	var doneContent string
 	for ev := range ch {
 		switch ev.Type {
-		case rt.EventMessage: msgs = append(msgs, ev.Content)
+		case rt.EventMessage:
+			msgs = append(msgs, ev.Content)
 		case rt.EventDone:
-			gotDone = true; doneContent = ev.Content
-		case rt.EventError: t.Fatalf("error event: %s", ev.Content)
+			gotDone = true
+			doneContent = ev.Content
+		case rt.EventError:
+			t.Fatalf("error event: %s", ev.Content)
 		}
 	}
-	if !gotDone { t.Fatal("expected EventDone") }
-	if len(msgs) == 0 { t.Error("expected at least one EventMessage from the stub (no streaming?)") }
-	for _, m := range msgs { if !strings.Contains(m, "acp stub") { t.Errorf("unexpected message: %s", m) } }
-	if doneContent == "" { t.Error("expected non-empty Done content") }
+	if !gotDone {
+		t.Fatal("expected EventDone")
+	}
+	if len(msgs) == 0 {
+		t.Error("expected at least one EventMessage from the stub (no streaming?)")
+	}
+	for _, m := range msgs {
+		if !strings.Contains(m, "acp stub") {
+			t.Errorf("unexpected message: %s", m)
+		}
+	}
+	if doneContent == "" {
+		t.Error("expected non-empty Done content")
+	}
+}
+func TestDriver_Pause(t *testing.T) {
+	d := New()
+	if err := d.Pause(context.Background(), "s1"); err != nil {
+		t.Errorf("Pause should not error: %v", err)
+	}
+}
+
+func TestDriver_Resume(t *testing.T) {
+	d := New()
+	if err := d.Resume(context.Background(), "s1"); err != nil {
+		t.Errorf("Resume should not error: %v", err)
+	}
+}
+
+func TestIsTransient_Empty(t *testing.T) {
+	if isTransient("", nil) {
+		t.Error("empty stderr should not be transient")
+	}
+}
+
+func TestIsTransient_Transient(t *testing.T) {
+	if !isTransient("connection refused", nil) {
+		t.Error("connection refused should be transient")
+	}
+}
+
+func TestFilterStderr_Empty(t *testing.T) {
+	if got := filterStderr(""); got != "" {
+		t.Errorf("expected empty, got %s", got)
+	}
 }

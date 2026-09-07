@@ -4,6 +4,7 @@ import "@fontsource-variable/manrope/wght.css";
 import "@fontsource-variable/space-grotesk/wght.css";
 import "@fontsource-variable/jetbrains-mono/wght.css";
 import "./globals.css";
+import { StructuredData } from "./structured-data";
 
 const SITE_URL = "https://agentcodinglab.github.io/aicodingagentteam";
 
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/og.png",
+        url: "/og/og-default.svg",
         width: 1200,
         height: 630,
         alt: "AiCodingAgentTeam \u2014 Coordinate a 9-role software team",
@@ -63,7 +64,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className="dark min-h-screen">{children}</body>
+      <body className="dark min-h-screen"><StructuredData />{children}</body>
     </html>
   );
 }

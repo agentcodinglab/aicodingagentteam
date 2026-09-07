@@ -10,11 +10,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/agentcodinglab/aicodingagentteam/internal/godocgen"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/agentcodinglab/aicodingagentteam/internal/godocgen"
 )
 
 func main() {
@@ -25,16 +24,21 @@ func main() {
 		ver    = flag.String("version", "dev", "version label written into index.md")
 	)
 	flag.Parse()
+	if err := runGodocGen(*pkgDir, *outDir, *locale, *ver); err != nil {
+		fail("%v", err)
+	}
+}
 
-	pkgAbs, err := filepath.Abs(*pkgDir)
+func runGodocGen(pkgDir, outDir, locale, ver string) error {
+	pkgAbs, err := filepath.Abs(pkgDir)
 	if err != nil {
-		fail("abs pkg: %v", err)
+		return fmt.Errorf("abs pkg: %w", err)
 	}
-	outAbs, err := filepath.Abs(*outDir)
+	outAbs, err := filepath.Abs(outDir)
 	if err != nil {
-		fail("abs out: %v", err)
+		return fmt.Errorf("abs out: %w", err)
 	}
-	for _, code := range strings.Split(*locale, ",") {
+	for _, code := range strings.Split(locale, ",") {
 		code = strings.TrimSpace(code)
 		if code == "" {
 			continue
@@ -44,17 +48,17 @@ func main() {
 			PkgDir:  pkgAbs,
 			OutDir:  outAbs,
 			Locale:  code,
-			Version: *ver,
+			Version: ver,
 		}
 		if err := godocgen.Generate(opts); err != nil {
-			fail("generate %s: %v", code, err)
+			return fmt.Errorf("generate %s: %w", code, err)
 		}
 	}
 	fmt.Println("[godocgen] OK")
+	return nil
 }
 
 func fail(format string, args ...any) {
 	fmt.Fprintf(os.Stderr, "[godocgen] "+format+"\n", args...)
 	os.Exit(1)
 }
-
