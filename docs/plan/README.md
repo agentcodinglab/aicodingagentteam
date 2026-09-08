@@ -15,4 +15,5 @@ _待补充_
 | 计划文件 | 关联 ADR | 状态 |
 |---|---|---|
 | next-steps-coverage-and-release.md | ADR-0022 | 已完成 |
+| p10-p13-init-wizard-plugin.md | ADR-0023 | 已完成 |
 

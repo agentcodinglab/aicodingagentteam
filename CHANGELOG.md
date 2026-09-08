@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.9.0] - 2026-09-07
+### Added (P10+P13 -- init wizard, plugin discovery, gRPC e2e, ADR-0023)
+- pkg/plugin: global driver registry for community-contributed Runtime implementations (self-registration via init())
+- internal/host/registry: auto-loads plugin.All() drivers after built-in 4 backends
+- pkg/plugin/examples/stub-driver: example community driver demonstrating self-registration
+- cmd/aicodingagentteam: `init` wizard (--non-interactive flag, interactive backend/threshold/auto-approve selection, generates config.json)
+- cmd/aicodingagentteam: `backends` command listing all registered drivers + capabilities + auth status
+- pkg/api/server_grpc_test.go: gRPC end-to-end integration tests (RunPipeline/GetPlan/Verify/QuickEdit)
+
 
 ### Added (P7 -- CLI smoke + coverage gap fill, ADR-0022)
 - cmd/aicodingagentteam smoke tests (coverage_test.go): printUsage, cmdInit, printCheckDetails, cmdMemory, cmdKnowledge, writeDemoReport, cmdGovern, cmdReport, toGateDetails, tempDir -- 0% to 60.2%

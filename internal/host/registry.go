@@ -9,6 +9,7 @@ import (
 	"github.com/agentcodinglab/aicodingagentteam/internal/host/codex"
 	"github.com/agentcodinglab/aicodingagentteam/internal/host/dsh"
 	"github.com/agentcodinglab/aicodingagentteam/internal/host/opencode"
+	"github.com/agentcodinglab/aicodingagentteam/pkg/plugin"
 	"github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
 )
 
@@ -24,6 +25,11 @@ func NewRegistry() *Registry {
 	r.Register(runtime.BackendClaudeCode, claude.New())
 	r.Register(runtime.BackendOpenCode, opencode.New())
 	r.Register(runtime.BackendDSH, dsh.New())
+
+	// Load community-contributed drivers from the global plugin registry.
+	for backend, drv := range plugin.All() {
+		r.Register(backend, drv)
+	}
 	return r
 }
 

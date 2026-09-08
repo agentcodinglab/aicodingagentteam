@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
@@ -18,9 +19,9 @@ import (
 	"github.com/agentcodinglab/aicodingagentteam/internal/agent"
 	"github.com/agentcodinglab/aicodingagentteam/internal/audit"
 	"github.com/agentcodinglab/aicodingagentteam/internal/config"
+	"github.com/agentcodinglab/aicodingagentteam/internal/host"
 	"github.com/agentcodinglab/aicodingagentteam/internal/coordinator"
 	"github.com/agentcodinglab/aicodingagentteam/internal/governance"
-	"github.com/agentcodinglab/aicodingagentteam/internal/host"
 	"github.com/agentcodinglab/aicodingagentteam/internal/knowledge"
 	"github.com/agentcodinglab/aicodingagentteam/internal/mcp"
 	"github.com/agentcodinglab/aicodingagentteam/internal/memory"
@@ -51,7 +52,7 @@ func main() {
 
 	switch os.Args[1] {
 	case "init":
-		cmdInit()
+		cmdInit(os.Args[2:])
 	case "run":
 		cmdRun(ctx, cfg, os.Args[2:])
 	case "quick":
@@ -78,6 +79,8 @@ func main() {
 		cmdMemory(ctx, os.Args[2:])
 	case "ci":
 		cmdGovern(ctx, append([]string{"--ci"}, os.Args[2:]...))
+	case "backends":
+		cmdBackends(ctx)
 	case "version":
 		fmt.Printf("aicodingagentteam %s (commit=%s, built=%s)\n", version, commit, date)
 	default:
@@ -85,11 +88,122 @@ func main() {
 	}
 }
 
-func cmdInit() {
+func cmdInit(args []string) {
+	fs := flag.NewFlagSet("init", flag.ExitOnError)
+	nonInteractive := fs.Bool("non-interactive", false, "skip prompts, use defaults")
+	_ = fs.Parse(args)
+
 	for _, d := range []string{".aicodingagentteam", ".aicodingagentteam/audit", ".aicodingagentteam/memory", ".aicodingagentteam/contracts", ".aicodingagentteam/proof", "output"} {
 		_ = os.MkdirAll(d, 0o755)
 	}
-	fmt.Println("project initialized: .aicodingagentteam/ created")
+
+	configPath := filepath.Join(".aicodingagentteam", "config.json")
+
+	// Check for existing config
+	if _, err := os.Stat(configPath); err == nil && !*nonInteractive {
+		fmt.Printf("Config file already exists: %s\n", configPath)
+		fmt.Print("Overwrite? (y/N): ")
+		reader := bufio.NewReader(os.Stdin)
+		resp, _ := reader.ReadString('\n')
+		if strings.TrimSpace(resp) != "y" && strings.TrimSpace(resp) != "Y" {
+			fmt.Println("init cancelled")
+			return
+		}
+	}
+
+	backend := "codex"
+	threshold := 90
+	autoApprove := false
+
+	if !*nonInteractive {
+		reader := bufio.NewReader(os.Stdin)
+		backend = promptSelect(reader, "Select default host CLI backend", []string{"codex", "opencode", "claude-code", "deepseek-dsh"}, "codex")
+		threshold = promptInt(reader, "Quality gate threshold (1-100)", 90)
+		autoApprove = promptSelect(reader, "Auto-approve quality gates?", []string{"false", "true"}, "false") == "true"
+	}
+
+	cfg := map[string]interface{}{
+		"default":     map[string]interface{}{"backend": backend, "auto_approve_gates": autoApprove},
+		"coordinator": map[string]interface{}{"grpc": 8080, "mcp": 8081, "acp": 8082, "a2a": 8083},
+		"quality":     map[string]interface{}{"threshold": threshold},
+	}
+	data, _ := json.MarshalIndent(cfg, "", "  ")
+	if err := os.WriteFile(configPath, data, 0o644); err != nil {
+		fmt.Fprintf(os.Stderr, "error writing config: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("project initialized: .aicodingagentteam/ created\n")
+	fmt.Printf("config written to %s (backend=%s, threshold=%d, auto_approve=%v)\n", configPath, backend, threshold, autoApprove)
+}
+
+// promptSelect prompts the user to choose from options, returning the default on empty input.
+func promptSelect(reader *bufio.Reader, prompt string, options []string, def string) string {
+	fmt.Printf("%s %s [%s]: ", prompt, strings.Join(options, "/"), def)
+	resp, _ := reader.ReadString('\n')
+	resp = strings.TrimSpace(resp)
+	if resp == "" {
+		return def
+	}
+	for _, opt := range options {
+		if resp == opt {
+			return resp
+		}
+	}
+	return def
+}
+
+// promptInt prompts the user for an integer, returning the default on empty/invalid input.
+func promptInt(reader *bufio.Reader, prompt string, def int) int {
+	fmt.Printf("%s [%d]: ", prompt, def)
+	resp, _ := reader.ReadString('\n')
+	resp = strings.TrimSpace(resp)
+	if resp == "" {
+		return def
+	}
+	n := 0
+	for _, r := range resp {
+		if r < '0' || r > '9' {
+			return def
+		}
+		n = n*10 + int(r-'0')
+	}
+	if n < 1 || n > 100 {
+		return def
+	}
+	return n
+}
+
+// cmdBackends lists all registered host drivers with their capabilities and auth status.
+func cmdBackends(ctx context.Context) {
+	registry := host.NewRegistry()
+	fmt.Printf("%-20s %-8s %-10s %-10s %-10s\n", "BACKEND", "SESSION", "TOOL_CALL", "WEB_SEARCH", "AUTH")
+	fmt.Println(strings.Repeat("-", 70))
+	for _, b := range registry.List() {
+		drv, err := registry.Get(b)
+		if err != nil {
+			continue
+		}
+		caps := drv.Capabilities()
+		auth, _ := drv.AuthStatus(ctx, "")
+		authStr := "no"
+		if auth.Ready {
+			authStr = "yes"
+		}
+		resumeStr := "no"
+		if caps.SessionResume {
+			resumeStr = "yes"
+		}
+		tcStr := "no"
+		if caps.ToolCalls {
+			tcStr = "yes"
+		}
+		wsStr := "no"
+		if caps.WebSearch {
+			wsStr = "yes"
+		}
+		fmt.Printf("%-20s %-8s %-10s %-10s %-10s\n", string(b), resumeStr, tcStr, wsStr, authStr)
+	}
 }
 
 func cmdRun(ctx context.Context, cfg *config.Config, args []string) {
@@ -532,7 +646,8 @@ func printUsage() {
 	fmt.Println(`AiCodingAgentTeam - AI coding orchestration platform
 
 Usage:
-  aicodingagentteam init                          Initialize project
+  aicodingagentteam init [--non-interactive]      Initialize project with config wizard
+  aicodingagentteam backends                       List registered host drivers
   aicodingagentteam run "requirement" --backend X  Run full pipeline
   aicodingagentteam quick "small edit"             Quick edit
   aicodingagentteam verify                         Run quality gate

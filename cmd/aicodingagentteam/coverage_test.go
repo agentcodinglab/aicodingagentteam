@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"encoding/json"
 	"github.com/agentcodinglab/aicodingagentteam/internal/config"
 	"github.com/agentcodinglab/aicodingagentteam/internal/knowledge"
 	"github.com/agentcodinglab/aicodingagentteam/internal/memory"
@@ -36,7 +38,7 @@ func TestCmdInit(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer os.Chdir(old)
-	cmdInit()
+	cmdInit(nil)
 	for _, d := range []string{".aicodingagentteam", ".aicodingagentteam/audit", "output"} {
 		if _, err := os.Stat(d); os.IsNotExist(err) {
 			t.Errorf("expected %s to exist", d)
@@ -200,5 +202,98 @@ func TestTempDir(t *testing.T) {
 	d := tempDir()
 	if d == "" {
 		t.Error("tempDir returned empty")
+	}
+}
+
+
+func TestCmdInit_NonInteractive(t *testing.T) {
+	dir := t.TempDir()
+	old, _ := os.Getwd()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Chdir(old)
+	cmdInit([]string{"-non-interactive"})
+	cfgPath := filepath.Join(".aicodingagentteam", "config.json")
+	data, err := os.ReadFile(cfgPath)
+	if err != nil {
+		t.Fatalf("config.json not created: %v", err)
+	}
+	var cfg map[string]interface{}
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		t.Fatalf("config.json not valid JSON: %v", err)
+	}
+	def := cfg["default"].(map[string]interface{})
+	if def["backend"] != "codex" {
+		t.Errorf("expected codex, got %v", def["backend"])
+	}
+	q := cfg["quality"].(map[string]interface{})
+	if int(q["threshold"].(float64)) != 90 {
+		t.Errorf("expected 90, got %v", q["threshold"])
+	}
+}
+
+func TestCmdInit_CreatesDirs(t *testing.T) {
+	dir := t.TempDir()
+	old, _ := os.Getwd()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Chdir(old)
+	cmdInit([]string{"-non-interactive"})
+	for _, d := range []string{".aicodingagentteam", ".aicodingagentteam/audit", "output"} {
+		if _, err := os.Stat(d); os.IsNotExist(err) {
+			t.Errorf("expected %s to exist", d)
+		}
+	}
+}
+
+func TestCmdBackends(t *testing.T) {
+	old := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+	cmdBackends(context.Background())
+	w.Close()
+	os.Stdout = old
+	buf := make([]byte, 8192)
+	n, _ := r.Read(buf)
+	out := string(buf[:n])
+	if !strings.Contains(out, "codex") {
+		t.Errorf("expected codex in backends output: %s", out)
+	}
+	if !strings.Contains(out, "BACKEND") {
+		t.Errorf("expected BACKEND header: %s", out)
+	}
+}
+
+func TestPromptSelect_Default(t *testing.T) {
+	reader := bufio.NewReader(strings.NewReader("\n"))
+	got := promptSelect(reader, "test", []string{"a", "b"}, "a")
+	if got != "a" {
+		t.Errorf("expected default a, got %s", got)
+	}
+}
+
+func TestPromptSelect_ValidChoice(t *testing.T) {
+	reader := bufio.NewReader(strings.NewReader("b\n"))
+	got := promptSelect(reader, "test", []string{"a", "b"}, "a")
+	if got != "b" {
+		t.Errorf("expected b, got %s", got)
+	}
+}
+
+func TestPromptInt_Default(t *testing.T) {
+	reader := bufio.NewReader(strings.NewReader("\n"))
+	got := promptInt(reader, "test", 80)
+	if got != 80 {
+		t.Errorf("expected 80, got %d", got)
+	}
+}
+
+func TestPromptInt_ValidInput(t *testing.T) {
+	reader := bufio.NewReader(strings.NewReader("75\n"))
+	got := promptInt(reader, "test", 90)
+	if got != 75 {
+		t.Errorf("expected 75, got %d", got)
 	}
 }

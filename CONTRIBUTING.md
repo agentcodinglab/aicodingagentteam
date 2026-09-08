@@ -117,3 +117,40 @@ Use the issue templates in `.github/ISSUE_TEMPLATE/`. Provide:
 - Steps to reproduce
 - Environment (OS, Go version, backend CLI)
 - Logs or error output
+
+## Contributing a New Host Driver
+
+AiCodingAgentTeam supports community-contributed host drivers via the plugin registry. To add a new AI coding CLI driver:
+
+1. **Implement the `runtime.Runtime` interface** (`pkg/runtime/runtime.go`) — all 8 methods: StartSession, DestroySession, SendTask, Capabilities, ModelInfo, Pause, Resume, AuthStatus.
+
+2. **Create a Go package** with an `init()` that self-registers:
+
+   ```go
+   package mydriver
+
+   import (
+       "github.com/agentcodinglab/aicodingagentteam/pkg/plugin"
+       "github.com/agentcodinglab/aicodingagentteam/pkg/runtime"
+   )
+
+   func init() {
+       plugin.Register(runtime.Backend("my-cli"), &Driver{})
+   }
+   ```
+
+3. **Write tests** — target >=85% coverage, test Capabilities/AuthStatus/SendTask at minimum.
+
+4. **Users activate your driver** with a blank import:
+
+   ```go
+   import _ "github.com/yourorg/mydriver"
+   ```
+
+5. **Reference**: see `pkg/plugin/examples/stub-driver/` for a complete working example.
+
+### Rules
+
+- **No API keys** in driver code (ADR-0005). Authentication is delegated to the underlying CLI.
+- **Report capabilities honestly** — `HostCapabilities` fields must reflect what the CLI actually supports, never fake `true`.
+- **Backend name** must be unique and lowercase-kebab (e.g., `my-cli`).
