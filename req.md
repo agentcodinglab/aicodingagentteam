@@ -1,0 +1,1 @@
+本项目 **基于golang开发的AI编码编排Agent Team项目**，特点是 容器化部署 基于角色的agent team团队编排,agnet之间使用a2a协议协作 , 本身不拥有大模型，负责调度3款主流AI编码CLI（Claude‑Code、Codex、OpenCode、deepseek dsh），模拟真实软件开发团队角色，提供完整可审计、带质量门禁的软件交付流水线,对外可提供整体mcp acp  a2a协议 方便外部调用，提供 typescript tui的cli客户端 让软件开发者使用。
