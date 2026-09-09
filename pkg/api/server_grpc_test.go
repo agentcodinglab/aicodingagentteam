@@ -8,9 +8,13 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/agentcodinglab/aicodingagentteam/pkg/api/gen"
+
+	"github.com/agentcodinglab/aicodingagentteam/internal/a2a"
 )
 
 // fakeHandler implements Handler for gRPC integration testing.
@@ -27,6 +31,35 @@ func (f *fakeHandler) Verify(ctx context.Context) (*VerifyResponse, error) {
 }
 func (f *fakeHandler) GetPlan(ctx context.Context) (*PlanResponse, error) {
 	return &PlanResponse{PlanJSON: "{}", Nodes: 3}, nil
+}
+
+// fakeExtendedHandler implements Handler + ExtendedHandler for Continue testing.
+type fakeExtendedHandler struct{ fakeHandler }
+
+func (f *fakeExtendedHandler) GetAgentCards(ctx context.Context) []a2a.AgentCard {
+	return nil
+}
+
+func (f *fakeExtendedHandler) GetPlanDetail(ctx context.Context) (*PlanDetail, error) {
+	return &PlanDetail{ID: "test"}, nil
+}
+
+func (f *fakeExtendedHandler) ContinuePlan(ctx context.Context, planID string) (bool, string, error) {
+	return true, "resumed", nil
+}
+
+// fakeEmptyHandler returns an empty plan (0 nodes).
+type fakeEmptyHandler struct{ fakeHandler }
+
+func (f *fakeEmptyHandler) GetPlan(ctx context.Context) (*PlanResponse, error) {
+	return &PlanResponse{PlanJSON: "{}", Nodes: 0}, nil
+}
+
+// fakeErrorHandler returns an error from GetPlan.
+type fakeErrorHandler struct{ fakeHandler }
+
+func (f *fakeErrorHandler) GetPlan(ctx context.Context) (*PlanResponse, error) {
+	return nil, fmt.Errorf("plan not found")
 }
 
 // startTestGRPC starts a gRPC server on a free port and returns the address + cleanup.
@@ -158,4 +191,115 @@ func TestGRPC_QuickEdit_EndToEnd(t *testing.T) {
 		t.Errorf("expected score 90, got %d", resp.Score)
 	}
 	_ = fmt.Sprintf("") // silence unused import if fmt not needed
+}
+
+func TestGRPC_Continue_FallbackPlanExists(t *testing.T) {
+	addr, stop := startTestGRPC(t, &fakeHandler{})
+	defer stop()
+
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := pb.NewCoordinatorClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	resp, err := client.Continue(ctx, &pb.ContinueRequest{PlanId: "p1"})
+	if err != nil {
+		t.Fatalf("Continue RPC failed: %v", err)
+	}
+	if resp.Resumed {
+		t.Error("expected resumed=false without ExtendedHandler")
+	}
+	if resp.Status != "plan exists but resume requires extended handler" {
+		t.Errorf("unexpected status: %s", resp.Status)
+	}
+}
+
+func TestGRPC_Continue_FallbackNoPlan(t *testing.T) {
+	addr, stop := startTestGRPC(t, &fakeEmptyHandler{})
+	defer stop()
+
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := pb.NewCoordinatorClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	resp, err := client.Continue(ctx, &pb.ContinueRequest{PlanId: "p1"})
+	if err != nil {
+		t.Fatalf("Continue RPC failed: %v", err)
+	}
+	if resp.Resumed {
+		t.Error("expected resumed=false")
+	}
+	if resp.Status != "no plan available to continue" {
+		t.Errorf("unexpected status: %s", resp.Status)
+	}
+}
+
+func TestGRPC_Continue_FallbackGetPlanError(t *testing.T) {
+	addr, stop := startTestGRPC(t, &fakeErrorHandler{})
+	defer stop()
+
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := pb.NewCoordinatorClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err = client.Continue(ctx, &pb.ContinueRequest{PlanId: "p1"})
+	if err == nil {
+		t.Fatal("expected error from Continue RPC")
+	}
+	st, ok := status.FromError(err)
+	if !ok || st.Code() != codes.Internal {
+		t.Errorf("expected Internal error, got %v", err)
+	}
+}
+
+func TestGRPC_Continue_WithExtendedHandler(t *testing.T) {
+	h := &fakeExtendedHandler{}
+	grpcServer := grpc.NewServer()
+	adapter := &coordinatorAdapter{h: h, ext: h}
+	pb.RegisterCoordinatorServer(grpcServer, adapter)
+
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("listen: %v", err)
+	}
+	go func() { _ = grpcServer.Serve(lis) }()
+	defer grpcServer.Stop()
+
+	conn, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := pb.NewCoordinatorClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	resp, err := client.Continue(ctx, &pb.ContinueRequest{PlanId: "p1"})
+	if err != nil {
+		t.Fatalf("Continue RPC failed: %v", err)
+	}
+	if !resp.Resumed {
+		t.Error("expected resumed=true with ExtendedHandler")
+	}
+	if resp.Status != "resumed" {
+		t.Errorf("expected status 'resumed', got %s", resp.Status)
+	}
 }

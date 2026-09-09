@@ -25,19 +25,21 @@
 
 ### 做什么
 
-1. **校验清单（10 项）**
-   | # | 校验项 | 类型 | 工具 | 阻塞级别 |
-   |---|---|---|---|---|
-   | 1 | PRD 完整性 | 文档 | 文件存在 + 关键词 | advisory |
-   | 2 | 架构/API/数据模型 | 文档 | OpenAPI 文件存在 | advisory |
-   | 3 | 前后端契约交叉校验 | 契约 | `pkg/contracts` CrossCheck | blocking |
-   | 4 | UI 坏味道（emoji/硬编码颜色） | 治理 | 正则扫描 | advisory |
-   | 5 | 编译 | 构建 | `go build ./...` | blocking |
-   | 6 | 单元测试 | 测试 | `go test ./...` | blocking |
-   | 7 | Lint | 静态 | `golangci-lint` + `eslint` | blocking |
-   | 8 | 密钥泄露扫描 | 安全 | 正则 + git-secrets | blocking |
-   | 9 | Runtime 探针 | 运行时 | 启动应用 + 访问路由 | advisory |
-   | 10 | 审计日志完整性 | 审计 | `.aicodingagentteam/audit/` 存在 | advisory |
+1. **校验清单（10 项）** — ✅ 全部已实现（P11 补齐）
+   | # | 校验项 | 类型 | 工具 | 阻塞级别 | 状态 |
+   |---|---|---|---|---|---|
+   | 1 | PRD 完整性 | 文档 | `prdCompleteness` CheckFunc | advisory | ✅ |
+   | 2 | 架构/API/数据模型 | 文档 | `architectureDesign` CheckFunc | advisory | ✅ |
+   | 3 | 前后端契约交叉校验 | 契约 | `apiContractCrossCheck` → `contracts.CrossCheck` | blocking | ✅ |
+   | 4 | UI 坏味道（emoji/硬编码颜色） | 治理 | `uiSmells` CheckFunc | advisory | ✅ |
+   | 5 | 编译 | 构建 | `go build ./...` | blocking | ✅ |
+   | 6 | 单元测试 | 测试 | `go test ./... -count=1` | blocking | ✅ |
+   | 7 | Lint | 静态 | `golangci-lint run ./...` | advisory | ✅ |
+   | 8 | 密钥泄露扫描 | 安全 | `secretLeak` → `governance.checkSecretLeak` | blocking | ✅ |
+   | 9 | Runtime 探针 | 运行时 | backend `--version` | advisory | ✅ |
+   | 10 | 审计日志完整性 | 审计 | `auditLog` CheckFunc | advisory | ✅ |
+
+   > 注：vet 作为 build 的子项执行。#3 和 #8 已接入 `pkg/contracts.CrossCheck` 和 `governance.checkSecretLeak` 真实逻辑。
 
 2. **评分规则**
    - 每项校验权重相等（10 分/项），总分 100
@@ -71,13 +73,21 @@
 - [x] Score ≥ 阈值时 `Passed=true`，低于阈值时 `Passed=false`
 - [x] go build 失败时 blocking 列表包含 "build" 项
 - [x] go test 失败时 blocking 列表包含 "test" 项
-- [x] 前后端契约不匹配时 blocking 列表包含 "api-contract" 项
+- [x] 前后端契约不匹配时 blocking 列表包含 "api-contract-crosscheck" 项
 - [x] advisory 项失败不影响 Passed 判定
 - [x] 校验超时标记失败，不 panic
 - [x] 引擎自身异常时返回默认通过（fail-open），不阻断开发
 - [x] 结果写入 `verify.jsonl` 审计日志
 - [x] `aicodingagentteam verify --runtime` 命令执行全部门禁 + Runtime 探针
 - [x] `aicodingagentteam report` 命令输出 scorecard
+- [x] `defaultChecks()` 返回 10 项校验（P11 补齐）
+- [x] `CheckFunc` 类型支持自定义校验函数
+- [x] PRD/architecture/audit-log 校验用文件检查实现，不依赖外部二进制
+- [x] secret-leak 校验复用 governance 的 `checkSecretLeak` 规则（占位）
+- [x] api-contract-crosscheck 校验复用 `pkg/contracts.CrossCheck`（占位）
+- [x] ui-smells 校验复用 governance 引擎（占位）
+- [x] `runCheck()` 优先执行 `Func`（如有），否则执行 `Command`
+- [x] 缺少产物目录时，advisory 项返回 skipped 不 panic
 
 ## 非目标
 

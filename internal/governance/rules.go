@@ -2,6 +2,10 @@
 package governance
 
 import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -129,9 +133,67 @@ func checkSQLInjection(path, content string) []Violation {
 	return out
 }
 
-// checkAPIContract detects fetch/axios calls that don't match OpenAPI paths.
-var fetchRe = regexp.MustCompile(`fetch\s*\(\s*['"]` + "`" + `/api/`)
+// callSiteRe matches fetch("...") and axios("...") and axios.get("...") etc.
+var callSiteRe = regexp.MustCompile(`(?:fetch|axios(?:\.\w+)?)\s*\(\s*['"]([^'"]+)['"]`)
 
+// extractPathFromURL strips query strings and base URL prefixes from an API path.
+func extractPathFromURL(raw string) string {
+	if idx := strings.Index(raw, "?"); idx >= 0 {
+		raw = raw[:idx]
+	}
+	if idx := strings.Index(raw, "://"); idx >= 0 {
+		rest := raw[idx+3:]
+		if slash := strings.Index(rest, "/"); slash >= 0 {
+			raw = rest[slash:]
+		} else {
+			return ""
+		}
+	}
+	return raw
+}
+
+// openapiSpec is a minimal OpenAPI JSON structure for path extraction.
+type openapiSpec struct {
+	Paths map[string]json.RawMessage `json:"paths"`
+}
+
+// loadOpenAPIPaths reads an OpenAPI/JSON file and extracts declared path patterns.
+// It first tries encoding/json parsing; if that fails it falls back to line scanning.
+func loadOpenAPIPaths(data []byte) map[string]bool {
+	paths := make(map[string]bool)
+
+	// Try JSON parsing first
+	var spec openapiSpec
+	if err := json.Unmarshal(data, &spec); err == nil && len(spec.Paths) > 0 {
+		for p := range spec.Paths {
+			if strings.HasPrefix(p, "/") {
+				paths[p] = true
+			}
+		}
+		return paths
+	}
+
+	// Fallback: line-by-line scanning for path patterns
+	content := string(data)
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "\"/") {
+			end := strings.Index(trimmed[1:], "\"")
+			if end > 0 {
+				p := trimmed[1 : 1+end]
+				if strings.HasPrefix(p, "/") {
+					paths[p] = true
+				}
+			}
+		}
+	}
+	return paths
+}
+
+// checkAPIContract detects fetch/axios calls that don't match OpenAPI paths.
+// It scans for a co-located openapi.* spec and checks that all frontend
+// call sites reference paths declared in the spec.
 func checkAPIContract(path, content string) []Violation {
 	if !strings.HasSuffix(path, ".ts") && !strings.HasSuffix(path, ".tsx") &&
 		!strings.HasSuffix(path, ".js") && !strings.HasSuffix(path, ".jsx") {
@@ -140,9 +202,79 @@ func checkAPIContract(path, content string) []Violation {
 	if !strings.Contains(content, "fetch(") && !strings.Contains(content, "axios") {
 		return nil
 	}
-	// This is a simplified check; real impl would parse OpenAPI spec and compare paths
-	_ = fetchRe
-	return nil
+
+	dir := filepath.Dir(path)
+	specPaths := []string{
+		filepath.Join(dir, "openapi.json"),
+		filepath.Join(dir, "openapi.yaml"),
+		filepath.Join(dir, "openapi.yml"),
+		filepath.Join(dir, "..", "openapi.json"),
+		filepath.Join(dir, "..", "openapi.yaml"),
+	}
+	var contractPaths map[string]bool
+	for _, sp := range specPaths {
+		if data, err := os.ReadFile(sp); err == nil {
+			contractPaths = loadOpenAPIPaths(data)
+			if len(contractPaths) > 0 {
+				break
+			}
+		}
+	}
+
+	var out []Violation
+	lines := strings.Split(content, "\n")
+	for i, line := range lines {
+		matches := callSiteRe.FindAllStringSubmatch(line, -1)
+		for _, m := range matches {
+			if len(m) < 2 {
+				continue
+			}
+			rawPath := m[1]
+			apiPath := extractPathFromURL(rawPath)
+			if apiPath == "" || !strings.HasPrefix(apiPath, "/") {
+				continue
+			}
+			if len(contractPaths) > 0 {
+				if !contractPaths[apiPath] {
+					matched := false
+					for p := range contractPaths {
+						if strings.Contains(p, "{") && pathPrefixMatch(apiPath, p) {
+							matched = true
+							break
+						}
+					}
+					if !matched {
+						out = append(out, Violation{
+							RuleID:   "api-contract-mismatch",
+							Severity: "blocking",
+							Path:     path,
+							Detail:   fmt.Sprintf("API call at line %d references %q not in OpenAPI spec", i+1, apiPath),
+						})
+					}
+				}
+			}
+		}
+	}
+	return out
+}
+
+// pathPrefixMatch checks if a concrete path matches a pattern with {param} segments.
+func pathPrefixMatch(concrete, pattern string) bool {
+	concreteParts := strings.Split(concrete, "/")
+	patternParts := strings.Split(pattern, "/")
+	if len(concreteParts) != len(patternParts) {
+		return false
+	}
+	for i := 0; i < len(concreteParts); i++ {
+		pp := patternParts[i]
+		if strings.HasPrefix(pp, "{") && strings.HasSuffix(pp, "}") {
+			continue
+		}
+		if concreteParts[i] != pp {
+			return false
+		}
+	}
+	return true
 }
 
 // checkTodoPlaceholder detects TODO/FIXME/HACK placeholders in code.

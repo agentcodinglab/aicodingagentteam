@@ -421,14 +421,32 @@ func (a *coordinatorAdapter) GetPlan(ctx context.Context, req *pb.GetPlanRequest
 }
 
 func (a *coordinatorAdapter) Continue(ctx context.Context, req *pb.ContinueRequest) (*pb.ContinueResponse, error) {
-	if a.ext == nil {
-		return &pb.ContinueResponse{Resumed: false, Status: "not implemented"}, nil
+	// If the handler implements ExtendedHandler, use the real ContinuePlan.
+	if a.ext != nil {
+		resumed, statusStr, err := a.ext.ContinuePlan(ctx, req.GetPlanId())
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		return &pb.ContinueResponse{Resumed: resumed, Status: statusStr}, nil
 	}
-	resumed, statusStr, err := a.ext.ContinuePlan(ctx, req.GetPlanId())
+
+	// Fallback: use GetPlan to check if a plan exists and report its status.
+	// Without ExtendedHandler we cannot truly resume a paused plan, but we
+	// provide a graceful response instead of a hard "not implemented".
+	planResp, err := a.h.GetPlan(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &pb.ContinueResponse{Resumed: resumed, Status: statusStr}, nil
+	if planResp == nil || planResp.Nodes == 0 {
+		return &pb.ContinueResponse{
+			Resumed: false,
+			Status:  "no plan available to continue",
+		}, nil
+	}
+	return &pb.ContinueResponse{
+		Resumed: false,
+		Status:  "plan exists but resume requires extended handler",
+	}, nil
 }
 
 // toPBDetails converts api.CheckSummary to pb.CheckDetailInfo.

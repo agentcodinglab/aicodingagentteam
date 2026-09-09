@@ -153,11 +153,14 @@ func TestNew_CreatesEngineWithDefaultChecks(t *testing.T) {
 	if e.threshold != 80 {
 		t.Errorf("expected threshold 80, got %d", e.threshold)
 	}
-	if len(e.checks) != 4 {
-		t.Errorf("expected 4 default checks, got %d", len(e.checks))
+	if len(e.checks) != 10 {
+		t.Errorf("expected 10 default checks, got %d", len(e.checks))
 	}
-	names := []string{e.checks[0].Name, e.checks[1].Name, e.checks[2].Name, e.checks[3].Name}
-	for _, n := range []string{"build", "vet", "test", "lint"} {
+	names := make([]string, len(e.checks))
+	for i, ch := range e.checks {
+		names[i] = ch.Name
+	}
+	for _, n := range []string{"build", "vet", "test", "lint", "prd-completeness", "architecture-design", "api-contract-crosscheck", "ui-smells", "secret-leak", "audit-log"} {
 		found := false
 		for _, got := range names {
 			if got == n {

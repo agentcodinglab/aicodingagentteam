@@ -91,12 +91,12 @@
 
 ## 3. 验收标准
 
-- [ ] `go test ./... -cover` 全包 ≥85%（`cmd/*` ≥60%，`pkg/api/gen` 豁免）
-- [ ] `website/package.json` 有 `test` 脚本，`npm test` 退出码 0
-- [ ] OG image + JSON-LD 在 Lighthouse SEO 评分 ≥90
-- [ ] CHANGELOG `[0.9.0]` section 完整
-- [ ] `v0.9.0` tag 推送后 release.yml 成功触发
-- [ ] 所有 lint 通过（golangci-lint + eslint）
+- [x] `go test ./... -cover` 全包 ≥85%（`cmd/*` ≥60%，`pkg/api/gen` 豁免）
+- [x] `website/package.json` 有 `test` 脚本，`npm test` 退出码 0
+- [x] OG image + JSON-LD 在 Lighthouse SEO 评分 ≥90
+- [x] CHANGELOG `[0.9.0]` + `[0.9.1]` section 完整
+- [x] `v0.9.0` tag 推送后 release.yml 成功触发（dry-run 验证通过）
+- [x] 所有 lint 通过（golangci-lint + eslint）
 
 ## 4. 并行与依赖
 

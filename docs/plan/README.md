@@ -16,4 +16,5 @@ _待补充_
 |---|---|---|
 | next-steps-coverage-and-release.md | ADR-0022 | 已完成 |
 | p10-p13-init-wizard-plugin.md | ADR-0023 | 已完成 |
+| p11-quality-gate-10-checks.md | ADR-0024 | 已完成 |
 

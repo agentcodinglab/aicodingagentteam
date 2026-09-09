@@ -153,3 +153,185 @@ func TestACP_SessionNewTask_StreamsEvents(t *testing.T) {
 
 // silences unused-import when test never uses strings
 var _ = strings.NewReader
+
+func TestACP_SessionNewTask_DirectorError(t *testing.T) {
+	inR, inW := io.Pipe()
+	outR, outW := io.Pipe()
+
+	var notifs []string
+	var notifMu sync.Mutex
+	notifier := func(method string, params interface{}) {
+		notifMu.Lock()
+		notifs = append(notifs, method)
+		notifMu.Unlock()
+	}
+
+	dir := &fakeDirector{failOn: 1}
+	s := NewWithDirector(dir, notifier)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	serverDone := make(chan struct{})
+	go func() {
+		_ = s.ServeReader(ctx, inR, outW)
+		close(serverDone)
+	}()
+
+	clientR := bufio.NewReader(outR)
+
+	writeReq := func(t *testing.T, req map[string]interface{}) {
+		t.Helper()
+		b, _ := json.Marshal(req)
+		b = append(b, '\n')
+		_, _ = inW.Write(b)
+	}
+
+	readMessage := func(t *testing.T) map[string]interface{} {
+		t.Helper()
+		for {
+			line, _ := clientR.ReadString('\n')
+			if line == "" || line == "\n" {
+				continue
+			}
+			var m map[string]interface{}
+			_ = json.Unmarshal([]byte(line), &m)
+			return m
+		}
+	}
+
+	writeReq(t, map[string]interface{}{
+		"jsonrpc": "2.0", "id": 1, "method": "session/start",
+		"params": map[string]string{"agentId": "codex"},
+	})
+	startResp := readMessage(t)
+	result, _ := startResp["result"].(map[string]interface{})
+	sessionID, _ := result["sessionId"].(string)
+
+	writeReq(t, map[string]interface{}{
+		"jsonrpc": "2.0", "id": 2, "method": "session/newTask",
+		"params": map[string]interface{}{
+			"sessionId": sessionID, "agentId": "codex", "prompt": "fail this",
+		},
+	})
+
+	deadline := time.Now().Add(2 * time.Second)
+	for time.Now().Before(deadline) {
+		notifMu.Lock()
+		if len(notifs) >= 2 {
+			notifMu.Unlock()
+			break
+		}
+		notifMu.Unlock()
+		time.Sleep(20 * time.Millisecond)
+	}
+
+	notifMu.Lock()
+	got := append([]string(nil), notifs...)
+	notifMu.Unlock()
+
+	if len(got) < 2 {
+		t.Fatalf("expected at least 2 notifications (start+error), got %d", len(got))
+	}
+
+	cancel()
+	inW.Close()
+	outW.Close()
+	<-serverDone
+}
+
+func TestACP_SessionNewTask_DeliveryNotPassed(t *testing.T) {
+	dir := &fakeDirectorNotPassed{}
+	inR, inW := io.Pipe()
+	outR, outW := io.Pipe()
+
+	var notifs []string
+	var notifMu sync.Mutex
+	notifier := func(method string, params interface{}) {
+		notifMu.Lock()
+		notifs = append(notifs, method)
+		notifMu.Unlock()
+	}
+
+	s := NewWithDirector(dir, notifier)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	serverDone := make(chan struct{})
+	go func() { _ = s.ServeReader(ctx, inR, outW); close(serverDone) }()
+
+	clientR := bufio.NewReader(outR)
+	writeReq := func(t *testing.T, req map[string]interface{}) {
+		t.Helper()
+		b, _ := json.Marshal(req)
+		b = append(b, '\n')
+		_, _ = inW.Write(b)
+	}
+	readMessage := func(t *testing.T) map[string]interface{} {
+		t.Helper()
+		for {
+			line, _ := clientR.ReadString('\n')
+			if line == "" || line == "\n" {
+				continue
+			}
+			var m map[string]interface{}
+			_ = json.Unmarshal([]byte(line), &m)
+			return m
+		}
+	}
+
+	writeReq(t, map[string]interface{}{
+		"jsonrpc": "2.0", "id": 1, "method": "session/start",
+		"params": map[string]string{"agentId": "codex"},
+	})
+	startResp := readMessage(t)
+	result, _ := startResp["result"].(map[string]interface{})
+	sessionID, _ := result["sessionId"].(string)
+
+	writeReq(t, map[string]interface{}{
+		"jsonrpc": "2.0", "id": 2, "method": "session/newTask",
+		"params": map[string]interface{}{
+			"sessionId": sessionID, "agentId": "codex", "prompt": "build app",
+		},
+	})
+
+	deadline := time.Now().Add(2 * time.Second)
+	for time.Now().Before(deadline) {
+		notifMu.Lock()
+		if len(notifs) >= 4 {
+			notifMu.Unlock()
+			break
+		}
+		notifMu.Unlock()
+		time.Sleep(20 * time.Millisecond)
+	}
+
+	notifMu.Lock()
+	got := append([]string(nil), notifs...)
+	notifMu.Unlock()
+
+	if len(got) < 4 {
+		t.Fatalf("expected at least 4 notifications (start+msg+tool+error), got %d", len(got))
+	}
+
+	cancel()
+	inW.Close()
+	outW.Close()
+	<-serverDone
+}
+
+type fakeDirectorNotPassed struct{}
+
+func (f *fakeDirectorNotPassed) Handle(ctx context.Context, req types.UserRequest) (*types.Delivery, error) {
+	return &types.Delivery{PlanID: "plan-fail", Score: 40, Passed: false, Artifacts: []string{"src/a.go"}}, nil
+}
+
+func TestACP_Serve_StartsAndStops(t *testing.T) {
+	s := New()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	err := s.Serve(ctx)
+	if err != nil {
+		t.Errorf("Serve with cancelled context should not return error: %v", err)
+	}
+}

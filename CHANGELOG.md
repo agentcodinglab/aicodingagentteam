@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-09-09
+
+### Added (P11 -- quality gate 10 checks, ADR-0024)
+- internal/qualitygate: CheckFunc type for custom validation functions
+- internal/qualitygate: Check.Func field for registering custom checks
+- internal/qualitygate: 6 new check functions (prd-completeness, architecture-design, api-contract-crosscheck, ui-smells, secret-leak, audit-log)
+- internal/qualitygate: defaultChecks() now returns 10 checks (was 4)
+- internal/qualitygate: runCheck() supports CheckFunc execution
+- internal/qualitygate: apiContractCrossCheck now uses pkg/contracts.CrossCheck (was stub)
+- internal/qualitygate: uiSmells now uses governance.Engine.Check (was stub)
+- internal/qualitygate: secretLeak now uses governance.checkSecretLeak (was stub)
+- internal/qualitygate: OpenAPI spec parsing upgraded from line scanning to encoding/json
+- internal/qualitygate: checks_test.go -- 22 new tests (coverage 52.9% -> 86.3%)
+- internal/qualitygate: runCheck() CheckFunc branch now enforces Timeout (was unbounded)
+- internal/qualitygate: uiSmells() now scans both .ts and .tsx files (was .tsx-only)
+- internal/qualitygate: advisory checks (architecture-design, audit-log) return skipped instead of fail when artifacts missing
+- internal/qualitygate: runCheck() passes artifacts parameter to CheckFunc (was hardcoded nil)
+- internal/governance: checkAPIContract real implementation (was empty stub) -- parses co-located openapi.* spec, extracts API paths, cross-checks fetch/axios call sites
+- internal/governance: loadOpenAPIPaths upgraded to encoding/json parser with fallback line scanning
+- internal/governance: apicontract_test.go -- 17 new tests (coverage 96.4%+)
+- pkg/api: Continue method fallback to GetPlan when ExtendedHandler not available (was hard "not implemented" return)
+- docs/spec/quality-gate.md: updated check table with implementation status
+- docs/adr/ADR-0024-quality-gate-10-checks.md: decision record
+- docs/plan/p11-quality-gate-10-checks.md: implementation plan
+
+### Fixed
+- pkg/api: coverage 84.6% -> 86.0% (server.go Continue fallback edge case tests added)
+- internal/acp: coverage 88.0% -> 93.5% (dispatchTaskAsync error path, delivery not-passed path, Serve function)
+- internal/mcp: coverage 89.6% -> 90.9% (Serve function, GovernDirectory walk error, invalid args paths)
+
+
 ## [0.9.0] - 2026-09-07
 ### Added (P10+P13 -- init wizard, plugin discovery, gRPC e2e, ADR-0023)
 - pkg/plugin: global driver registry for community-contributed Runtime implementations (self-registration via init())

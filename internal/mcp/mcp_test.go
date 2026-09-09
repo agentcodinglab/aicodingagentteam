@@ -331,6 +331,85 @@ func TestServeReader_UnknownTool(t *testing.T) {
 	}
 }
 
+func TestServeReader_GovernDirectoryToolCall(t *testing.T) {
+	dir := t.TempDir()
+	_ = os.WriteFile(filepath.Join(dir, "bad.go"), []byte("package main\nvar token = \"ghp_1234567890abcdefghijklmnopqrstuvwxyz\"\n"), 0644)
+
+	s := New(governance.New())
+	args := governDirArgs{Root: dir}
+	params := toolCallParams{Name: "govern_directory", Arguments: mustMarshal(args)}
+	req := jsonRPCRequest{JSONRPC: "2.0", ID: json.RawMessage("1"), Method: "tools/call", Params: mustMarshal(params)}
+	data, _ := json.Marshal(req)
+
+	var buf bytes.Buffer
+	_ = s.ServeReader(context.Background(), strings.NewReader(string(data)+"\n"), &buf)
+
+	var resp jsonRPCResponse
+	_ = json.Unmarshal(buf.Bytes(), &resp)
+	if resp.Error != nil {
+		t.Fatalf("unexpected error: %s", resp.Error.Message)
+	}
+}
+
+func TestServeReader_GovernDirectoryToolCall_InvalidArgs(t *testing.T) {
+	s := New(governance.New())
+	params := toolCallParams{Name: "govern_directory", Arguments: json.RawMessage("invalid")}
+	req := jsonRPCRequest{JSONRPC: "2.0", ID: json.RawMessage("1"), Method: "tools/call", Params: mustMarshal(params)}
+	data, _ := json.Marshal(req)
+
+	var buf bytes.Buffer
+	_ = s.ServeReader(context.Background(), strings.NewReader(string(data)+"\n"), &buf)
+
+	var resp jsonRPCResponse
+	_ = json.Unmarshal(buf.Bytes(), &resp)
+	if resp.Error == nil {
+		t.Error("expected error for invalid arguments")
+	}
+	if !strings.Contains(resp.Error.Message, "invalid") {
+		t.Errorf("expected 'invalid arguments', got %s", resp.Error.Message)
+	}
+}
+
+func TestServeReader_GovernFileToolCall_InvalidArgs(t *testing.T) {
+	s := New(governance.New())
+	params := toolCallParams{Name: "govern_file", Arguments: json.RawMessage("invalid")}
+	req := jsonRPCRequest{JSONRPC: "2.0", ID: json.RawMessage("1"), Method: "tools/call", Params: mustMarshal(params)}
+	data, _ := json.Marshal(req)
+
+	var buf bytes.Buffer
+	_ = s.ServeReader(context.Background(), strings.NewReader(string(data)+"\n"), &buf)
+
+	var resp jsonRPCResponse
+	_ = json.Unmarshal(buf.Bytes(), &resp)
+	if resp.Error == nil {
+		t.Error("expected error for invalid arguments")
+	}
+	if !strings.Contains(resp.Error.Message, "invalid") {
+		t.Errorf("expected 'invalid arguments', got %s", resp.Error.Message)
+	}
+}
+
+func TestGovernDirectory_WalkError(t *testing.T) {
+	s := New(governance.New())
+	results, err := s.GovernDirectory(context.Background(), filepath.Join(t.TempDir(), "nonexistent-subdir"))
+	if err == nil {
+		t.Error("expected error for nonexistent directory")
+	}
+	if len(results) != 0 {
+		t.Errorf("expected 0 results, got %d", len(results))
+	}
+}
+
+func TestServe_WithCancelledContext(t *testing.T) {
+	s := New(governance.New())
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	err := s.Serve(ctx)
+	if err != nil {
+		t.Errorf("Serve with cancelled context should not return error: %v", err)
+	}
+}
+
 func mustMarshal(v interface{}) json.RawMessage {
 	data, _ := json.Marshal(v)
 	return data
