@@ -40,13 +40,13 @@
 
 ## 3. 验收标准
 
-- [ ] `session/newTask` method 返回 task ID
-- [ ] `notifications/session/update` 推送 start/message/tool_call/done/error
-- [ ] ACP server 能接 Director（`NewWithDirector`）
-- [ ] `TestACP_SessionNewTask_StreamsEvents`：模拟 stdio 客户端，验证 newTask → 事件流 → done
-- [ ] 现有 ACP initialize/start/stop/list 测试不破坏
-- [ ] `go build ./...` + `go test ./...` 全绿
-- [ ] 无 umadev/umacloud/goder.ai 字样
+- [x] `session/newTask` method 返回 task ID
+- [x] `notifications/session/update` 推送 start/message/tool_call/done/error
+- [x] ACP server 能接 Director（`NewWithDirector`）
+- [x] `TestACP_SessionNewTask_StreamsEvents`：模拟 stdio 客户端，验证 newTask → 事件流 → done
+- [x] 现有 ACP initialize/start/stop/list 测试不破坏
+- [x] `go build ./...` + `go test ./...` 全绿
+- [x] 无 umadev/umacloud/goder.ai 字样
 
 ## 4. 不在范围
 

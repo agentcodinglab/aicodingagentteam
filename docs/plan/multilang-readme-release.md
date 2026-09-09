@@ -73,11 +73,11 @@ gh run watch <id> --exit-status
 ```
 
 ## Acceptance criteria
-- [ ] 8 README files present on main, each with the 8-language picker at top
-- [ ] Single git commit for all 8 files (or 2: rename + add new languages)
-- [ ] `git tag v0.2.0` exists locally and pushed to origin
-- [ ] GitHub Actions release workflow triggers and produces cross-platform artifacts
-- [ ] All artifacts include the localized README files
+- [x] 8 README files present on main, each with the 8-language picker at top
+- [x] Single git commit for all 8 files (or 2: rename + add new languages)
+- [x] `git tag v0.2.0` exists locally and pushed to origin
+- [x] GitHub Actions release workflow triggers and produces cross-platform artifacts
+- [x] All artifacts include the localized README files
 
 ## Risks
 - Translation quality: human-translated where possible; for languages I cannot natively verify, I will use professional-tone machine translation that is technically faithful (preserve all code, paths, commands).

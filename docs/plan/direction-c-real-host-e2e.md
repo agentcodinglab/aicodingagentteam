@@ -44,17 +44,17 @@
 
 ## 3. 验收标准
 
-- [ ] `Scheduler.Execute` writer 节点调用 `driver.SendTask`，stdout 工件落盘到 workspace
-- [ ] driver=nil 降级为旧行为（直接列 artifacts），不 panic
-- [ ] codex stub binary 接收 `exec --skip-git-repo-check <prompt>`，stdout 写含工件引用输出，退出 0
-- [ ] `TestScheduler_HostE2E_StubBinary` 跑通：delivery.Passed=true，artifacts 非空
-- [ ] `TestScheduler_HostE2E_NilDriver_NoPanic`：无 driver 降级不 panic
-- [ ] governance.yml host-e2e job（soft-fail）用 stub binary 跑端到端
-- [ ] `make e2e-codex` 本地真实 codex手动验证（文档说明）
-- [ ] ADR-0018 记录 stub-binary 与 ADR-0005 不冲突论证
-- [ ] v0.5.0 release 含 ADR-0018 引用
-- [ ] `go build ./...` + `go test ./...` 全绿
-- [ ] 无 umadev/umacloud/goder.ai 字样
+- [x] `Scheduler.Execute` writer 节点调用 `driver.SendTask`，stdout 工件落盘到 workspace
+- [x] driver=nil 降级为旧行为（直接列 artifacts），不 panic
+- [x] codex stub binary 接收 `exec --skip-git-repo-check <prompt>`，stdout 写含工件引用输出，退出 0
+- [x] `TestScheduler_HostE2E_StubBinary` 跑通：delivery.Passed=true，artifacts 非空
+- [x] `TestScheduler_HostE2E_NilDriver_NoPanic`：无 driver 降级不 panic
+- [x] governance.yml host-e2e job（soft-fail）用 stub binary 跑端到端
+- [x] `make e2e-codex` 本地真实 codex手动验证（文档说明）
+- [x] ADR-0018 记录 stub-binary 与 ADR-0005 不冲突论证
+- [x] v0.5.0 release 含 ADR-0018 引用
+- [x] `go build ./...` + `go test ./...` 全绿
+- [x] 无 umadev/umacloud/goder.ai 字样
 
 ## 4. 不在范围
 

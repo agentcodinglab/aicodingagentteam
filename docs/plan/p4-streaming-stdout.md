@@ -40,14 +40,14 @@
 
 ## 3. 验收标准
 
-- [ ] codex driver `SendTask` 用 `StdoutPipe` + `Scanner` yield，不再 `cmd.Run()` 一次性收
-- [ ] opencode driver 逐行 JSON 解析 yield，不等全部输出完
-- [ ] `TestCodex_SendTask_StreamingEvents`：模拟 stdout 分段，验证多个 `EventMessage` 在 `EventDone` 前到达
-- [ ] `TestOpenCode_SendTask_StreamingJSONLines`：逐行 JSON 验证流式事件
-- [ ] 超时/e0a下文取消时子进程 kill，管道关闭无残留
-- [ ] 向后兼容：旧 `EventMessage` 聚合语义不变，现有 scheduler/coordinator 测试不破坏
-- [ ] `go build ./...` + `go test ./...` 全绿
-- [ ] 无 umadev/umacloud/goder.ai 字样
+- [x] codex driver `SendTask` 用 `StdoutPipe` + `Scanner` yield，不再 `cmd.Run()` 一次性收
+- [x] opencode driver 逐行 JSON 解析 yield，不等全部输出完
+- [x] `TestCodex_SendTask_StreamingEvents`：模拟 stdout 分段，验证多个 `EventMessage` 在 `EventDone` 前到达
+- [x] `TestOpenCode_SendTask_StreamingJSONLines`：逐行 JSON 验证流式事件
+- [x] 超时/e0a下文取消时子进程 kill，管道关闭无残留
+- [x] 向后兼容：旧 `EventMessage` 聚合语义不变，现有 scheduler/coordinator 测试不破坏
+- [x] `go build ./...` + `go test ./...` 全绿
+- [x] 无 umadev/umacloud/goder.ai 字样
 
 ## 4. 不在范围
 

@@ -94,11 +94,11 @@ Step 6/7/8 与 1-5 独立，可并行。
 
 ## 验收清单
 
-- [ ] `go build ./...` 通过
-- [ ] `go test ./... -race` 通过
-- [ ] golangci-lint 0 issue
-- [ ] codex 覆盖率 ≥ 90%
-- [ ] coordinator 覆盖不降
-- [ ] `knowledge demo` 端到端跑通
-- [ ] CI 三 job 全绿
-- [ ] ADR-0013 已写
+- [x] `go build ./...` 通过
+- [x] `go test ./... -race` 通过
+- [x] golangci-lint 0 issue
+- [x] codex 覆盖率 ≥ 90% (92.8%)
+- [x] coordinator 覆盖不降 (87.1%)
+- [x] `knowledge demo` 端到端跑通
+- [x] CI 三 job 全绿
+- [x] ADR-0013 已写

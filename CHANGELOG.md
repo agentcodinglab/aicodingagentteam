@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-09-09
+
+### Fixed
+- docs: all plan and spec acceptance checklists synced -- 0 unchecked items remain (was 54 across 7 files)
+- docs/plan/README.md: status table extended with 8 previously missing plan entries (direction-a/c/d, rag, p4/p5/p6, multilang, website)
+- .gitignore: build artifacts excluded (*.exe, bin/, output/, spike/*.exe, tui/dist/, website scripts_tmp/tsbuildinfo)
+
 ## [0.9.1] - 2026-09-09
 
 ### Added (P11 -- quality gate 10 checks, ADR-0024)

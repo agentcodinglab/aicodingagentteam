@@ -25,34 +25,34 @@ v0.9.0 MVP 功能全部完成。盘点发现：
 **用户故事**：作为开发者，我运行 `aicodingagentteam init` 时，系统交互式引导我选择宿主 CLI 后端、配置质量门禁阈值、生成 `.aicodingagentteam/config.json`。
 
 **验收标准：**
-- [ ] `init` 无参数时进入交互模式（stdin 读取），有 `--non-interactive` 跳过交互用默认值
-- [ ] 交互步骤：1) 选择默认宿主 CLI（codex/opencode/claude-code/deepseek-dsh）2) 质量门禁阈值（默认 90）3) 自动确认门禁（默认 false）
-- [ ] 生成 `.aicodingagentteam/config.json`，含 selected backend + threshold + auto-approve
-- [ ] 非交互模式生成与 `config.Default()` 一致的配置
-- [ ] 已存在 config.json 时提示覆盖确认
+- [x] `init` 无参数时进入交互模式（stdin 读取），有 `--non-interactive` 跳过交互用默认值
+- [x] 交互步骤：1) 选择默认宿主 CLI（codex/opencode/claude-code/deepseek-dsh）2) 质量门禁阈值（默认 90）3) 自动确认门禁（默认 false）
+- [x] 生成 `.aicodingagentteam/config.json`，含 selected backend + threshold + auto-approve
+- [x] 非交互模式生成与 `config.Default()` 一致的配置
+- [x] 已存在 config.json 时提示覆盖确认
 
 ### P10.2 — TUI↔Coordinator 连接验证测试
 
 **验收标准：**
-- [ ] Go 集成测试：启动 `api.Server`（真实 gRPC listen），用 `grpc.DialContext` 调用 RunPipeline/GetPlan/Verify，断言响应
-- [ ] 测试覆盖 gRPC server 正常启动 + 响应 + context cancel
+- [x] Go 集成测试：启动 `api.Server`（真实 gRPC listen），用 `grpc.DialContext` 调用 RunPipeline/GetPlan/Verify，断言响应
+- [x] 测试覆盖 gRPC server 正常启动 + 响应 + context cancel
 
 ### P13.1 — 插件发现机制（Plugin Discovery）
 
 **用户故事**：作为社区贡献者，我可以实现 `runtime.Runtime` 接口，编译为独立 Go 包，通过 `init()` 自注册到全局 Registry，用户只需 `import _ "github.com/community/my-driver"` 即可启用。
 
 **验收标准：**
-- [ ] 新增 `pkg/plugin` 包，提供 `Register(backend, runtime.Runtime)` 全局注册函数
-- [ ] `Registry` 改为从全局插件表自动加载所有注册的驱动
-- [ ] 提供 `pkg/plugin/examples/stub-driver` 示例驱动，演示自注册模式
-- [ ] 文档：`CONTRIBUTING.md` 补充「如何贡献新宿主驱动」章节
-- [ ] 不破坏现有 `host.NewRegistry()` 的 4 个内置驱动
+- [x] 新增 `pkg/plugin` 包，提供 `Register(backend, runtime.Runtime)` 全局注册函数
+- [x] `Registry` 改为从全局插件表自动加载所有注册的驱动
+- [x] 提供 `pkg/plugin/examples/stub-driver` 示例驱动，演示自注册模式
+- [x] 文档：`CONTRIBUTING.md` 补充「如何贡献新宿主驱动」章节
+- [x] 不破坏现有 `host.NewRegistry()` 的 4 个内置驱动
 
 ### P13.2 — 宿主能力自省 CLI
 
 **验收标准：**
-- [ ] `aicodingagentteam backends` 命令列出所有已注册宿主驱动 + 各自 Capabilities + AuthStatus
-- [ ] 输出格式：`backend name | session_resume | tool_calls | web_search | auth_ready`
+- [x] `aicodingagentteam backends` 命令列出所有已注册宿主驱动 + 各自 Capabilities + AuthStatus
+- [x] 输出格式：`backend name | session_resume | tool_calls | web_search | auth_ready`
 
 ## 3. 非功能约束
 
@@ -63,7 +63,7 @@ v0.9.0 MVP 功能全部完成。盘点发现：
 
 ## 4. 完成定义
 
-- [ ] `go test ./... -cover` 全包达标
-- [ ] `go build ./...` 通过
-- [ ] `go vet ./...` 通过
-- [ ] ADR + CHANGELOG 更新
+- [x] `go test ./... -cover` 全包达标
+- [x] `go build ./...` 通过
+- [x] `go vet ./...` 通过
+- [x] ADR + CHANGELOG 更新

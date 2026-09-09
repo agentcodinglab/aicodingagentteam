@@ -95,13 +95,13 @@ agent_team/
 15. Push and verify build/deploy
 
 ## Acceptance criteria
-- [ ] `cd website && npm ci && npm run build` produces `out/` with 9 locale subdirs
-- [ ] GitHub Actions `docs-site` workflow runs green on push
-- [ ] `https://agentcodinglab.github.io/aicodingagentteam/` shows English landing page
-- [ ] Top-right language switcher cycles through all 9 locales
-- [ ] Each locale `/<locale>/docs/requirements` renders the corresponding markdown
-- [ ] Sidebar shows 5 doc pages, TOC anchors work
-- [ ] Root README has a Docs badge linking to the deployed site
+- [x] `cd website && npm ci && npm run build` produces `out/` with 9 locale subdirs
+- [x] GitHub Actions `docs-site` workflow runs green on push
+- [x] `https://agentcodinglab.github.io/aicodingagentteam/` shows English landing page
+- [x] Top-right language switcher cycles through all 9 locales
+- [x] Each locale `/<locale>/docs/requirements` renders the corresponding markdown
+- [x] Sidebar shows 5 doc pages, TOC anchors work
+- [x] Root README has a Docs badge linking to the deployed site
 
 ## Risks
 - `npm install` may be slow on CI; mitigated by caching via `actions/setup-node` cache

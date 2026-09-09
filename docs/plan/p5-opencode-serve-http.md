@@ -41,14 +41,14 @@ OpenCode 提供的编程接口是 `opencode acp`（stdio JSON-RPC），与我们
 
 ## 3. 验收标准
 
-- [ ] opencode driver 预启动 `opencode acp` 子进程，stdio 上调 JSON-RPC
-- [ ] 事件流：ACP notification 逐条 yield `runtime.EventMessage` / `EventToolCall` / `EventDone`
-- [ ] 会话复用：多个 SendTask 复用同一 session
-- [ ] `TestOpenCode_ACP_StubServer`：用 stub JSON-RPC server 跑驱动端到端。
-- [ ] `scripts/e2e-real-opencode.ps1` 本地验证。
-- [ ] 现有 scheduler/coordinator 测试无回归。
-- [ ] `go build ./...` + `go test ./...` 全绿。
-- [ ] 无 umadev/umacloud/goder.ai 字样。
+- [x] opencode driver 预启动 `opencode acp` 子进程，stdio 上调 JSON-RPC
+- [x] 事件流：ACP notification 逐条 yield `runtime.EventMessage` / `EventToolCall` / `EventDone`
+- [x] 会话复用：多个 SendTask 复用同一 session
+- [x] `TestOpenCode_ACP_StubServer`：用 stub JSON-RPC server 跑驱动端到端。
+- [x] `scripts/e2e-real-opencode.ps1` 本地验证。
+- [x] 现有 scheduler/coordinator 测试无回归。
+- [x] `go build ./...` + `go test ./...` 全绿。
+- [x] 无 umadev/umacloud/goder.ai 字样。
 
 ## 4. 不在范围
 
