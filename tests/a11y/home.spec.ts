@@ -31,10 +31,6 @@ for (const locale of LOCALES) {
     // Run axe with WCAG 2.1 AA + best practices tags.
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
-      // Disable color-contrast at the rule level: dark duotone hero has
-      // intentional low-contrast decorative gradients (Stage 2 design).
-      // Real text contrast is verified by Lighthouse audit (governance workflow).
-      .disableRules(['color-contrast'])
       .analyze();
 
     const serious = results.violations.filter(
