@@ -81,6 +81,8 @@ func main() {
 		cmdGovern(ctx, append([]string{"--ci"}, os.Args[2:]...))
 	case "backends":
 		cmdBackends(ctx)
+	case "plugin":
+		cmdPlugin(os.Args[2:])
 	case "version":
 		fmt.Printf("aicodingagentteam %s (commit=%s, built=%s)\n", version, commit, date)
 	default:
