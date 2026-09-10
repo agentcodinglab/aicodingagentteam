@@ -7,6 +7,7 @@ export const docsNav: DocNavItem[] = [
   { slug: 'quality-constraints', titleKey: 'docs.nav.qualityConstraints' },
   { slug: 'domain-model', titleKey: 'docs.nav.domainModel' },
   { slug: 'changelog', titleKey: 'docs.nav.changelog' },
+  { slug: 'decisions', titleKey: 'docs.nav.decisions' },
 ];
 
 export function getDocBySlug(slug: string): DocNavItem | undefined {

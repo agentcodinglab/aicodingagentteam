@@ -10,7 +10,8 @@
     "quickstart": "クイックスタート",
     "docs": "ドキュメント",
     "github": "GitHub",
-    "changelog": "変更履歴"
+    "changelog": "変更履歴",
+      "decisions": "意思決定"
   },
   "home": {
     "hero": {
@@ -153,7 +154,8 @@
       "implementationPlan": "実装計画",
       "qualityConstraints": "品質制約",
       "domainModel": "ドメインモデル",
-      "changelog": "変更履歴"
+      "changelog": "変更履歴",
+      "decisions": "意思決定"
     },
     "tableOfContents": "目次",
     "notFound": "ドキュメントが見つかりません",
@@ -182,7 +184,8 @@
       "releases": "リリース",
       "issues": "Issue",
       "discussions": "ディスカッション",
-      "changelog": "変更履歴"
+      "changelog": "変更履歴",
+      "decisions": "意思決定"
     },
     "releaseNote": "MIT ライセンスで公開 · GitHub Pages で静的エクスポートをデプロイ"
   }

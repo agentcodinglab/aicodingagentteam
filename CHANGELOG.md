@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-10
+
+### Added (plugin ecosystem + multi-host e2e + docs decisions page)
+- cmd/aicodingagentteam: 'plugin new/search/list' subcommands for scaffolding and indexing community drivers
+- pkg/plugin/marketplace.go: local JSON marketplace index with Add/Load/Search/Remove
+- pkg/plugin/examples/gemini-driver: second real example driver (self-registering, gemini-2.0-flash)
+- internal/scheduler: opencode_host_e2e_test.go -- ACP stub binary scheduler-level e2e
+- internal/acp: e2e_test.go -- full ACP server lifecycle (start -> newTask -> streamed notifs -> list -> stop)
+- internal/mcp: e2e_test.go -- full MCP server lifecycle (initialize -> tools/list -> govern_file + govern_directory)
+- website: ADR decisions page (en + zh content, 9 locale i18n keys, sidebar nav)
+- docs/spec/plugin-ecosystem.md: spec with all acceptance criteria checked
+
 ## [0.9.2] - 2026-09-09
 
 ### Fixed

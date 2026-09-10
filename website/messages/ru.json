@@ -10,7 +10,8 @@
     "quickstart": "Быстрый старт",
     "docs": "Документация",
     "github": "GitHub",
-    "changelog": "Журнал изменений"
+    "changelog": "Журнал изменений",
+      "decisions": "Решения"
   },
   "home": {
     "hero": {
@@ -153,7 +154,8 @@
       "implementationPlan": "План реализации",
       "qualityConstraints": "Ограничения качества",
       "domainModel": "Модель домена",
-      "changelog": "Журнал изменений"
+      "changelog": "Журнал изменений",
+      "decisions": "Решения"
     },
     "tableOfContents": "На этой странице",
     "notFound": "Документ не найден",
@@ -182,7 +184,8 @@
       "releases": "Релизы",
       "issues": "Задачи",
       "discussions": "Обсуждения",
-      "changelog": "Журнал изменений"
+      "changelog": "Журнал изменений",
+      "decisions": "Решения"
     },
     "releaseNote": "Под лицензией MIT · Статический экспорт развёрнут через GitHub Pages"
   }
