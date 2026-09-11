@@ -83,8 +83,8 @@ try {
   console.error("SETUP ERROR:", e.message);
   failures = 1;
 } finally {
-  server.kill("SIGTERM");
-  try { await new Promise((r) => server.once("exit", r)); } catch {}
+  if (!server.killed) { server.kill("SIGTERM"); }
+  try { await new Promise((r) => { const t = setTimeout(r, 5000); server.once('exit', () => { clearTimeout(t); r(); }); server.kill('SIGKILL'); }); } catch {}
 }
 
 console.log(failures === 0 ? "\nE2E LIVE: ALL PASS" : `\nE2E LIVE: ${failures} FAILED`);

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-09-11
+
+### Added (v0.11.0 release readiness, ADR-0025)
+- scripts/release-readiness.sh + .ps1: cross-platform pre-release validation (build/vet/test/godocgen/goreleaser-check)
+- pkg/plugin/remote_index.go: RemoteIndex for remote marketplace HTTP index (fail-open PoC)
+- pkg/plugin/remote_index_test.go: 7 tests covering fetch/parse/fail-open/merge/dedup
+- pkg/plugin/examples/qwen-driver: third example community driver (qwen-2.5-coder)
+- docs/plugin-development.md: plugin author guide (register/discover/install/security)
+- .aicodingagentteam/plugins.example.json: sample marketplace index
+- website quickstart: fixed binary name from aicat to aicodingagentteam
+- tui/scripts/e2e-live.mjs: improved server kill/cleanup with SIGKILL fallback
+- .github/workflows/release.yml: pinned GoReleaser v2.14.1 + config validation step
+- .github/workflows/governance.yml: godocgen now generates 9 locales + 9-locale smoke test
+
 ## [0.10.0] - 2026-09-10
 
 ### Added (plugin ecosystem + multi-host e2e + docs decisions page)

@@ -199,11 +199,14 @@ jobs:
         with:
           go-version: '1.25'
 
-      - name: Generate godoc (en)
-        run: go run ./cmd/godocgen --locale=en --version=${{ github.sha }}
+      - name: Generate godoc (9 locales)
+        run: go run ./cmd/godocgen --locale=en,zh,ja,ko,fr,de,ru,es,it --version=${{ github.sha }}
 
-      - name: Smoke test (en content exists)
-        run: test -f website/content/docs/api/en/pkg-runtime.md
+      - name: Smoke test (9 locale indexes exist)
+        run: |
+          for locale in en zh ja ko fr de ru es it; do
+            test -f "website/content/docs/api/$locale/index.md"
+          done
 
       - name: Upload godoc artifact
         if: always()

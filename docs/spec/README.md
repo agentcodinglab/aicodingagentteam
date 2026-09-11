@@ -14,6 +14,7 @@
 | B5 | [governance.md](governance.md) | 治理引擎 | 9 | ✅ 已完成 |
 | B6 | [knowledge-memory.md](knowledge-memory.md) | 知识库与记忆 | 11 | ✅ 已完成 |
 | B7 | [tui-client.md](tui-client.md) | TS TUI 客户端 | 12 | ✅ 已完成 |
+| B8 | [v0.11.0-release-readiness.md](v0.11.0-release-readiness.md) | 发布就绪 | 8 | 🔵 进行中 |
 
 ## 模板
 

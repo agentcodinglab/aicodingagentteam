@@ -25,5 +25,6 @@ _待补充_
 | p5-opencode-serve-http.md | ADR-0021 | 已完成 |
 | p6-acp-session-newtask.md | ADR-0020 | 已完成 |
 | multilang-readme-release.md | — | 已完成 |
+| v0.11.0-release-readiness.md | ADR-0025 | 进行中 |
 | website-nextjs-9lang.md | — | 已完成 |
 
