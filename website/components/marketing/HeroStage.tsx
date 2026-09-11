@@ -12,7 +12,7 @@ function slidesFor(locale: string): Line[][] {
   if (isZh) {
     return [
       [
-        { text: "$ aicat run \"\u6784\u5efa REST API\" --backend codex", kind: "prompt" },
+        { text: "$ aicodingagentteam run \"\u6784\u5efa REST API\" --backend codex", kind: "prompt" },
         { text: "router \u2192 intent=build_api   workflow=full_team", kind: "sys" },
         { text: "phase: docs_confirm", kind: "stage" },
         { text: "output/plan.json written", kind: "file" },
@@ -24,7 +24,7 @@ function slidesFor(locale: string): Line[][] {
         { text: "\u4ea4\u4ed8\u95ed\u73af\u5b8c\u6210\u3002", kind: "done" },
       ],
       [
-        { text: "$ aicat continue --phase docs", kind: "prompt" },
+        { text: "$ aicodingagentteam continue --phase docs", kind: "prompt" },
         { text: "doc_agent \u2192 syncing context from PRD\u2026", kind: "sys" },
         { text: "phase: frontend_implement", kind: "stage" },
         { text: "output/uiux.md read", kind: "file" },
@@ -33,7 +33,7 @@ function slidesFor(locale: string): Line[][] {
         { text: "status: pending_backend", kind: "done" },
       ],
       [
-        { text: "$ aicat gate --threshold 90", kind: "prompt" },
+        { text: "$ aicodingagentteam gate --threshold 90", kind: "prompt" },
         { text: "gate_agent \u2192 running compliance and tests\u2026", kind: "sys" },
         { text: "phase: quality_gate", kind: "stage" },
         { text: "\u2713 build success", kind: "ok" },
@@ -46,7 +46,7 @@ function slidesFor(locale: string): Line[][] {
   }
   return [
     [
-      { text: "$ aicat run \"Build a REST API\" --backend codex", kind: "prompt" },
+      { text: "$ aicodingagentteam run \"Build a REST API\" --backend codex", kind: "prompt" },
       { text: "router \u2192 intent=build_api   workflow=full_team", kind: "sys" },
       { text: "phase: docs_confirm", kind: "stage" },
       { text: "output/plan.json written", kind: "file" },
@@ -58,7 +58,7 @@ function slidesFor(locale: string): Line[][] {
       { text: "Delivery complete.", kind: "done" },
     ],
     [
-      { text: "$ aicat continue --phase docs", kind: "prompt" },
+      { text: "$ aicodingagentteam continue --phase docs", kind: "prompt" },
       { text: "doc_agent \u2192 syncing context from PRD\u2026", kind: "sys" },
       { text: "phase: frontend_implement", kind: "stage" },
       { text: "output/uiux.md read", kind: "file" },
@@ -67,7 +67,7 @@ function slidesFor(locale: string): Line[][] {
       { text: "status: pending_backend", kind: "done" },
     ],
     [
-      { text: "$ aicat gate --threshold 90", kind: "prompt" },
+      { text: "$ aicodingagentteam gate --threshold 90", kind: "prompt" },
       { text: "gate_agent \u2192 running compliance and tests\u2026", kind: "sys" },
       { text: "phase: quality_gate", kind: "stage" },
       { text: "\u2713 build success", kind: "ok" },
@@ -147,7 +147,7 @@ export function HeroStage() {
         </div>
         <div className="flex items-center gap-2 font-mono text-ink-muted2">
           <TerminalIcon className="h-3.5 w-3.5" />
-          <span>aicat \u2014 bash \u00b7 zsh</span>
+          <span>aicodingagentteam \u2014 bash \u00b7 zsh</span>
         </div>
         <button
           type="button"

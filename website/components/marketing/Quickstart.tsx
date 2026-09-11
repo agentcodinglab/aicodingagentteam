@@ -5,10 +5,10 @@ import { Reveal } from "../ui/Reveal";
 const STEPS = ["build", "init", "run", "verify"] as const;
 
 const COMMANDS: Record<(typeof STEPS)[number], string> = {
-  build: "go build -o bin/aicat ./cmd/aicat",
-  init: "./bin/aicat init",
-  run: "./bin/aicat run \"Build a REST API\" --backend codex",
-  verify: "./bin/aicat verify",
+  build: "go build -o bin/aicodingagentteam ./cmd/aicodingagentteam",
+  init: "./bin/aicodingagentteam init",
+  run: "./bin/aicodingagentteam run \"Build a REST API\" --backend codex",
+  verify: "./bin/aicodingagentteam verify",
 };
 
 export function Quickstart() {

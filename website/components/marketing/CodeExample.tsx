@@ -2,7 +2,7 @@ import { Terminal } from "lucide-react";
 import { Reveal } from "../ui/Reveal";
 
 const LINES: Array<{ prompt?: string; body: string; kind?: "out" | "ok" | "dim" }> = [
-  { prompt: "$", body: "./bin/aicat run \"Build a REST API\" --backend codex" },
+  { prompt: "$", body: "./bin/aicodingagentteam run \"Build a REST API\" --backend codex" },
   { kind: "dim", body: "[router]  intent=build_api   workflow=full_team   backend=codex" },
   { kind: "dim", body: "[planner] nodes=9   writers=3   reviewers=6   dag=built (12ms)" },
   { kind: "dim", body: "[sched]   dispatched reviewer:qa + reviewer:security + reviewer:arch (parallel)" },
@@ -36,7 +36,7 @@ export function CodeExample() {
             <span className="h-3 w-3 rounded-full bg-[#27c93f]/80" />
           </div>
           <div className="flex items-center gap-1.5 font-mono text-ink-muted2">
-            <Terminal className="h-3.5 w-3.5" />aicat run
+            <Terminal className="h-3.5 w-3.5" />aicodingagentteam run
           </div>
           <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted2/60">
             bash

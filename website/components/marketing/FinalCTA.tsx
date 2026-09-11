@@ -13,7 +13,7 @@ export function FinalCTA() {
 
       <div className="container mx-auto max-w-4xl px-6 text-center">
         <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-cyan">
-          ./aicat --ready
+          ./aicodingagentteam --ready
         </p>
         <h2 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-5xl">
           <span className="text-ink">{t("ctaTitle")}</span>

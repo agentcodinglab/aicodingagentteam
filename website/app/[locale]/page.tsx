@@ -39,7 +39,7 @@ function HomeContent() {
         <Stats />
       </Section>
 
-      <Section eyebrow="$ aicat run" title={t("codeTitle")} subtitle={t("codeSubtitle")}>
+      <Section eyebrow="$ aicodingagentteam run" title={t("codeTitle")} subtitle={t("codeSubtitle")}>
         <CodeExample />
       </Section>
 
