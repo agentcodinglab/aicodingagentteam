@@ -21,9 +21,9 @@ export function SiteFooter() {
             </p>
           </div>
           <div>
-            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted2">
+            <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted2">
               {t("product")}
-            </h4>
+            </h3>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
                 <LocaleLink href="/features" className="text-ink-muted transition-colors hover:text-cyan">
@@ -43,9 +43,9 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted2">
+            <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted2">
               {t("resources")}
-            </h4>
+            </h3>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
                 <LocaleLink href="/docs/requirements" className="text-ink-muted transition-colors hover:text-cyan">
@@ -75,9 +75,9 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted2">
+            <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted2">
               {t("community")}
-            </h4>
+            </h3>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
                 <a
