@@ -33,7 +33,7 @@ archives:
       {{- if eq .Arch "amd64"}}x86_64
       {{- else if eq .Arch "arm64"}}ARM64
       {{- end}}
-    format_overrides:
+    formats:
       - goos: windows
         format: zip
     files:
